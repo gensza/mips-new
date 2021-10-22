@@ -1,0 +1,5222 @@
+<?php 
+class Cash_bank_model extends CI_Model{	
+    
+    //nama tabel dari database
+    var $table = 'pp_logistik'; 
+    //field yang ada di table user
+    var $column_order = array(null, 'user_nama','user_email','user_alamat'); 
+    var $column_search = array('nopp','ref_po','nopo'); //field yang diizin untuk pencarian 
+    var $order = array('id' => 'asc'); // default order
+
+
+    function __construct() {
+        parent::__construct();
+        $this->mips_gl  = $this->load->database('mips_gl', TRUE);
+        $this->mips_caba = $this->load->database('mips_caba', TRUE);
+        $this->mstcode = $this->load->database('mstcode', TRUE);
+        $this->mips_logistik = $this->load->database('mips_logistik', TRUE);
+        
+        
+    }
+    
+    function username(){
+        return $this->session->userdata('sess_id');
+    }
+    
+    function get_id_lokasi(){
+        return $this->session->userdata('sess_id_lokasi');
+    }
+    
+    function get_nama_lokasi(){
+        return $this->session->userdata('sess_nama_lokasi');
+    }
+    
+    function get_sess_pt(){
+        return $this->session->userdata('sess_pt');
+    }
+    
+    function get_acct_supplier(){
+        return '3010';
+    }
+            
+    function periode(){
+       return $this->session->userdata('sess_periode');
+    }
+
+    function get_bank(){
+        $sql = "SELECT * FROM noac ORDER BY NOID ASC";
+        return $this->mips_gl->query($sql);
+    }
+    
+    function get_data_noac(){
+    	$sql = "SELECT * FROM noac ORDER BY NOID ASC";
+        return $this->mips_gl->query($sql);
+    }
+
+    function simpan_voucher_header($data){
+
+        $user_id = $this->username();
+        $lokasi  = $this->get_nama_lokasi();
+        
+            $jumlah_amount    = str_replace(",","",$data['jumlah']);
+
+            $ceknoref;
+            $nopp;
+            if($data['noref_select'] == '-'){
+                $ceknoref = '-';
+                $nopp     = '-';
+            }else{
+                $ceknoref = $data['noref_select'].' '.$data['no_ref'];
+                $nopp     = $data['no_ref'];
+            }
+
+            $tgl_explode    = explode("-" , $data['tanggal']);
+            $tgltxt         = $tgl_explode[2].$tgl_explode[1].$tgl_explode[0];
+            $tgltxtperiode  = $tgl_explode[2].$tgl_explode[1];
+
+        // ini select dari voucher temp
+        $sql1 = "SELECT * FROM voucher_tmp where voucno = '$data[kode_sementara]' order by id desc";
+        $m = $this->mips_caba->query($sql1)->row_array();
+
+        // ini select dulu ke table tmp , lalu insert ke table voucher dengan fungsi insert batch
+        $sql2 = "SELECT * FROM voucher_tmp where voucno = '$data[kode_sementara]'";
+        // $n = $this->mips_caba->query($sql2)->result_array();
+        $n = $this->mips_caba->query($sql2)->result();
+        // $data=array();
+        // foreach($n as $row){
+        //     $row_arr=array(
+        //         'TRANS' => $row->TRANS ,
+        //         'VOUCNO' =>  $row->VOUCNO ,
+        //         'DATE' => date('Y-m-d H:i:s'),
+        //         'ACCTNO' =>  $row->ACCTNO ,
+        //         'DEBIT' =>  $row->DEBIT ,
+        //         'CREDIT' =>  $row->CREDIT ,
+        //         'DESCRIPT' =>  $row->DESCRIPT ,
+        //         'JENIS' =>  $row->JENIS ,
+        //         'CHEQNO' =>  $row->CHEQNO ,
+        //         'TO' =>  $row->TO ,
+        //         'FROM' =>  $row->FROM ,
+        //         'PAY' =>  $row->PAY ,
+        //         'AMOUNT' =>  $row->AMOUNT ,
+        //         'POSTED' =>  $row->POSTED ,
+        //         'REMARKS' =>  $row->REMARKS ,
+        //         'LOKASI' =>  $row->LOKASI ,
+        //         'PROJECT' =>  $row->PROJECT ,
+        //         'PRINTED' =>  $row->PRINTED ,
+        //         'TGLTXT' =>  $row->TGLTXT ,
+        //         'KODE_PT' =>  $row->KODE_PT ,
+        //         'txtperiode' =>  $row->txtperiode ,
+        //         'module' =>  $row->module ,
+        //         'user' =>  $row->user ,
+        //         'NO_PP' =>  $row->NO_PP ,
+        //         'NO_PO' =>  $row->NO_PO ,
+        //         'PDO' =>  $row->PDO ,
+        //         'sumber' =>  $row->sumber ,
+            
+        //     );
+        //     array_push($data,$row_arr);
+        // }
+
+
+        // fungsi insert batch
+        $this->mips_caba->insert_batch('voucher', $n); 
+        // $this->mips_caba->insert_batch('voucher', $n); 
+
+        //hapus yang ada di table voucher tmp
+        $sql3 = "DELETE FROM voucher_tmp WHERE voucno = '$data[kode_sementara]'";
+        $this->mips_caba->query($sql3);
+
+
+        //ini untuk ambil urutan BANK, karna di select bank saya kasih 3 value {1:NO ACCOUNT, 2:NAMA BANK , 3:NO URUT SELECT : 1-10}
+        $value_bank = $data['bank_descript'];
+        $exploded_value_bank = explode('|', $value_bank);
+        $value_one_bank   = $exploded_value_bank[0]; // NO ACCOUNT
+        $value_two_bank   = $exploded_value_bank[1]; // NAMA BANG
+        $value_three_bank = $exploded_value_bank[2]; // NO URUT
+
+        $namabankvalue = str_replace("_"," ",$value_two_bank);
+        //sebelumnya : $data[bank_descript]
+
+
+        //ini untuk insert noac
+        $noacs = "SELECT general FROM noac WHERE noac = '$value_one_bank'";
+        $ks = $this->mips_gl->query($noacs)->row_array();
+        
+        $noacsa = "SELECT nama FROM noac WHERE noac = '$ks[general]'";
+        $kss = $this->mips_gl->query($noacsa)->row_array();
+        $namageneral = str_replace("_"," ",$kss['nama']);
+
+
+        //selain ho maka ada PDO dan SUMBER
+        if($lokasi != 'HO'){ // INI ESTATE
+
+            //$nominalsumber = str_replace(",","",$data['sumber_dana_nominal']);
+
+            $nomorsumber = $data['sumber_dana_nominal'];
+
+
+            //ini untuk ambil urutan BANK, karna di select bank saya kasih 2 value {1:NAMA BANK , 2:NO URUT SELECT : 1-10}
+            $value_sumber_dana              = $data['sumber_dana'];
+            $exploded_value_sumber_dana     = explode('|', $value_sumber_dana);
+            $value_one_sumber_dana          = $exploded_value_sumber_dana[0]; // INI NAMA
+            $value_two_sumber_dana          = $exploded_value_sumber_dana[1]; // NO URUT
+
+
+            // ini insert ke head voucher
+            $sql = "INSERT INTO head_voucher (trans,
+                                        voucno,
+                                        DATE,
+                                        acctno,
+                                        descript,
+                                        general,
+                                        jenis,
+                                        cheqno,
+                                        nama_ref,
+                                        kode_ref,
+                                        `to`,
+                                        `from`,
+                                        pay,
+                                        amount,
+                                        bank,
+                                        lokasi,
+                                        project,
+                                        user,
+                                        pdo,
+                                        sumber,
+                                        tgltxt,
+                                        txtperiode,
+                                        remarks,
+                                        kode_pt,
+                                        nocekbg,
+                                        bankcek,
+                                        tglcek,
+                                        tglinput,posted,printed) 
+                                VALUES ('$data[kas_bank]',
+                                        '$data[kode_sementara]',
+                                        STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                        '$value_one_bank',
+                                        '$value_two_bank',
+                                        '$namageneral',
+                                        '$data[pay_rec]',
+                                        '$ceknoref',
+                                        '$data[noref_select]',
+                                        '$data[no_ref]',
+                                        '-',
+                                        '$data[kepada]',
+                                        '$data[terbilang]',
+                                        '$jumlah_amount',
+                                        '$namabankvalue',
+                                        '$lokasi',
+                                        '-',
+                                        'sfbahri',
+                                        '$value_one_sumber_dana',
+                                        '$nomorsumber',
+                                        $tgltxt,
+                                        $tgltxtperiode,
+                                        '$m[REMARKS]',
+                                        '$m[KODE_PT]',
+                                        '$data[bank_no]',
+                                        '$data[bank_nama]',
+                                        STR_TO_DATE('$data[bank_tanggal]', '%d-%m-%Y')";
+
+                $headrs = $this->mips_caba->query($sql);
+
+        }else{ // INI HO
+
+        // ini insert ke head voucher
+        $sql = "INSERT INTO head_voucher (trans,
+                                    voucno,
+                                    DATE,
+                                    acctno,
+                                    descript,
+                                    general,
+                                    jenis,
+                                    cheqno,
+                                    nama_ref,
+                                    kode_ref,
+                                    `to`,
+                                    `from`,
+                                    pay,
+                                    amount,
+                                    bank,
+                                    lokasi,
+                                    project,
+                                    user,
+                                    tgltxt,
+                                    txtperiode,
+                                    remarks,
+                                    kode_pt,
+                                    nocekbg,
+                                    bankcek) 
+                            VALUES ('$data[kas_bank]',
+                                    '$data[kode_sementara]',
+                                    STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                    '$value_one_bank',
+                                    '$value_two_bank',
+                                    '$namageneral',
+                                    '$data[pay_rec]',
+                                    '$ceknoref',
+                                    '$data[noref_select]',
+                                    '$data[no_ref]',
+                                    '-',
+                                    '$data[kepada]',
+                                    '$data[terbilang]',
+                                    '$jumlah_amount',
+                                    '$namabankvalue',
+                                    '$lokasi',
+                                    '-',
+                                    'sfbahri',
+                                    $tgltxt,
+                                    $tgltxtperiode,
+                                    '$m[REMARKS]',
+                                    '$m[KODE_PT]',
+                                    '$data[bank_no]',
+                                    '$data[bank_nama]')";
+
+            $headrs = $this->mips_caba->query($sql);
+
+        }
+
+
+
+        //parameter untuk pengkategorian payment dan receive untuk memanggil configuration.
+        $pt          = $this->get_sess_pt();
+        //$lokasi      = $data['lokasi_users'];
+        $kas_or_bank = $data['kas_bank'];
+
+
+        //Ini untuk pengambilan kode urut
+        if($lokasi == 'HO'){ // HO
+
+
+            //filter : payment
+            if($data['pay_rec'] == 'Payment'){
+
+                //filter : kas
+                if($kas_or_bank == 'Kas'){
+
+                    $sql4 = "SELECT pay_nokas,pay_inikas FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                    $res = $this->mips_caba->query($sql4)->row_array();
+
+                    $no_urut_pay      = $res['pay_nokas'];
+                    $ditambah         = 1;
+                    $no_urut_terakhir = $ditambah+$no_urut_pay;
+
+                    //ini fungsi untuk menambah angka nol di depan
+                    $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                    $inisial_pay      = $res['pay_inikas'];
+                    $nofix            = $inisial_pay.''.$fzeropadded;
+
+                    //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                    //voucher detail
+                    $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                    $this->mips_caba->query($sql88);
+                    //voucher header
+                    $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                    $this->mips_caba->query($sql99);
+                    
+                    //START : ini fungsi untuk update table pp_logistik
+                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+                        
+                    }else{
+                        
+                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+                        
+                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+                        
+                        foreach($k as $c){
+                            $cls_date = new DateTime($data['tanggal']);
+                            $tgls     = $cls_date->format('Ymd');
+                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                            $this->mips_caba->query($sq_logistik);
+                            
+                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                        no_voutxt  = '$nofix',
+                                                        tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                        tgl_voutxt = '$tgls',
+                                                        status_vou = 1,
+                                                        kasir_bayar = '$c[DEBIT]'
+                                                        WHERE nopp  = '$c[NO_PP]'";
+                            $this->mips_logistik->query($pplogis);
+                            
+                            //update status logistik menjadi 1 kalo sudah lunas
+                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                            $sum_item_po = $r_ipo['jumlah'];
+                            
+                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                            $sum_item_cb = $r_icb['jumlah'];
+
+                            if($sum_item_cb >= $sum_item_po){
+                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar   = '1',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                $this->mips_logistik->query($ipoa);
+                            }else{
+                                //belum diupdate menjadi lunas
+                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                $this->mips_logistik->query($ipoa);
+                            }
+                            
+                        }
+                        
+                        
+                    }
+                    //END : ini fungsi untuk update table pp_logistik
+                    
+                    
+
+                    //update configur
+                    $sql11 = "UPDATE konfigur SET pay_nokas  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                    $this->mips_caba->query($sql11);
+
+
+                }else if($kas_or_bank == 'Bank'){
+
+                    //untuk select 'PAYMENT' HO, VALUE BANK ADA 10 JUMLAHNYA, jadi kita harus pecah satu satu
+                
+                    switch ($value_three_bank) {
+                    case "1":
+
+                        $sql4 = "SELECT pay_nobank1 as no_bank,pay_inibank1 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        /*$no_urut_pay      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_pay);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $no_urut_pay+$ditambah;*/
+
+                        $no_urut_pay      = $res['no_bank'];
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+                        
+                    }else{
+                        
+                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+                        
+                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+                        
+                        foreach($k as $c){
+                            $cls_date = new DateTime($data['tanggal']);
+                            $tgls     = $cls_date->format('Ymd');
+                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                            $this->mips_caba->query($sq_logistik);
+                            
+                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                            no_voutxt  = '$nofix',
+                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                            tgl_voutxt = '$tgls',
+                                                            status_vou = 1,
+                                                            kasir_bayar = '$c[DEBIT]'
+                                                        WHERE nopp  = '$c[NO_PP]'";
+                            $this->mips_logistik->query($pplogis);
+                            
+                            //update status logistik menjadi 1 kalo sudah lunas
+                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                            $sum_item_po = $r_ipo['jumlah'];
+                            
+                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                            $sum_item_cb = $r_icb['jumlah'];
+
+                            if($sum_item_cb >= $sum_item_po){
+                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '1',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                $this->mips_logistik->query($ipoa);
+                            }else{
+                                //belum diupdate menjadi lunas
+                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                $this->mips_logistik->query($ipoa);
+                            }
+                            
+                        }
+                        
+                        
+                    }
+                    //END : ini fungsi untuk update table pp_logistik
+                        
+                       
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank1  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "2":
+                        
+                        $sql4 = "SELECT pay_nobank2 as no_bank,pay_inibank2 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_pay      = $res['no_bank'];
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+                        
+                    }else{
+                        
+                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+                        
+                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+                        
+                        foreach($k as $c){
+                            $cls_date = new DateTime($data['tanggal']);
+                            $tgls     = $cls_date->format('Ymd');
+                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                            $this->mips_caba->query($sq_logistik);
+                            
+                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                            no_voutxt  = '$nofix',
+                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                            tgl_voutxt = '$tgls',
+                                                            status_vou = 1,
+                                                            kasir_bayar = '$c[DEBIT]'
+                                                        WHERE nopp  = '$c[NO_PP]'";
+                            $this->mips_logistik->query($pplogis);
+                            
+                            //update status logistik menjadi 1 kalo sudah lunas
+                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                            $sum_item_po = $r_ipo['jumlah'];
+                            
+                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                            $sum_item_cb = $r_icb['jumlah'];
+
+                            if($sum_item_cb >= $sum_item_po){
+                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '1',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                $this->mips_logistik->query($ipoa);
+                            }else{
+                                //belum diupdate menjadi lunas
+                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                $this->mips_logistik->query($ipoa);
+                            }
+                            
+                        }
+                        
+                        
+                    }
+                    //END : ini fungsi untuk update table pp_logistik
+                        
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank2  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "3":
+                        
+                        $sql4 = "SELECT pay_nobank3 as no_bank,pay_inibank3 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_pay      = $res['no_bank'];
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+                        
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+
+                        //START : ini fungsi untuk update table pp_logistik
+                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+                        
+                    }else{
+                        
+                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+                        
+                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+                        
+                        foreach($k as $c){
+                            $cls_date = new DateTime($data['tanggal']);
+                            $tgls     = $cls_date->format('Ymd');
+                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                            $this->mips_caba->query($sq_logistik);
+                            
+                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                        no_voutxt  = '$nofix',
+                                                        tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                        tgl_voutxt = '$tgls',
+                                                        status_vou = 1,
+                                                        kasir_bayar = '$c[DEBIT]'
+                                                        WHERE nopp  = '$c[NO_PP]'";
+                            $this->mips_logistik->query($pplogis);
+                            
+                            //update status logistik menjadi 1 kalo sudah lunas
+                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                            $sum_item_po = $r_ipo['jumlah'];
+                            
+                            //where nya di tambah account depannya 3010
+                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                            $sum_item_cb = $r_icb['jumlah'];
+
+                            if($sum_item_cb >= $sum_item_po){
+                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '1',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                $this->mips_logistik->query($ipoa);
+                            }else{
+                                //belum diupdate menjadi lunas
+                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                            }
+                            
+                        }
+                        
+                        
+                    }
+                    //END : ini fungsi untuk update table pp_logistik
+                        
+                        
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank3  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "4":
+                        
+                        $sql4 = "SELECT pay_nobank4 as no_bank,pay_inibank4 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        
+                        if($res['no_bank'] == 0){
+                            $no_urut_pay = 1;
+                        }else{
+                            $no_urut_pay = $res['no_bank'];
+                        }
+
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+                        
+                        
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank4  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "5":
+                        
+                        $sql4 = "SELECT pay_nobank5 as no_bank,pay_inibank5 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_pay      = $res['no_bank'];
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+                        
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank5  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "6":
+                        
+                        $sql4 = "SELECT pay_nobank6 as no_bank,pay_inibank6 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_pay      = $res['no_bank'];
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+                        
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank6  = '$no_urut_terakhir',lokasi = '$lokasi' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "7":
+                        
+                        $sql4 = "SELECT pay_nobank7 as no_bank,pay_inibank7 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_pay      = $res['no_bank'];
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+                        
+                        
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank7  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "8":
+                        
+                        $sql4 = "SELECT pay_nobank8 as no_bank,pay_inibank8 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_pay      = $res['no_bank'];
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank8  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "9":
+                        
+                        $sql4 = "SELECT pay_nobank9 as no_bank,pay_inibank9 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_pay      = $res['no_bank'];
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+                        
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank9  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "10":
+                            
+                        $sql4 = "SELECT pay_nobank10 as no_bank,pay_inibank10 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_pay      = $res['no_bank'];
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_pay;
+                        
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_pay      = $res['ini_bank'];
+                        $nofix            = $inisial_pay.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET pay_nobank10  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    default:
+                        echo "BANK TIDAK TERSEDIA !";
+                    }
+
+                }else{
+                    //ini untuk RO kayany
+                }
+
+
+
+            }else if($data['pay_rec'] == 'Receive'){
+
+
+                if($kas_or_bank == 'Kas'){
+
+                    $sql4 = "SELECT rec_nokas,rec_inikas FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                    $res = $this->mips_caba->query($sql4)->row_array();
+
+                    $no_urut_rec    = $res['rec_nokas'];
+                    //ini fungsi untuk menambah angka nol di depan
+                    $fzeropadded      = sprintf("%03d", $no_urut_rec);
+
+
+                    $inisial_rec    = $res['rec_inikas'];
+                    $nofix            = $inisial_rec.''.$fzeropadded;
+                    $ditambah         = 1;
+                    $no_urut_terakhir = $ditambah+$no_urut_rec;
+                    //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                    //voucher detail
+                    $sql88 = "UPDATE voucher SET voucno  = '$nofix' WHERE voucno = '$data[kode_sementara]'";
+                    $this->mips_caba->query($sql88);
+                    //voucher header
+                    $sql99 = "UPDATE head_voucher SET voucno  = '$nofix' WHERE voucno = '$data[kode_sementara]'";
+                    $this->mips_caba->query($sql99);
+                    
+                    //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+
+                    //update configur
+                    $sql11 = "UPDATE konfigur SET rec_nokas  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                    $this->mips_caba->query($sql11);
+
+                }else if($kas_or_bank == 'Bank'){
+
+                    switch ($value_three_bank){
+                    case "1":
+
+                        $sql4 = "SELECT rec_nobank1 as no_bank,rec_inibank1 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        /*$no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $fzeropadded      = sprintf("%03d", $no_urut_rec);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $no_urut_rec+$ditambah;*/
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank1  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "2":
+                        
+                        $sql4 = "SELECT rec_nobank2 as no_bank,rec_inibank2 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank2  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "3":
+                        
+                        $sql4 = "SELECT rec_nobank3 as no_bank,rec_inibank3 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank3  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "4":
+                        
+                        $sql4 = "SELECT rec_nobank4 as no_bank,rec_inibank4 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank4  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "5":
+                        
+                        $sql4 = "SELECT rec_nobank5 as no_bank,rec_inibank5 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+                        
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank5  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "6":
+                        
+                        $sql4 = "SELECT rec_nobank6 as no_bank,rec_inibank6 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+                        
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank6  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "7":
+                        
+                        $sql4 = "SELECT rec_nobank7 as no_bank,rec_inibank7 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank7  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "8":
+                        
+                        $sql4 = "SELECT rec_nobank8 as no_bank,rec_inibank8 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar   = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+                        
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank8  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "9":
+                        
+                        $sql4 = "SELECT rec_nobank9 as no_bank,rec_inibank9 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+                        
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank9  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    case "10":
+                            
+                        $sql4 = "SELECT rec_nobank10 as no_bank,rec_inibank10 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                        $res = $this->mips_caba->query($sql4)->row_array();
+
+                        $no_urut_rec      = $res['no_bank'];
+                        //ini fungsi untuk menambah angka nol di depan
+                        $ditambah         = 1;
+                        $no_urut_terakhir = $ditambah+$no_urut_rec;
+                        $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                        $inisial_rec      = $res['ini_bank'];
+                        $nofix            = $inisial_rec.''.$fzeropadded;
+
+                        //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                        //voucher detail
+                        $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql88);
+                        //voucher header
+                        $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                        $this->mips_caba->query($sql99);
+                        
+                        
+                        //START : ini fungsi untuk update table pp_logistik
+                        if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                        }else{
+
+                            //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                            $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                            $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                            foreach($k as $c){
+                                $cls_date = new DateTime($data['tanggal']);
+                                $tgls     = $cls_date->format('Ymd');
+                                $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                    no_voutxt  = '$nofix',
+                                                                    tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                    tgl_voutxt = '$tgls',
+                                                                    status_vou = 1
+                                                                WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_caba->query($sq_logistik);
+
+                                $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                no_voutxt  = '$nofix',
+                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                tgl_voutxt = '$tgls',
+                                                                status_vou = 1,
+                                                                kasir_bayar = '$c[DEBIT]'
+                                                            WHERE nopp  = '$c[NO_PP]'";
+                                $this->mips_logistik->query($pplogis);
+
+                                //update status logistik menjadi 1 kalo sudah lunas
+                                $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                $sum_item_po = $r_ipo['jumlah'];
+
+                                $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                $r_icb = $this->mips_caba->query($icb)->row_array();
+                                $sum_item_cb = $r_icb['jumlah'];
+
+                                if($sum_item_cb >= $sum_item_po){
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                            terbayar  = '1',
+                                                            nopp       = '$c[NO_PP]'
+                                                            WHERE noreftxt  = '$c[NO_PO]'";
+                                    $this->mips_logistik->query($ipoa);
+                                }else{
+                                    //belum diupdate menjadi lunas
+                                    $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                }
+
+                            }
+
+
+                        }
+                        //END : ini fungsi untuk update table pp_logistik
+
+                        //update configur
+                        $sql11 = "UPDATE konfigur SET rec_nobank10  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                        $this->mips_caba->query($sql11);
+
+                        break;
+                    default:
+                        echo "BANK TIDAK TERSEDIA !";
+
+                    }
+
+                }
+
+            }else{
+
+                // jika else tidak ada aksi apa2
+
+            }
+
+
+
+
+        }else if($lokasi == 'ESTATE'){ // ESTATE
+
+
+            //ini untuk ambil urutan BANK, karna di select bank saya kasih 2 value {1:NAMA BANK , 2:NO URUT SELECT : 1-10}
+            $value_sumber_dana              = $data['sumber_dana'];
+            $exploded_value_sumber_dana     = explode('|', $value_sumber_dana);
+            $value_one_sumber_dana          = $exploded_value_sumber_dana[0]; // INI NAMA
+            $value_two_sumber_dana          = $exploded_value_sumber_dana[1]; // NO URUT
+
+
+
+                //filter : payment atau Receive
+                if($data['pay_rec'] == 'Payment'){
+
+                        //filter : kas atau bank
+                        if($kas_or_bank == 'Kas'){
+
+                            switch ($value_two_sumber_dana) {
+                            case "1":
+                                
+                                $sql4 = "SELECT pay_nokas as no_bank,pay_inikas as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+                                
+                                
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                
+
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET pay_nokas  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+                                break;
+                            case "2":
+                                
+                                $sql4 = "SELECT pay_nokas2 as no_bank,pay_inikas2 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+                                
+                                
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                
+
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET pay_nokas2  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+                                break;
+                            case "3":
+                                
+                                $sql4 = "SELECT pay_nokas3 as no_bank,pay_inikas3 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+                                
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                
+
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET pay_nokas3  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+                                break;
+                            case "4":
+                                
+                                $sql4 = "SELECT pay_nokas4 as no_bank,pay_inikas4 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+                                
+                                
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET pay_nokas4  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+                                break;
+                            case "5":
+                                
+                                $sql4 = "SELECT pay_nokas5 as no_bank,pay_inikas5 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+                                
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET pay_nokas5  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+
+                                break;
+                            default:
+                                echo "Konten Tidak Tersedia !";
+                            }
+
+                        }else if($kas_or_bank == 'Bank'){
+
+
+                            switch ($value_three_bank) {
+                                case "1":
+
+                                    $sql4 = "SELECT pay_nobank1 as no_bank,pay_inibank1 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                    $res = $this->mips_caba->query($sql4)->row_array();
+
+                                    /*$no_urut_pay      = $res['no_bank'];
+                                    //ini fungsi untuk menambah angka nol di depan
+                                    $fzeropadded      = sprintf("%03d", $no_urut_pay);
+
+                                    $inisial_pay      = $res['ini_bank'];
+                                    $nofix            = $inisial_pay.''.$fzeropadded;
+                                    $ditambah         = 1;
+                                    $no_urut_terakhir = $no_urut_pay+$ditambah;*/
+
+                                    $no_urut_pay      = $res['no_bank'];
+                                    $ditambah         = 1;
+                                    $no_urut_terakhir = $ditambah+$no_urut_pay;
+                                    
+                                    //ini fungsi untuk menambah angka nol di depan
+                                    $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                    $inisial_pay      = $res['ini_bank'];
+                                    $nofix            = $inisial_pay.''.$fzeropadded;
+
+                                    //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                    //voucher detail
+                                    $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql88);
+                                    //voucher header
+                                    $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql99);
+                                    
+                                    //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+
+                                    //update configur
+                                    $sql11 = "UPDATE konfigur SET pay_nobank1  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                    $this->mips_caba->query($sql11);
+
+                                    break;
+                                case "2":
+                                    
+                                    $sql4 = "SELECT pay_nobank2 as no_bank,pay_inibank2 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                    $res = $this->mips_caba->query($sql4)->row_array();
+
+                                    $no_urut_pay      = $res['no_bank'];
+                                    $ditambah         = 1;
+                                    $no_urut_terakhir = $ditambah+$no_urut_pay;
+                                    
+                                    //ini fungsi untuk menambah angka nol di depan
+                                    $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                    $inisial_pay      = $res['ini_bank'];
+                                    $nofix            = $inisial_pay.''.$fzeropadded;
+
+                                    //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                    //voucher detail
+                                    $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql88);
+                                    //voucher header
+                                    $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql99);
+                                    
+                                    
+                                    //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                    
+
+                                    //update configur
+                                    $sql11 = "UPDATE konfigur SET pay_nobank2  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                    $this->mips_caba->query($sql11);
+
+                                    break;
+                                case "3":
+                                    
+                                    $sql4 = "SELECT pay_nobank3 as no_bank,pay_inibank3 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                    $res = $this->mips_caba->query($sql4)->row_array();
+
+                                    $no_urut_pay      = $res['no_bank'];
+                                    $ditambah         = 1;
+                                    $no_urut_terakhir = $ditambah+$no_urut_pay;
+                                    
+                                    //ini fungsi untuk menambah angka nol di depan
+                                    $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                    $inisial_pay      = $res['ini_bank'];
+                                    $nofix            = $inisial_pay.''.$fzeropadded;
+                                    
+
+                                    //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                    //voucher detail
+                                    $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql88);
+                                    //voucher header
+                                    $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql99);
+                                    
+                                    
+                                    //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                    
+
+                                    //update configur
+                                    $sql11 = "UPDATE konfigur SET pay_nobank3  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                    $this->mips_caba->query($sql11);
+
+                                    break;
+                                case "4":
+                                    
+                                    $sql4 = "SELECT pay_nobank4 as no_bank,pay_inibank4 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                    $res = $this->mips_caba->query($sql4)->row_array();
+
+                                    $no_urut_pay      = $res['no_bank'];
+                                    $ditambah         = 1;
+                                    $no_urut_terakhir = $ditambah+$no_urut_pay;
+                                    
+                                    //ini fungsi untuk menambah angka nol di depan
+                                    $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                    $inisial_pay      = $res['ini_bank'];
+                                    $nofix            = $inisial_pay.''.$fzeropadded;
+
+                                    //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                    //voucher detail
+                                    $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql88);
+                                    //voucher header
+                                    $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql99);
+                                    
+                                    
+                                    //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+
+                                    //update configur
+                                    $sql11 = "UPDATE konfigur SET pay_nobank4  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                    $this->mips_caba->query($sql11);
+
+                                    break;
+
+                                default:
+                                    echo "BANK TIDAK TERSEDIA !";
+                                }
+
+
+                        }else{
+
+                        }
+
+                }else if($data['pay_rec'] == 'Receive'){
+
+                        //filter : kas atau bank
+                        if($kas_or_bank == 'Kas'){
+
+                            switch ($value_two_sumber_dana) {
+                            case "1":
+                                
+                                $sql4 = "SELECT rec_nokas as no_bank,rec_inikas as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+                                
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET rec_nokas  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+                                break;
+                            case "2":
+                                
+                                $sql4 = "SELECT rec_nokas2 as no_bank,rec_inikas2 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                
+                                
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET rec_nokas2  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+                                break;
+                            case "3":
+                                
+                                $sql4 = "SELECT rec_nokas3 as no_bank,rec_inikas3 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+                                
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET rec_nokas3  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+                                break;
+                            case "4":
+                                
+                                $sql4 = "SELECT rec_nokas4 as no_bank,rec_inikas4 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+                                
+                                
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                
+
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET rec_nokas4  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+                                break;
+                            case "5":
+                                
+                                $sql4 = "SELECT rec_nokas5 as no_bank,rec_inikas5 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                $res = $this->mips_caba->query($sql4)->row_array();
+
+                                $no_urut_rec      = $res['no_bank'];
+                                $ditambah         = 1;
+                                $no_urut_terakhir = $ditambah+$no_urut_rec;
+                                $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                $inisial_rec      = $res['ini_bank'];
+                                $nofix            = $inisial_rec.''.$fzeropadded;
+
+
+                                //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                //voucher detail
+                                $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql88);
+                                //voucher header
+                                $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                $this->mips_caba->query($sql99);
+                                
+                                
+                                //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+                                            
+                                            //start : update status_vou di pp_logistik caba
+//                                            $sql_q = "SELECT jumlah FROM pp_logistik WHERE ref_po = '$c[NO_PP]'";
+//                                            $kj = $this->mips_caba->query($sql_q)->row_array();
+//                                            
+//                                            
+//                                            if($sum_item_cb >= $sum_item_po){
+//                                                $ipoa = "UPDATE pp_logistik SET voucher   = '$nofix',
+//                                                                                terbayar  = '1',
+//                                                                                nopp     = '$c[NO_PP]'
+//                                                                                WHERE noreftxt  = '$c[NO_PO]'";
+//                                                $this->mips_logistik->query($ipoa);
+//                                            }else{
+//                                                //belum diupdate menjadi lunas
+//                                                $ipoa = "UPDATE pp_logistik SET   voucher   = '$nofix',
+//                                                                         terbayar  = '2',
+//                                                                         nopp     = '$c[NO_PP]'
+//                                                                WHERE noreftxt  = '$c[NO_PO]'";
+//                                                $this->mips_logistik->query($ipoa);
+//                                            }
+                                            
+                                            
+                                            //end : update status_vou di pp_logistik 
+                                            
+                                            
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp     = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                         terbayar  = '2',
+                                                                         nopp     = '$c[NO_PP]'
+                                                                WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                
+
+                                //update configur
+                                $sql11 = "UPDATE konfigur SET rec_nokas5  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                $this->mips_caba->query($sql11);
+
+
+                                break;
+                            default:
+                                echo "Konten Tidak Tersedia !";
+                            }
+
+
+                        }else if($kas_or_bank == 'Bank'){
+
+
+                            switch ($value_three_bank) {
+                                case "1":
+
+                                    $sql4 = "SELECT rec_nobank1 as no_bank,rec_inibank1 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                    $res = $this->mips_caba->query($sql4)->row_array();
+
+                                    $no_urut_pay      = $res['no_bank'];
+                                    $ditambah         = 1;
+                                    $no_urut_terakhir = $ditambah+$no_urut_pay;
+                                    
+                                    //ini fungsi untuk menambah angka nol di depan
+                                    $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                    $inisial_pay      = $res['ini_bank'];
+                                    $nofix            = $inisial_pay.''.$fzeropadded;
+
+                                    //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                    //voucher detail
+                                    $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql88);
+                                    //voucher header
+                                    $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql99);
+                                    
+                                    //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET  voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                    
+
+                                    //update configur
+                                    $sql11 = "UPDATE konfigur SET rec_nobank1  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                    $this->mips_caba->query($sql11);
+
+                                    break;
+                                case "2":
+                                    
+                                    $sql4 = "SELECT rec_nobank2 as no_bank,rec_inibank2 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                                    $res = $this->mips_caba->query($sql4)->row_array();
+
+                                    $no_urut_pay      = $res['no_bank'];
+                                    $ditambah         = 1;
+                                    $no_urut_terakhir = $ditambah+$no_urut_pay;
+                                    
+                                    //ini fungsi untuk menambah angka nol di depan
+                                    $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+
+                                    $inisial_pay      = $res['ini_bank'];
+                                    $nofix            = $inisial_pay.''.$fzeropadded;
+
+                                    //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
+                                    //voucher detail
+                                    $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql88);
+                                    //voucher header
+                                    $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                                    $this->mips_caba->query($sql99);
+                                    
+                                    
+                                    //START : ini fungsi untuk update table pp_logistik
+                                    if($data['noref_select'] == 0 && $data['noref_select'] == '-' && $data['no_ref'] == ''){
+
+                                    }else{
+
+                                        //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
+
+                                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                                        $k = $this->mips_caba->query($slq_logistik)->result_array();
+
+                                        foreach($k as $c){
+                                            $cls_date = new DateTime($data['tanggal']);
+                                            $tgls     = $cls_date->format('Ymd');
+                                            $sq_logistik = "UPDATE pp_logistik SET no_vou  = '$no_urut_terakhir',
+                                                                                no_voutxt  = '$nofix',
+                                                                                tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                                tgl_voutxt = '$tgls',
+                                                                                status_vou = 1
+                                                                            WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_caba->query($sq_logistik);
+
+                                            $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                                                            no_voutxt  = '$nofix',
+                                                                            tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                                                            tgl_voutxt = '$tgls',
+                                                                            status_vou = 1,
+                                                                            kasir_bayar = '$c[DEBIT]'
+                                                                        WHERE nopp  = '$c[NO_PP]'";
+                                            $this->mips_logistik->query($pplogis);
+
+                                            //update status logistik menjadi 1 kalo sudah lunas
+                                            $ipo = "SELECT SUM(harga*qty) AS jumlah FROM item_po where noref = '$c[NO_PO]'";
+                                            $r_ipo = $this->mips_logistik->query($ipo)->row_array();
+                                            $sum_item_po = $r_ipo['jumlah'];
+
+                                            $icb = "SELECT SUM(debit) AS jumlah FROM voucher WHERE NO_PO = '$c[NO_PO]' AND SUBSTR(ACCTNO,1,4) = '3010'";
+                                            $r_icb = $this->mips_caba->query($icb)->row_array();
+                                            $sum_item_cb = $r_icb['jumlah'];
+
+                                            if($sum_item_cb >= $sum_item_po){
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                                        terbayar  = '1',
+                                                                        nopp       = '$c[NO_PP]'
+                                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }else{
+                                                //belum diupdate menjadi lunas
+                                                $ipoa = "UPDATE po SET   voucher   = '$nofix',
+                                                        terbayar  = '2',
+                                                        nopp       = '$c[NO_PP]'
+                                                        WHERE noreftxt  = '$c[NO_PO]'";
+                                                $this->mips_logistik->query($ipoa);
+                                            }
+
+                                        }
+
+
+                                    }
+                                    //END : ini fungsi untuk update table pp_logistik
+                                    
+
+                                    //update configur
+                                    $sql11 = "UPDATE konfigur SET rec_nobank2  = '$no_urut_terakhir' where lokasi = '$lokasi' and pt = '$pt'";
+                                    $this->mips_caba->query($sql11);
+
+                                    break;
+
+                                default:
+                                    echo "BANK TIDAK TERSEDIA !";
+                                }
+
+
+                        }else{
+
+                        }
+
+                }
+
+        }else{
+
+        }
+
+        
+        return $headrs;
+
+    }
+
+    function cobacoba(){
+        $sql4 = "SELECT pay_nokas,pay_inikas FROM konfigur";
+                $res = $this->mips_caba->query($sql4)->row_array();
+
+                $no_urut_rec    = $res['pay_nokas'];
+                $inisial_rec    = $res['pay_inikas'];
+                $nofix            = $inisial_rec.$no_urut_rec;
+                $ditambah         = 1;
+                $no_urut_terakhir = $no_urut_rec+$ditambah;
+
+
+                return $no_urut_terakhir;
+    }
+
+    function simpan_voucher_detail($data){
+        
+            $user_id = $this->username();
+
+            $jumlah_amount    = str_replace(",","",$data['jumlah']);
+
+            $val_kredit;
+            if($data['kredit'] == ''){
+                $val_kredit = '0';
+            }else{
+                $val_kredit = str_replace(",","",$data['kredit']);;
+            }
+
+            $val_debet;
+            if($data['debit'] == ''){
+                $val_debet = '0';
+            }else{
+                $val_debet = str_replace(",","",$data['debit']);
+            }
+           
+            $ceknoref;
+            $nopp;
+            if($data['noref_select'] == '-'){
+                $ceknoref = '-';
+                $nopp     = '-';
+            }else{
+                $ceknoref = $data['noref_select'].' '.$data['no_ref'];
+                $nopp     = $data['no_ref'];
+            }
+
+            $tgl_explode    = explode("-" , $data['tanggal']);
+            $tgltxt         = $tgl_explode[2].$tgl_explode[1].$tgl_explode[0];
+            $tgltxtperiode  = $tgl_explode[2].$tgl_explode[1];
+
+            $lokasi = $this->get_nama_lokasi();
+            $nama_user = $this->session->userdata('sess_nama');
+            ///*$data[nomor_voucher]*/
+//            $sql = "INSERT INTO voucher_tmp (trans,
+//                                    voucno,
+//                                    date,
+//                                    acctno,
+//                                    debit,
+//                                    credit,
+//                                    descript,
+//                                    jenis,
+//                                    cheqno,
+//                                    `to`,
+//                                    `from`,
+//                                    pay,
+//                                    amount,
+//                                    bank,
+//                                    remarks,
+//                                    lokasi,
+//                                    project,
+//                                    kode_pt,
+//                                    user,
+//                                    no_pp,
+//                                    pdo,
+//                                    sumber,
+//                                    tgltxt,
+//                                    txtperiode) 
+//                            VALUES ('$data[kas_bank]',
+//                                    '$data[kode_sementara]',
+//                                    STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+//                                    '$data[acct]',
+//                                    '$val_debet',
+//                                    '$val_kredit',
+//                                    '$data[acct_nama]',
+//                                    '$data[pay_rec]',
+//                                    '$ceknoref',
+//                                    '-',
+//                                    '$data[kepada]',
+//                                    '$data[terbilang]',
+//                                    '$jumlah_amount',
+//                                    '$data[bank_nama]',
+//                                    '$data[transaksi_remark]',
+//                                    '$lokasi',
+//                                    '-',
+//                                    '$data[divisi_v]',
+//                                    'sfbahri',
+//                                    '$nopp',
+//                                    '-',
+//                                    '-',
+//                                    $tgltxt,
+//                                    $tgltxtperiode
+//                                )";
+            
+            $sql = "INSERT INTO voucher_tmp (trans,
+                                    voucno,
+                                    date,
+                                    acctno,
+                                    debit,
+                                    credit,
+                                    descript,
+                                    jenis,
+                                    cheqno,
+                                    `to`,
+                                    `from`,
+                                    pay,
+                                    amount,
+                                    bank,
+                                    remarks,
+                                    lokasi,
+                                    project,
+                                    kode_pt,
+                                    user,
+                                    pdo,
+                                    sumber,
+                                    tgltxt,
+                                    txtperiode,
+                                    posted,
+                                    printed) 
+                            VALUES ('$data[kas_bank]',
+                                    '$data[kode_sementara]',
+                                    STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                    '$data[acct]',
+                                    '$val_debet',
+                                    '$val_kredit',
+                                    '$data[acct_nama]',
+                                    '$data[pay_rec]',
+                                    '-',
+                                    '-',
+                                    '$data[kepada]',
+                                    '$data[terbilang]',
+                                    '$jumlah_amount',
+                                    '$data[bank_nama]',
+                                    '$data[transaksi_remark]',
+                                    '$lokasi',
+                                    '-',
+                                    '$data[divisi_v]',
+                                    '$nama_user',
+                                    '-',
+                                    '-',
+                                    $tgltxt,
+                                    $tgltxtperiode,
+                                    '0',
+                                    '0'
+                                )";
+
+            return $this->mips_caba->query($sql);
+        }
+
+        function simpan_voucher_detail_by_po($data){
+            
+            $user_id = $this->username();
+
+            $jumlah_amount    = str_replace(",","",$data['jumlah']);
+
+            $val_debet;
+            if($data['debit'] == ''){
+                $val_debet = '0';
+            }else{
+                $val_debet = str_replace(",","",$data['debit']);
+            }
+           
+            $ceknoref;
+            $nopp;
+            if($data['noref_select'] == '-'){
+                $ceknoref = '-';
+                $nopp     = '-';
+            }else{
+                $ceknoref = $data['noref_select'].' '.$data['no_ref'];
+                $nopp     = $data['no_ref'];
+            }
+
+            $tgl_explode    = explode("-" , $data['tanggal']);
+            $tgltxt         = $tgl_explode[2].$tgl_explode[1].$tgl_explode[0];
+            $tgltxtperiode  = $tgl_explode[2].$tgl_explode[1];
+
+            $lokasi = $this->get_nama_lokasi();
+            $nama_user = $this->session->userdata('sess_nama');
+            
+            
+            ///*$data[nomor_voucher]*/
+            $sql = "INSERT INTO voucher_tmp (trans,
+                                    voucno,
+                                    date,
+                                    acctno,
+                                    debit,
+                                    descript,
+                                    jenis,
+                                    cheqno,
+                                    `to`,
+                                    `from`,
+                                    pay,
+                                    amount,
+                                    bank,
+                                    remarks,
+                                    lokasi,
+                                    project,
+                                    kode_pt,
+                                    user,
+                                    no_pp,
+                                    pdo,
+                                    sumber,
+                                    tgltxt,
+                                    txtperiode,
+                                    no_po,
+                                    posted,
+                                    printed) 
+                            VALUES ('$data[kas_bank]',
+                                    '$data[kode_sementara]',
+                                    STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                    '$data[supp_acct]',
+                                    '$val_debet',
+                                    '$data[supp_nama]',
+                                    '$data[pay_rec]',
+                                    '$ceknoref',
+                                    '-',
+                                    '$data[kepada]',
+                                    '$data[terbilang]',
+                                    '$jumlah_amount',
+                                    '$data[bank_nama]',
+                                    '$data[transaksi_remark]',
+                                    '$lokasi',
+                                    '-',
+                                    '$data[kodept]',
+                                    '$nama_user',
+                                    '$nopp',
+                                    '-',
+                                    '-',
+                                    $tgltxt,
+                                    $tgltxtperiode,
+                                    '$data[ref_po]','0','0')";
+
+           
+            return $this->mips_caba->query($sql);
+        }
+
+        function simpan_voucher_detail_by_po_edit($data){
+            
+            $lokasi     = $this->get_nama_lokasi();
+            $nama_user  = $this->session->userdata('sess_nama');
+            
+            $user_id = $this->username();
+
+            $jumlah_amount    = str_replace(",","",$data['jumlah']);
+
+            $val_debet;
+            if($data['debit'] == ''){
+                $val_debet = '0';
+            }else{
+                $val_debet = str_replace(",","",$data['debit']);
+            }
+           
+            $ceknoref;
+            $nopp;
+            if($data['noref_select'] == '-'){
+                $ceknoref = '-';
+                $nopp     = '-';
+            }else{
+                $ceknoref = $data['noref_select'].' '.$data['no_ref'];
+                $nopp     = $data['no_ref'];
+            }
+
+            $tgl_explode    = explode("-" , $data['tanggal']);
+            $tgltxt         = $tgl_explode[2].$tgl_explode[1].$tgl_explode[0];
+            $tgltxtperiode  = $tgl_explode[2].$tgl_explode[1];
+
+            ///*$data[nomor_voucher]*/
+            $sql = "INSERT INTO voucher (trans,
+                                    voucno,
+                                    date,
+                                    acctno,
+                                    debit,
+                                    descript,
+                                    jenis,
+                                    cheqno,
+                                    `to`,
+                                    `from`,
+                                    pay,
+                                    amount,
+                                    bank,
+                                    remarks,
+                                    lokasi,
+                                    project,
+                                    kode_pt,
+                                    user,
+                                    no_pp,
+                                    pdo,
+                                    sumber,
+                                    tgltxt,
+                                    txtperiode) 
+                            VALUES ('$data[kas_bank]',
+                                    '$data[no_vouc]',
+                                    STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                    '$data[acct]',
+                                    '$val_debet',
+                                    '$data[acct_nama]',
+                                    '$data[pay_rec]',
+                                    '$ceknoref',
+                                    '-',
+                                    '$data[kepada]',
+                                    '$data[terbilang]',
+                                    '$jumlah_amount',
+                                    '$data[bank_nama]',
+                                    '$data[transaksi_remark]',
+                                    '$lokasi',
+                                    '-',
+                                    '$data[divisi_v]',
+                                    '$nama_user',
+                                    '$nopp',
+                                    '-',
+                                    '-',
+                                    $tgltxt,
+                                    $tgltxtperiode
+                                )";
+
+
+            return $this->mips_caba->query($sql);
+        }
+
+        function data_list_voucher_detail($data){
+
+            $sql = "SELECT *,FORMAT(debit, 2) debit_f
+                            ,FORMAT(credit, 2) credit_f,
+                            ID as id_vouc_tmp 
+                        FROM voucher_tmp where voucno = '$data[kode_sementara]'";
+            return $this->mips_caba->query($sql);
+        
+        }
+
+
+        function coba_data(){
+
+            $sql = "SELECT *,FORMAT(debit, 2) debit_f
+                            ,FORMAT(credit, 2) credit_f 
+                        FROM voucher_tmp";
+            return $this->mips_caba->query($sql);
+        
+        }
+
+        function configurasi_data($lokasi){
+
+            //1 : HO
+            //2 : ESTATE
+            //3 : RO
+
+            $pt = $this->get_sess_pt();
+
+            $sql = "SELECT * FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+            return $this->mips_caba->query($sql);
+
+        }
+
+
+        function configurasi_update($data){
+
+            $pt = $this->get_sess_pt();
+
+            if($data['lokasi'] == 'HO'){//HO
+
+                $sql = "UPDATE konfigur SET pay_inikas  = '$data[kode_payment_kas_inisial_1]',
+                                            pay_nokas   = '$data[kode_payment_kas_kode_1]',
+                                            NOACC_KAS1  = '$data[kode_payment_kas_coa_1]',
+                                            pay_namabank1 = '$data[kode_payment_bank_nama_1]',
+                                            NOAC_BANK1    = '$data[kode_payment_bank_coa_1]',
+                                            pay_nobank1   = '$data[kode_payment_bank_kode_1]',
+                                            pay_inibank1  = '$data[kode_payment_bank_inisial_1]',
+                                            pay_namabank2 = '$data[kode_payment_bank_nama_2]',
+                                            NOAC_BANK2    = '$data[kode_payment_bank_coa_2]',
+                                            pay_nobank2   = '$data[kode_payment_bank_kode_2]',
+                                            pay_inibank2  = '$data[kode_payment_bank_inisial_2]',
+                                            pay_namabank3 = '$data[kode_payment_bank_nama_3]',
+                                            NOAC_BANK3    = '$data[kode_payment_bank_coa_3]',
+                                            pay_nobank3   = '$data[kode_payment_bank_kode_3]',
+                                            pay_inibank3  = '$data[kode_payment_bank_inisial_3]',
+                                            pay_namabank4 = '$data[kode_payment_bank_nama_4]',
+                                            NOAC_BANK4    = '$data[kode_payment_bank_coa_4]',
+                                            pay_nobank4   = '$data[kode_payment_bank_kode_4]',
+                                            pay_inibank4  = '$data[kode_payment_bank_inisial_4]',
+                                            pay_namabank5 = '$data[kode_payment_bank_nama_5]',
+                                            NOAC_BANK5    = '$data[kode_payment_bank_coa_5]',
+                                            pay_nobank5   = '$data[kode_payment_bank_kode_5]',
+                                            pay_inibank5  = '$data[kode_payment_bank_inisial_5]',
+                                            pay_namabank6 = '$data[kode_payment_bank_nama_6]',
+                                            NOAC_BANK6    = '$data[kode_payment_bank_coa_6]',
+                                            pay_nobank6   = '$data[kode_payment_bank_kode_6]',
+                                            pay_inibank6  = '$data[kode_payment_bank_inisial_6]',
+                                            pay_namabank7 = '$data[kode_payment_bank_nama_7]',
+                                            NOAC_BANK7    = '$data[kode_payment_bank_coa_7]',
+                                            pay_nobank7   = '$data[kode_payment_bank_kode_7]',
+                                            pay_inibank7  = '$data[kode_payment_bank_inisial_7]',
+                                            pay_namabank8 = '$data[kode_payment_bank_nama_8]',
+                                            NOAC_BANK8    = '$data[kode_payment_bank_coa_8]',
+                                            pay_nobank8   = '$data[kode_payment_bank_kode_8]',
+                                            pay_inibank8  = '$data[kode_payment_bank_inisial_8]',
+                                            pay_namabank9 = '$data[kode_payment_bank_nama_9]',
+                                            NOAC_BANK9    = '$data[kode_payment_bank_coa_9]',
+                                            pay_nobank9   = '$data[kode_payment_bank_kode_9]',
+                                            pay_inibank9  = '$data[kode_payment_bank_inisial_9]',
+                                            pay_namabank10 = '$data[kode_payment_bank_nama_10]',
+                                            NOAC_BANK10    = '$data[kode_payment_bank_coa_10]',
+                                            pay_nobank10   = '$data[kode_payment_bank_kode_10]',
+                                            pay_inibank10  = '$data[kode_payment_bank_inisial_10]',
+                                            rec_nokas     = '$data[kode_receive_kas_kode_1]',
+                                            NOACCKAS1     = '$data[kode_receive_kas_coa_1]',
+                                            rec_inikas    = '$data[kode_receive_kas_inisial_1]',
+                                            rec_namabank1  = '$data[kode_receive_bank_nama_1]',
+                                            NOACC_RECBANK1 = '$data[kode_receive_bank_coa_1]',
+                                            rec_nobank1    = '$data[kode_receive_bank_kode_1]',
+                                            rec_inibank1   = '$data[kode_receive_bank_inisial_1]',
+                                            rec_namabank2  = '$data[kode_receive_bank_nama_2]', 
+                                            NOACC_RECBANK2 = '$data[kode_receive_bank_coa_2]',
+                                            rec_nobank2    = '$data[kode_receive_bank_kode_2]',
+                                            rec_inibank2   = '$data[kode_receive_bank_inisial_2]',
+                                            rec_namabank3  = '$data[kode_receive_bank_nama_3]', 
+                                            NOACC_RECBANK3 = '$data[kode_receive_bank_coa_3]',
+                                            rec_nobank3    = '$data[kode_receive_bank_kode_3]',
+                                            rec_inibank3   = '$data[kode_receive_bank_inisial_3]',
+                                            rec_namabank4  = '$data[kode_receive_bank_nama_4]', 
+                                            NOACC_RECBANK4 = '$data[kode_receive_bank_coa_4]',
+                                            rec_nobank4    = '$data[kode_receive_bank_kode_4]',
+                                            rec_inibank4   = '$data[kode_receive_bank_inisial_4]',
+                                            rec_namabank5  = '$data[kode_receive_bank_nama_5]', 
+                                            NOACC_RECBANK5 = '$data[kode_receive_bank_coa_5]',
+                                            rec_nobank5    = '$data[kode_receive_bank_kode_5]',
+                                            rec_inibank5   = '$data[kode_receive_bank_inisial_5]',
+                                            rec_namabank6  = '$data[kode_receive_bank_nama_6]', 
+                                            NOACC_RECBANK6 = '$data[kode_receive_bank_coa_6]',
+                                            rec_nobank6    = '$data[kode_receive_bank_kode_6]',
+                                            rec_inibank6   = '$data[kode_receive_bank_inisial_6]',
+                                            rec_namabank7  = '$data[kode_receive_bank_nama_7]', 
+                                            NOACC_RECBANK7 = '$data[kode_receive_bank_coa_7]',
+                                            rec_nobank7    = '$data[kode_receive_bank_kode_7]',
+                                            rec_inibank7   = '$data[kode_receive_bank_inisial_7]',
+                                            rec_namabank8  = '$data[kode_receive_bank_nama_8]', 
+                                            NOACC_RECBANK8 = '$data[kode_receive_bank_coa_8]',
+                                            rec_nobank8    = '$data[kode_receive_bank_kode_8]',
+                                            rec_inibank8   = '$data[kode_receive_bank_inisial_8]',
+                                            rec_namabank9  = '$data[kode_receive_bank_nama_9]', 
+                                            NOACC_RECBANK9 = '$data[kode_receive_bank_coa_9]',
+                                            rec_nobank9    = '$data[kode_receive_bank_kode_9]',
+                                            rec_inibank9   = '$data[kode_receive_bank_inisial_9]',
+                                            rec_namabank10  = '$data[kode_receive_bank_nama_10]', 
+                                            NOACC_RECBANK10 = '$data[kode_receive_bank_coa_10]',
+                                            rec_nobank10    = '$data[kode_receive_bank_kode_10]',
+                                            rec_inibank10   = '$data[kode_receive_bank_inisial_10]'
+                                            WHERE lokasi = 'HO' and pt = '$pt'";
+            
+                 return $this->mips_caba->query($sql);
+
+
+
+            }else if($data['lokasi'] == 'ESTATE'){//ESTATE
+
+
+                $sql = "UPDATE konfigur SET pay_inikas  = '$data[kode_payment_kas_inisial_1]',
+                                            pay_nokas   = '$data[kode_payment_kas_kode_1]',
+                                            NOACC_KAS1  = '$data[kode_payment_kas_coa_1]',
+                                            pay_inikas2 = '$data[kode_payment_kas_inisial_2]',
+                                            pay_nokas2  = '$data[kode_payment_kas_kode_2]',
+                                            NOAC_KAS2   = '$data[kode_payment_kas_coa_2]',
+                                            pay_inikas3 = '$data[kode_payment_kas_inisial_3]',
+                                            pay_nokas3  = '$data[kode_payment_kas_kode_3]',
+                                            NOAC_KAS3   = '$data[kode_payment_kas_coa_3]',
+                                            pay_inikas4 = '$data[kode_payment_kas_inisial_4]',
+                                            pay_nokas4  = '$data[kode_payment_kas_kode_4]',
+                                            NOAC_KAS4   = '$data[kode_payment_kas_coa_4]',
+                                            pay_inikas5 = '$data[kode_payment_kas_inisial_5]',
+                                            pay_nokas5  = '$data[kode_payment_kas_kode_5]',
+                                            NOAC_KAS5   = '$data[kode_payment_kas_coa_5]',
+                                            pay_namabank1 = '$data[kode_payment_bank_nama_1]',
+                                            NOAC_BANK1    = '$data[kode_payment_bank_coa_1]',
+                                            pay_nobank1   = '$data[kode_payment_bank_kode_1]',
+                                            pay_inibank1  = '$data[kode_payment_bank_inisial_1]',
+                                            pay_namabank2 = '$data[kode_payment_bank_nama_2]',
+                                            NOAC_BANK2    = '$data[kode_payment_bank_coa_2]',
+                                            pay_nobank2   = '$data[kode_payment_bank_kode_2]',
+                                            pay_inibank2  = '$data[kode_payment_bank_inisial_2]',
+                                            pay_namabank3 = '$data[kode_payment_bank_nama_3]',
+                                            NOAC_BANK3    = '$data[kode_payment_bank_coa_3]',
+                                            pay_nobank3   = '$data[kode_payment_bank_kode_3]',
+                                            pay_inibank3  = '$data[kode_payment_bank_inisial_3]',
+                                            pay_namabank4 = '$data[kode_payment_bank_nama_4]',
+                                            NOAC_BANK4    = '$data[kode_payment_bank_coa_4]',
+                                            pay_nobank4   = '$data[kode_payment_bank_kode_4]',
+                                            pay_inibank4  = '$data[kode_payment_bank_inisial_4]',
+                                            rec_nokas     = '$data[kode_receive_kas_kode_1]',
+                                            NOACCKAS1     = '$data[kode_receive_kas_coa_1]',
+                                            rec_inikas    = '$data[kode_receive_kas_inisial_1]',
+                                            rec_nokas2    = '$data[kode_receive_kas_kode_2]',
+                                            NOACCKAS2     = '$data[kode_receive_kas_coa_2]',
+                                            rec_inikas2   = '$data[kode_receive_kas_inisial_2]',
+                                            rec_nokas3    = '$data[kode_receive_kas_kode_3]',
+                                            NOACCKAS3     = '$data[kode_receive_kas_coa_3]',
+                                            rec_inikas3   = '$data[kode_receive_kas_inisial_3]',
+                                            rec_nokas4    = '$data[kode_receive_kas_kode_4]',
+                                            NOACCKAS4     = '$data[kode_receive_kas_coa_4]',
+                                            rec_inikas4   = '$data[kode_receive_kas_inisial_4]',
+                                            rec_nokas5    = '$data[kode_receive_kas_kode_5]',
+                                            NOACCKAS5     = '$data[kode_receive_kas_coa_5]',
+                                            rec_inikas5   = '$data[kode_receive_kas_inisial_5]',
+                                            rec_namabank1  = '$data[kode_receive_bank_nama_1]',
+                                            NOACC_RECBANK1 = '$data[kode_receive_bank_coa_1]',
+                                            rec_nobank1    = '$data[kode_receive_bank_kode_1]',
+                                            rec_inibank1   = '$data[kode_receive_bank_inisial_1]',
+                                            rec_namabank2  = '$data[kode_receive_bank_nama_2]', 
+                                            NOACC_RECBANK2 = '$data[kode_receive_bank_coa_2]',
+                                            rec_nobank2    = '$data[kode_receive_bank_kode_2]',
+                                            rec_inibank2   = '$data[kode_receive_bank_inisial_2]'
+                                            WHERE lokasi = 'ESTATE' and pt = '$pt'";
+            
+                 return $this->mips_caba->query($sql);
+
+
+            }else if($data['lokasi'] == 'RO'){//RO
+
+            }
+
+
+        }
+
+        function get_balance($kode_sementara){
+
+            $sql = "SELECT  (SUM(debit)+SUM(credit)) AS Total,
+                            FORMAT((SUM(debit)+SUM(credit)), 2) AS total_f,
+                            SUM(debit) tot_debit,
+                            SUM(credit) tot_credit,
+                            (SUM(debit)+SUM(credit)) AS total_detail_trans,
+                            FORMAT((SUM(debit)-SUM(credit)), 2) AS total_detail_trans2
+                            FROM voucher_tmp WHERE VOUCNO = '$kode_sementara'
+                            GROUP BY VOUCNO";
+
+            return $this->mips_caba->query($sql);
+        }
+
+
+        function get_balance_edit($no_vouc,$periode){
+
+            $sql = "SELECT  (SUM(debit)+SUM(credit)) AS Total,
+                            FORMAT((SUM(debit)+SUM(credit)), 2) AS total_f,
+                            SUM(debit) tot_debit,
+                            SUM(credit) tot_credit,
+                            (SUM(debit)+SUM(credit)) AS total_detail_trans,
+                            FORMAT((SUM(debit)-SUM(credit)), 2) AS total_detail_trans2
+                            FROM voucher WHERE VOUCNO = '$no_vouc' AND txtperiode = '$periode'
+                            GROUP BY VOUCNO";
+
+
+            /*$sql = "SELECT  (SUM(debit)+SUM(credit)) AS Total,
+                            FORMAT((SUM(debit)+SUM(credit)), 2) AS total_f,
+                            SUM(debit) tot_debit,
+                            SUM(credit) tot_credit
+                            FROM voucher WHERE VOUCNO = '$no_vouc' AND txtperiode = '$periode'
+                            GROUP BY VOUCNO";*/
+
+            return $this->mips_caba->query($sql);
+        }
+     
+        function count_all()
+        {
+            $this->mips_caba->from($this->table);
+            return $this->mips_caba->count_all_results();
+        }
+
+        public function detail_pp_logistik($pppo_id,$pppo_no){
+
+            $sql = "SELECT kode_supplytxt,kodept,ref_po,kode_supply,nama_supply,nopp,FORMAT(jumlah, 2) jumlah_f FROM pp_logistik where id = '$pppo_id' and nopp = '$pppo_no'";
+            return $this->mips_caba->query($sql);
+        }
+
+        public function get_bank_konfig(){
+
+            /*$sql = "SELECT  pay_namabank1,
+                            NOAC_BANK1,
+                            pay_namabank2,
+                            NOAC_BANK2,
+                            pay_namabank3,
+                            NOAC_BANK3,
+                            pay_namabank4,
+                            NOAC_BANK4
+                        FROM konfigur";*/
+
+            $pt = $this->get_sess_pt();
+            $lokasi  = $this->get_nama_lokasi();
+            $sql = "SELECT * FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+            return $this->mips_caba->query($sql);
+        }
+
+
+        function detail_cash_bank($cb_id){
+
+            $sql = "SELECT * FROM head_voucher where id = '$cb_id'";
+            return $this->mips_caba->query($sql);
+        }
+
+        function hapus_vouc_tmp_detail($data){
+
+            $sql = "DELETE FROM voucher_tmp WHERE ID = '$data[id_vouc_tmp]' and VOUCNO = '$data[voucno]'";
+            return $this->mips_caba->query($sql);
+        
+        }
+
+        function get_vouc_tmp_detail($data){
+
+            $sql = "SELECT *,FORMAT(DEBIT, 2) debit_f
+                            ,FORMAT(CREDIT, 2) credit_f FROM voucher_tmp where ID = '$data[id_vouc_tmp]' and VOUCNO = '$data[voucno]'";
+            return $this->mips_caba->query($sql);
+
+        }
+
+         function update_vouc_tmp_detail($data){
+
+            $user_id = $this->username();
+
+            $val_kredit;
+            if($data['kredit'] == ''){
+                $val_kredit = '0';
+            }else{
+                $val_kredit = str_replace(",","",$data['kredit']);;
+            }
+
+            $val_debet;
+            if($data['debit'] == ''){
+                $val_debet = '0';
+            }else{
+                $val_debet = str_replace(",","",$data['debit']);
+            }
+           
+
+            $sql = "UPDATE voucher_tmp SET  acctno  = '$data[acct]',
+                                            descript= '$data[acct_nama]',
+                                            debit   = $val_debet,
+                                            credit  = $val_kredit,
+                                            remarks = '$data[transaksi_remark]',
+                                            kode_pt = '$data[divisi_v]'
+                                        WHERE id = '$data[idvoucher]'";
+
+            return $this->mips_caba->query($sql);
+        }
+
+
+        function get_data_head_vouch($data){
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,
+                            SUBSTRING(CHEQNO, 1, 5) REF_PP,
+                            SUBSTRING(CHEQNO, 7, 100) NOMOR_REF_PP,
+                            FORMAT(AMOUNT, 2) amount,
+                            DATE_FORMAT(TGLCEK, '%d-%m-%Y') TGLCEK
+                             FROM head_voucher where id = '$data[id_vouc]'";
+            return $this->mips_caba->query($sql);
+        }
+
+
+        function get_list_voucher_detail($data){
+
+            $sql = "SELECT *,FORMAT(debit, 2) debit_f
+                            ,FORMAT(credit, 2) credit_f,
+                            ID as id_vouc_tmp 
+                        FROM voucher where voucno = '$data[kode_vouch]' AND txtperiode = '$data[kode_periode]'";
+            return $this->mips_caba->query($sql);
+        
+        }
+
+
+        function simpan_vouc_tmp_detail_update($data){
+
+            $sess_lok = $this->session->userdata('sess_lokasi');
+            $sqlE      = "SELECT nama,value FROM codegroup where group_n = 'LOKASI_USERS' and value = '$sess_lok'";
+            $d        = $this->db->query($sqlE)->row_array();
+            $nama_user = $this->session->userdata('sess_nama');
+            $user_id = $this->username();
+
+            $jumlah_amount    = str_replace(",","",$data['jumlah']);
+
+            $val_kredit;
+            if($data['kredit'] == ''){
+                $val_kredit = '0';
+            }else{
+                $val_kredit = str_replace(",","",$data['kredit']);;
+            }
+
+            $val_debet;
+            if($data['debit'] == ''){
+                $val_debet = '0';
+            }else{
+                $val_debet = str_replace(",","",$data['debit']);
+            }
+           
+            $ceknoref;
+            $nopp;
+            if($data['noref_select'] == '-'){
+                $ceknoref = '-';
+                $nopp     = '-';
+            }else{
+                $ceknoref = $data['noref_select'].' '.$data['no_ref'];
+                $nopp     = $data['no_ref'];
+            }
+
+            $tgl_explode    = explode("-" , $data['tanggal']);
+            $tgltxt         = $tgl_explode[2].$tgl_explode[1].$tgl_explode[0];
+            $tgltxtperiode  = $tgl_explode[2].$tgl_explode[1];
+
+            $lokasi = $d['nama'];
+            ///*$data[nomor_voucher]*/
+            $sql = "INSERT INTO voucher (trans,
+                                    voucno,
+                                    date,
+                                    acctno,
+                                    debit,
+                                    credit,
+                                    descript,
+                                    jenis,
+                                    cheqno,
+                                    `to`,
+                                    `from`,
+                                    pay,
+                                    amount,
+                                    bank,
+                                    remarks,
+                                    lokasi,
+                                    project,
+                                    kode_pt,
+                                    user,
+                                    no_pp,
+                                    pdo,
+                                    sumber,
+                                    tgltxt,
+                                    txtperiode) 
+                            VALUES ('$data[kas_bank]',
+                                    '$data[no_vouc]',
+                                    STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
+                                    '$data[acct]',
+                                    '$val_debet',
+                                    '$val_kredit',
+                                    '$data[acct_nama]',
+                                    '$data[pay_rec]',
+                                    '$ceknoref',
+                                    '-',
+                                    '$data[kepada]',
+                                    '$data[terbilang]',
+                                    '$jumlah_amount',
+                                    '$data[bank_nama]',
+                                    '$data[transaksi_remark]',
+                                    '$lokasi',
+                                    '-',
+                                    '$data[divisi_v]',
+                                    '$nama_user',
+                                    '$nopp',
+                                    '-',
+                                    '-',
+                                    $tgltxt,
+                                    $tgltxtperiode
+                                )";
+
+
+            return $this->mips_caba->query($sql);
+        }
+
+
+
+        function simpan_voucher_header_update($data){
+
+            $user_id = $this->username();
+
+            $jumlah_amount    = str_replace(",","",$data['jumlah']);
+
+            $ceknoref;
+            $nopp;
+            if($data['noref_select'] == '-'){
+                $ceknoref = '-';
+                $nopp     = '-';
+            }else{
+                $ceknoref = $data['noref_select'].' '.$data['no_ref'];
+                $nopp     = $data['no_ref'];
+            }
+
+            $tgl_explode    = explode("-" , $data['tanggal']);
+            $tgltxt         = $tgl_explode[2].$tgl_explode[1].$tgl_explode[0];
+            $tgltxtperiode  = $tgl_explode[2].$tgl_explode[1];
+
+
+        //selain ho maka ada PDO dan SUMBER
+        if($this->session->userdata('sess_lokasi') != 1){
+
+            $nominalsumber = str_replace(",","",$data['sumber_dana_nominal']);  
+
+                $sql = "UPDATE head_voucher SET `to`     = '-',
+                                            `from`   = '$data[kepada]',
+                                            nama_ref = '$data[noref_select]',
+                                            kode_ref = '$data[no_ref]',
+                                            pay      = '$data[terbilang]',
+                                            amount   = '$jumlah_amount',
+                                            bankcek  = '$data[bank_nama]',
+                                            tglcek   = STR_TO_DATE('$data[bank_tanggal]','%d-%m-%Y'),
+                                            pdo      = '$data[sumber_dana]',
+                                            sumber   = '$nominalsumber',
+                                            nocekbg  = '$data[bank_no]' where id = '$data[id_vouc]' and voucno = '$data[no_vouc]'";
+
+                $headrs = $this->mips_caba->query($sql);
+
+        }else{
+
+
+            $sql = "UPDATE head_voucher SET `to`     = '-',
+                                            `from`   = '$data[kepada]',
+                                            nama_ref = '$data[noref_select]',
+                                            kode_ref = '$data[no_ref]',
+                                            pay      = '$data[terbilang]',
+                                            amount   = '$jumlah_amount',
+                                            bankcek  = '$data[bank_nama]',
+                                            tglcek   = STR_TO_DATE('$data[bank_tanggal]','%d-%m-%Y'),
+                                            nocekbg  = '$data[bank_no]' where id = '$data[id_vouc]' and voucno = '$data[no_vouc]'";
+
+                $headrs = $this->mips_caba->query($sql);
+
+        }
+            
+
+        return $headrs;
+
+    }
+
+    function get_vouc_tmp_detail_edit($data){
+
+            $sql = "SELECT *,FORMAT(DEBIT, 2) debit_f
+                            ,FORMAT(CREDIT, 2) credit_f FROM voucher where ID = '$data[id_vouc]' and VOUCNO = '$data[voucno]'";
+            return $this->mips_caba->query($sql);
+
+        }
+
+    function update_vouc_tmp_detail_edit($data){
+
+            $user_id = $this->username();
+
+            $val_kredit;
+            if($data['kredit'] == ''){
+                $val_kredit = '0';
+            }else{
+                $val_kredit = str_replace(",","",$data['kredit']);;
+            }
+
+            $val_debet;
+            if($data['debit'] == ''){
+                $val_debet = '0';
+            }else{
+                $val_debet = str_replace(",","",$data['debit']);
+            }
+           
+
+            $sql = "UPDATE voucher SET  acctno  = '$data[acct]',
+                                            descript= '$data[acct_nama]',
+                                            debit   = $val_debet,
+                                            credit  = $val_kredit,
+                                            remarks = '$data[transaksi_remark]',
+                                            kode_pt = '$data[divisi_v]'
+                                        WHERE id = '$data[idvoucher]'";
+
+            return $this->mips_caba->query($sql);
+        }
+
+        function hapus_vouc_tmp_detail_edit($data){
+
+            $sql = "DELETE FROM voucher WHERE ID = '$data[id_vouc]' and VOUCNO = '$data[voucno]'";
+            return $this->mips_caba->query($sql);
+        
+        }
+
+        function get_data_saldo_awal(){
+
+            $sql = "SELECT *,FORMAT(saldo, 2) saldo_f,
+                            FORMAT(saldo_1, 2) saldo1_f,
+                            FORMAT(saldo_2, 2) saldo2_f,
+                            FORMAT(saldo_3, 2) saldo3_f,
+                            FORMAT(saldo_4, 2) saldo4_f,
+                            FORMAT(saldo_5, 2) saldo5_f,
+                            FORMAT(saldo_6, 2) saldo6_f,
+                            FORMAT(saldo_7, 2) saldo7_f,
+                            FORMAT(saldo_8, 2) saldo8_f,
+                            FORMAT(saldo_9, 2) saldo9_f,
+                            FORMAT(saldo_10, 2) saldo10_f,
+                            FORMAT(saldo_11, 2) saldo11_f,
+                            FORMAT(saldo_12, 2) saldo12_f
+                             FROM master_accountcb ORDER BY id DESC";
+            return $this->mips_caba->query($sql);
+
+        }
+
+        function get_detail_supplier($data){
+
+            $sql = "SELECT account,nama_account FROM supplier where kode = '$data[kode_supplier]'";
+            return $this->mstcode->query($sql);
+
+        }
+
+        function cek_saldo_awal($data){
+
+            $sql = "SELECT * FROM master_accountcb where acctno = '$data[acctno]' AND thn = '$data[tahun]'";
+            return $this->mips_caba->query($sql);
+
+        }
+
+
+        function update_saldo_awal($data){
+
+
+            $saldo = str_replace(",","",$data['saldo']);
+            $bln   = $data['bulan'];
+
+            $var_bulan;
+            if($bln == '01'){
+                $var_bulan = 'saldo_1 = '.$saldo.'';
+            }else if($bln == '02'){
+                $var_bulan = 'saldo_2 = '.$saldo.'';
+            }else if($bln == '03'){
+                $var_bulan = 'saldo_3 = '.$saldo.'';
+            }else if($bln == '04'){
+                $var_bulan = 'saldo_4 = '.$saldo.'';
+            }else if($bln == '05'){
+                $var_bulan = 'saldo_5 = '.$saldo.'';
+            }else if($bln == '06'){
+                $var_bulan = 'saldo_6 = '.$saldo.'';
+            }else if($bln == '07'){
+                $var_bulan = 'saldo_7 = '.$saldo.'';
+            }else if($bln == '08'){
+                $var_bulan = 'saldo_8 = '.$saldo.'';
+            }else if($bln == '09'){
+                $var_bulan = 'saldo_9 = '.$saldo.'';
+            }else if($bln == '10'){
+                $var_bulan = 'saldo_10 = '.$saldo.'';
+            }else if($bln == '11'){
+                $var_bulan = 'saldo_11 = '.$saldo.'';
+            }else if($bln == '12'){
+                $var_bulan = 'saldo_12 = '.$saldo.'';
+            }else{
+                $var_bulan = '-';
+            }
+
+            $sql = "UPDATE master_accountcb SET  saldo  = '$saldo',
+                                            $var_bulan
+                                            WHERE ACCTNO = '$data[acctno]' AND thn = '$data[tahun]'";
+
+            return $this->mips_caba->query($sql);
+
+
+        }
+
+        function simpan_saldo_awal($data){
+
+
+            $saldo = str_replace(",","",$data['saldo']);
+            $bln   = $data['bulan'];
+
+            $var_bulan;
+            if($bln == '01'){
+                $var_bulan = '1';
+            }else if($bln == '02'){
+                $var_bulan = '2';
+            }else if($bln == '03'){
+                $var_bulan = '3';
+            }else if($bln == '04'){
+                $var_bulan = '4';
+            }else if($bln == '05'){
+                $var_bulan = '5';
+            }else if($bln == '06'){
+                $var_bulan = '6';
+            }else if($bln == '07'){
+                $var_bulan = '7';
+            }else if($bln == '08'){
+                $var_bulan = '8';
+            }else if($bln == '09'){
+                $var_bulan = '9';
+            }else if($bln == '10'){
+                $var_bulan = '10';
+            }else if($bln == '11'){
+                $var_bulan = '11';
+            }else if($bln == '12'){
+                $var_bulan = '12';
+            }else{
+                $var_bulan = '-';
+            }
+
+            $sql = "INSERT INTO master_accountcb (ACCTNO,
+                                    ACCTNAME,
+                                    saldo,
+                                    saldo_".$var_bulan.",
+                                    thn) 
+                            VALUES ('$data[acctno]',
+                                    '$data[acctname]',
+                                    '$saldo',
+                                    '$saldo',
+                                    '$data[tahun]')";
+
+            return $this->mips_caba->query($sql);
+
+
+        }
+
+        function saldo_awal_detail($data){
+
+
+            $bln   = $data['bulan'];
+
+            $var_bulan;
+            if($bln == '01'){
+                $var_bulan = '1';
+            }else if($bln == '02'){
+                $var_bulan = '2';
+            }else if($bln == '03'){
+                $var_bulan = '3';
+            }else if($bln == '04'){
+                $var_bulan = '4';
+            }else if($bln == '05'){
+                $var_bulan = '5';
+            }else if($bln == '06'){
+                $var_bulan = '6';
+            }else if($bln == '07'){
+                $var_bulan = '7';
+            }else if($bln == '08'){
+                $var_bulan = '8';
+            }else if($bln == '09'){
+                $var_bulan = '9';
+            }else if($bln == '10'){
+                $var_bulan = '10';
+            }else if($bln == '11'){
+                $var_bulan = '11';
+            }else if($bln == '12'){
+                $var_bulan = '12';
+            }else{
+                $var_bulan = '-';
+            }
+
+            $sql = "SELECT *,FORMAT(saldo_".$var_bulan.", 2) saldo_f FROM master_accountcb WHERE id = '$data[id_saldo]' and thn = '$data[tahun]'";
+            return $this->mips_caba->query($sql);
+
+        }
+
+
+        function saldo_awal_update($data){
+
+
+            $saldo = str_replace(",","",$data['saldo']);
+            $bln   = $data['bulan'];
+
+            $var_bulan;
+            if($bln == '01'){
+                $var_bulan = 'saldo_1 = '.$saldo.'';
+            }else if($bln == '01'){
+                $var_bulan = 'saldo_2 = '.$saldo.'';
+            }else if($bln == '03'){
+                $var_bulan = 'saldo_3 = '.$saldo.'';
+            }else if($bln == '04'){
+                $var_bulan = 'saldo_4 = '.$saldo.'';
+            }else if($bln == '05'){
+                $var_bulan = 'saldo_5 = '.$saldo.'';
+            }else if($bln == '06'){
+                $var_bulan = 'saldo_6 = '.$saldo.'';
+            }else if($bln == '07'){
+                $var_bulan = 'saldo_7 = '.$saldo.'';
+            }else if($bln == '08'){
+                $var_bulan = 'saldo_8 = '.$saldo.'';
+            }else if($bln == '09'){
+                $var_bulan = 'saldo_9 = '.$saldo.'';
+            }else if($bln == '10'){
+                $var_bulan = 'saldo_10 = '.$saldo.'';
+            }else if($bln == '11'){
+                $var_bulan = 'saldo_11 = '.$saldo.'';
+            }else if($bln == '12'){
+                $var_bulan = 'saldo_12 = '.$saldo.'';
+            }else{
+                $var_bulan = '-';
+            }
+
+            $sql = "UPDATE master_accountcb SET  saldo  = '$saldo',
+                                            $var_bulan
+                                            WHERE id = '$data[id_saldo]' AND thn = '$data[tahun]'";
+
+            return $this->mips_caba->query($sql);
+
+        }
+        
+        
+        function hapus_vouchers($data){
+            
+            //header
+            $sql = "DELETE FROM head_voucher WHERE ID = '$data[txt_periode]' AND voucno = '$data[no_vouc]' and txtperiode = '$data[id_vouc]' ";
+            $this->mips_caba->query($sql);
+            
+            //detail
+            $sql1 = "DELETE FROM voucher WHERE voucno = '$data[no_vouc]' and txtperiode = '$data[id_vouc]' ";
+            return $this->mips_caba->query($sql1);
+            
+        }
+        
+        
+        function cek_pp_logistik($data){
+
+            $sql = "SELECT NO_PO FROM voucher_tmp where NO_PO = '$data[ref_po]'";
+            return $this->mips_caba->query($sql);
+
+        }
+        
+        function transfer_to_gl(){
+            
+        }
+        
+        function posting_harian_submit(){
+            
+            $period = $this->periode();
+
+            $tahun  = substr($period, 0, 4);
+            $bulan  = substr($period, 4, 6);
+            
+            if($bulan == '01'){
+                $var_bulan = '1';
+            }else if($bulan == '02'){
+                $var_bulan = '2';
+            }else if($bulan == '03'){
+                $var_bulan = '3';
+            }else if($bulan == '04'){
+                $var_bulan = '4';
+            }else if($bulan == '05'){
+                $var_bulan = '5';
+            }else if($bulan == '06'){
+                $var_bulan = '6';
+            }else if($bulan == '07'){
+                $var_bulan = '7';
+            }else if($bulan == '08'){
+                $var_bulan = '8';
+            }else if($bulan == '09'){
+                $var_bulan = '9';
+            }else if($bulan == '10'){
+                $var_bulan = '10';
+            }else if($bulan == '11'){
+                $var_bulan = '11';
+            }else if($bulan == '12'){
+                $var_bulan = '12';
+            }
+            
+            $sql = "SELECT  ACCTNO,
+		    DESCRIPT,
+                    SUM(DEBIT) AS sum_debit, 
+                    SUM(CREDIT) AS sum_credit
+            FROM voucher
+            WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND (POSTED = 0 OR POSTED IS NULL)
+            GROUP BY ACCTNO";
+            $result = $this->mips_caba->query($sql)->result_array();
+            
+            foreach ($result as $a){
+                
+                $saldos = $a['sum_debit'] - $a['sum_credit'];
+                
+                $sqlv = "UPDATE saldo_voucher SET saldo_".$var_bulan." = $saldos WHERE ACCTNO = '$a[ACCTNO]' and thn = $tahun";
+                $this->mips_caba->query($sqlv);
+            }
+            
+            
+            //$h = "b'1'";
+            $sqlc = "UPDATE voucher SET POSTED = 1 AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' WHERE POSTED = 0";
+            return $this->mips_caba->query($sqlc);
+        }
+        
+        
+        function transfer_ke_gl_submit(){
+            
+            $period = $this->periode();
+
+            $tahun  = substr($period, 0, 4);
+            $bulan  = substr($period, 4, 6);
+            
+            $lokasi = $this->get_nama_lokasi();
+            
+            
+            //head entry
+            $sql_head = "SELECT   *,
+                                    ACCTNO,
+                                    DESCRIPT,
+                                    SUM(DEBIT) AS sum_debit, 
+                                    SUM(CREDIT) AS sum_credit
+                            FROM head_voucher
+                            WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun'";
+            $result_head = $this->mips_caba->query($sql_head)->result_array();
+            $ses_nama = $this->session->userdata('sess_nama');
+            foreach ($result_head as $a){
+                
+                $sql_cek_head = "SELECT  * FROM header_entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND modul = 'CABA' AND ref = '$a[VOUCNO]'";
+                $kd = $this->mips_gl->query($sql_cek_head)->num_rows();
+                
+                if($kd == 0){
+
+                    $saaa = "SELECT SUM(DEBIT) AS totaldr,
+                                   SUM(CREDIT) AS totalcr
+                            FROM voucher
+                            WHERE VOUCNO = '$a[VOUCNO]'";
+                    $bb = $this->mips_caba->query($saaa)->row_array();
+
+                    $sql_ins = "INSERT INTO header_entry (`date`,
+                                    periode,
+                                    ref,
+                                    totaldr,
+                                    totalcr,
+                                    periodetxt,
+                                    modul,
+                                    lokasi,
+                                    user) 
+                            VALUES ('$a[DATE]',
+                                    '$a[DATE]',
+                                    '$a[VOUCNO]',
+                                    '$bb[totaldr]',
+                                    '$bb[totalcr]',
+                                    '$a[TGLTXT]',
+                                    'CABA','$a[LOKASI]','$ses_nama')";
+                    
+                    $this->mips_gl->query($sql_ins);
+                }
+                
+            }
+            
+            
+            
+            //entry
+            
+            $sql = "SELECT  * FROM voucher WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' and lokasi = '$lokasi' and POSTED = 1";
+            $result = $this->mips_caba->query($sql)->result_array();
+            $nama = $this->session->userdata('sess_nama');
+            foreach ($result as $a){
+                
+                //cek dulu di entry GL sudah tersedia atau belum disini untuk voucher ini
+                $sql_cek = "SELECT  * FROM entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND module = 'CABA' AND ref = '$a[VOUCNO]' AND noac = '$a[ACCTNO]'";
+                $k = $this->mips_gl->query($sql_cek)->num_rows();
+                
+                if($a['DEBIT'] == 0){
+                    $types = 'C';
+                }else if($a['KREDIT'] == 0){
+                    $types = 'D';
+                }
+                
+                $coax = $a['ACCTNO'];
+                $jk = "SELECT  `type`,`level`,`group`,general FROM noac WHERE noac = '$coax'";
+                $as = $this->mips_gl->query($jk)->row_array();
+                $noac_type    = $as['type'];
+                $noac_level   = $as['level'];
+                $noac_group   = $as['group'];
+                $noac_general = $as['general'];
+                
+                
+                if($k == 0){
+                    $sql_ins = "INSERT INTO entry (`date`,
+                                    sbu,
+                                    noac,
+                                    `type`,
+                                    `level`,
+                                    `group`,
+                                    general,
+                                    dr,
+                                    cr,
+                                    periode,
+                                    descac,
+                                    ket,
+                                    periodetxt,
+                                    module,
+                                    dc,
+                                    lokasi,
+                                    tglinput,
+                                    user,
+                                    ref,
+                                    begindr,
+                                    begincr,
+                                    `POST`,
+                                    noref,
+                                    converse) 
+                            VALUES ('$a[DATE]',
+                                    '$a[KODE_PT]',
+                                    '$a[ACCTNO]',
+                                    '$noac_type',
+                                    '$noac_level',
+                                    '$noac_group',
+                                    '$noac_general',
+                                    '$a[DEBIT]',
+                                    '$a[CREDIT]',
+                                    '$a[DATE]',
+                                    '$a[DESCRIPT]',
+                                    '$a[REMARKS]',
+                                    '$a[TGLTXT]',
+                                    'CABA',
+                                    '$types',
+                                    '$a[LOKASI]',NOW(),'$nama','$a[VOUCNO]',0,0,0,0,0)";
+                    
+                    $this->mips_gl->query($sql_ins);
+                }else{
+                    
+                }
+                
+            }
+            
+        }
+        
+        
+        
+        function monthly_closing_submit(){
+            
+            $period = $this->periode();
+
+            $tahun  = substr($period, 0, 4);
+            $bulan  = substr($period, 4, 6);
+            
+            $lokasi = $this->get_nama_lokasi();
+            
+            $sql = "SELECT  * FROM voucher WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' and lokasi = '$lokasi' and POSTED = 1";
+            $result = $this->mips_caba->query($sql)->result_array();
+            $nama = $this->session->userdata('sess_nama');
+            foreach ($result as $a){
+                
+                //cek dulu di entry GL sudah tersedia atau belum disini untuk voucher ini
+                $sql_cek = "SELECT  * FROM entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND module = 'CABA' AND ref = '$a[VOUCNO]' AND noac = '$a[ACCTNO]'";
+                $k = $this->mips_gl->query($sql_cek)->num_rows();
+                
+                if($a['DEBIT'] == 0){
+                    $types = 'C';
+                }else if($a['KREDIT'] == 0){
+                    $types = 'D';
+                }
+                
+                $coax = $a['ACCTNO'];
+                $jk = "SELECT  `type`,`level`,`group`,general FROM noac WHERE noac = '$coax'";
+                $as = $this->mips_gl->query($jk)->row_array();
+                $noac_type    = $as['type'];
+                $noac_level   = $as['level'];
+                $noac_group   = $as['group'];
+                $noac_general = $as['general'];
+                
+                
+                if($k == 0){
+                    $sql_ins = "INSERT INTO entry (`date`,
+                                    sbu,
+                                    noac,
+                                    `type`,
+                                    `level`,
+                                    `group`,
+                                    general,
+                                    dr,
+                                    cr,
+                                    periode,
+                                    descac,
+                                    ket,
+                                    periodetxt,
+                                    module,
+                                    dc,
+                                    lokasi,
+                                    tglinput,
+                                    user,
+                                    ref,
+                                    begindr,
+                                    begincr,
+                                    `POST`,
+                                    noref,
+                                    converse) 
+                            VALUES ('$a[DATE]',
+                                    '$a[KODE_PT]',
+                                    '$a[ACCTNO]',
+                                    '$noac_type',
+                                    '$noac_level',
+                                    '$noac_group',
+                                    '$noac_general',
+                                    '$a[DEBIT]',
+                                    '$a[CREDIT]',
+                                    '$a[DATE]',
+                                    '$a[DESCRIPT]',
+                                    '$a[REMARKS]',
+                                    '$a[TGLTXT]',
+                                    'CABA',
+                                    '$types',
+                                    '$a[LOKASI]',NOW(),'$nama','$a[VOUCNO]',0,0,0,0,0)";
+                    
+                    $this->mips_gl->query($sql_ins);
+                }else{
+                    
+                }
+                
+            }
+            
+        }
+        
+}

@@ -1,0 +1,30 @@
+<IfModule mod_rewrite.c>
+
+Options +FollowSymLinks
+Options -Indexes
+
+<FilesMatch "(?i)((\.tpl|\.ini|\.log|(?<!robots)\.txt))">
+    Order deny,allow
+    Deny from all
+</FilesMatch>
+
+DirectoryIndex index.php
+
+#start :ini untuk memblock url akses file images memalui url
+#RewriteCond %{HTTP_REFERER} !^http://(www\.)?localhost\.ltd [NC] 
+#RewriteCond %{HTTP_REFERER} !^http://(www\.)?localhost\.ltd.*$ [NC] 
+#RewriteRule \.(gif|png|PNG|JPG|jpg|pdf|js|txt)$ /messageforcurious [L]
+#end :ini untuk memblock url akses file images memalui url
+
+#RewriteCond %{HTTP_REFERER} !^http://(www\.)?localhost [NC] 
+#RewriteCond %{HTTP_REFERER} !^http://(www\.)?localhost.*$ [NC] 
+#RewriteRule \.(gif|png|PNG|JPG|jpg|jpeg|pdf|js|txt)$ - [F]
+
+
+RewriteEngine on
+RewriteCond $1 !^(index\.php|images|robots\.txt|css|js|font|woff|ttf|svg|eot|favicon\.ico)
+#RewriteRule ^(.*)$ https://%{HOST_NAME}%{REQUEST_URI} [R=301]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?/$1 [L]
+</IfModule>
