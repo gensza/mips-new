@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------
 | DATABASE CONNECTIVITY SETTINGS
@@ -49,7 +49,7 @@ $active_group = 'default';
 $active_record = TRUE;
 
 //start : koneksi_databases_dynamic
-$CI = &get_instance();
+$CI =& get_instance();
 $CI->load->library('lib_databases');
 $inis_config = $CI->lib_databases->inis_config();
 $inis_db     = $CI->lib_databases->inis_db();
@@ -59,7 +59,7 @@ $inis_db     = $CI->lib_databases->inis_db();
 $db['default']['hostname'] = '192.168.1.237';
 $db['default']['username'] = 'mis';
 $db['default']['password'] = 'msaljkt@88';
-$db['default']['database'] = 'dev_db_mips_' . $inis_config . '';
+$db['default']['database'] = 'db_mips_'.$inis_config.'';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
@@ -77,7 +77,7 @@ $db['default']['stricton'] = FALSE;
 $db['mips_gl']['hostname'] = '192.168.1.237';
 $db['mips_gl']['username'] = 'mis';
 $db['mips_gl']['password'] = 'msaljkt@88';
-$db['mips_gl']['database'] = 'db_mips_gl_' . $inis_db . '';
+$db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db.'';
 // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db;
 // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db.'_sblmcoba10digit';
 $db['mips_gl']['dbdriver'] = 'mysqli';
@@ -98,7 +98,7 @@ $db['mips_gl']['stricton'] = FALSE;
 $db['mips_caba']['hostname'] = '192.168.1.237';
 $db['mips_caba']['username'] = 'mis';
 $db['mips_caba']['password'] = 'msaljkt@88';
-$db['mips_caba']['database'] = 'db_mips_cb_' . $inis_db . '';
+$db['mips_caba']['database'] = 'db_mips_cb_'.$inis_db.'';
 $db['mips_caba']['dbdriver'] = 'mysqli';
 $db['mips_caba']['dbprefix'] = '';
 $db['mips_caba']['pconnect'] = TRUE;
@@ -114,21 +114,21 @@ $db['mips_caba']['stricton'] = FALSE;
 
 
 /* START-DB-MASTERCODE */
-// $db['mstcode']['hostname'] = '192.168.1.237';
-// $db['mstcode']['username'] = 'mis';
-// $db['mstcode']['password'] = 'msaljkt@88';
-// $db['mstcode']['database'] = 'db_mmop_ms_code';
-// $db['mstcode']['dbdriver'] = 'mysqli';
-// $db['mstcode']['dbprefix'] = '';
-// $db['mstcode']['pconnect'] = TRUE;
-// $db['mstcode']['db_debug'] = TRUE;
-// $db['mstcode']['cache_on'] = FALSE;
-// $db['mstcode']['cachedir'] = '';
-// $db['mstcode']['char_set'] = 'utf8';
-// $db['mstcode']['dbcollat'] = 'utf8_general_ci';
-// $db['mstcode']['swap_pre'] = '{PRE}';
-// $db['mstcode']['autoinit'] = TRUE;
-// $db['mstcode']['stricton'] = FALSE;
+$db['mstcode']['hostname'] = '192.168.1.237';
+$db['mstcode']['username'] = 'mis';
+$db['mstcode']['password'] = 'msaljkt@88';
+$db['mstcode']['database'] = 'db_mmop_ms_code';
+$db['mstcode']['dbdriver'] = 'mysqli';
+$db['mstcode']['dbprefix'] = '';
+$db['mstcode']['pconnect'] = TRUE;
+$db['mstcode']['db_debug'] = TRUE;
+$db['mstcode']['cache_on'] = FALSE;
+$db['mstcode']['cachedir'] = '';
+$db['mstcode']['char_set'] = 'utf8';
+$db['mstcode']['dbcollat'] = 'utf8_general_ci';
+$db['mstcode']['swap_pre'] = '{PRE}';
+$db['mstcode']['autoinit'] = TRUE;
+$db['mstcode']['stricton'] = FALSE;
 /* END-DB-MASTERCODE */
 
 
