@@ -5220,4 +5220,3 @@ class Cash_bank_model extends CI_Model{
         }
         
 }
-?>
