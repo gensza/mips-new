@@ -760,7 +760,7 @@
       $('#kategori').empty();
       var $kategori = $('#kategori');
       if ($("#divisi_v").val() == '06') {
-        $kategori.append('<option value="0">- Pilih -</option><option value="TM">TM</option><option value="TBM">TBM</option><option value="LAND_CLEARING">LAND CLEARING</option><option value="PEMBIBITAN">PEMBIBITAN</option>');
+        $kategori.append('<option value="">- Pilih -</option><option value="TM">TM</option><option value="TBM">TBM</option><option value="LAND_CLEARING">LAND CLEARING</option><option value="PEMBIBITAN">PEMBIBITAN</option>');
       } else {
         $kategori.append('<option value="-">-</option>');
       }
@@ -772,7 +772,6 @@
     get_afdunit = function() {
 
       var kategori = $("#kategori").val();
-      console.log(kategori + 'lele');
       $('#afd_unit').empty();
       $.ajax({
         type: 'POST',
@@ -784,9 +783,9 @@
         success: function(data) {
           var $kategori = $('#afd_unit');
           if (kategori != '-') {
-            $kategori.append('<option value="0">- Pilih -</option>');
+            $kategori.append('<option value="">- Pilih -</option>');
           } else {
-            $kategori.append('<option value="0">-</option>');
+            $kategori.append('<option value="">-</option>');
           }
           for (var i = 0; i < data.length; i++) {
             $kategori.append('<option value=' + data[i].afd + '>' + data[i].afd + ' </option>');
@@ -819,9 +818,9 @@
         success: function(data) {
           var $kategori = $('#tahun_tanam');
           if (kategori != '-') {
-            $kategori.append('<option value="0">- Pilih -</option>');
+            $kategori.append('<option value="">- Pilih -</option>');
           } else {
-            $kategori.append('<option value="0">-</option>');
+            $kategori.append('<option value="">-</option>');
           }
           for (var i = 0; i < data.length; i++) {
             $kategori.append('<option value=' + data[i].tahuntanam + '>' + data[i].tahuntanam + ' </option>');
@@ -858,7 +857,7 @@
       var dt = tm_tbm1 + afd + thn_tanam;
 
       src_noac = afd + '' + thn_tanam;
-      getpopup('gl/master_tabel_coa_popup_by_kategori', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', 'TM', src_noac);
+      getpopup('gl/master_tabel_coa_popup_by_kategori', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', tm_tbm, src_noac);
 
       $.ajax({
         url: base_url + 'gl/get_nama_acct',
