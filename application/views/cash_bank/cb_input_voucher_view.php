@@ -606,7 +606,11 @@
         var form_data = new FormData($('#form_input_transaksi')[0]);
 
         $.ajax({
+<<<<<<< HEAD
           url: base_url + 'cash_bank/simpan_ali',
+=======
+          url: base_url + 'cash_bank/simpan_voucher_header',
+>>>>>>> c607e097c36b80b222ce7c7272ce6647bb24d6e8
           type: "POST",
           dataType: 'json',
           mimeType: 'multipart/form-data',
@@ -615,7 +619,10 @@
           cache: false,
           processData: false,
           success: function(response) {
+<<<<<<< HEAD
             console.log(response);
+=======
+>>>>>>> c607e097c36b80b222ce7c7272ce6647bb24d6e8
             if (response == true) {
               swal.close();
               Command: toastr["success"]("Transaksi Voucher detail berhasil disimpan", "Berhasil");
@@ -964,7 +971,11 @@ for ($i = 0; $i < 6; $i++) {
 
 
 <form id="form_input_transaksi" method=POST enctype='multipart/form-data'>
+<<<<<<< HEAD
   <input type="hidden" name="kode_sementara" id="kode_sementara" value="<?php echo $token; ?>">
+=======
+  <input type="text" name="kode_sementara" id="kode_sementara" value="<?php echo $token; ?>">
+>>>>>>> c607e097c36b80b222ce7c7272ce6647bb24d6e8
   <input type="hidden" name="lokasi_users" id="lokasi_users" value="<?php echo $lokasi['nama']; ?>">
   <input type='hidden' class='form-control' name='<?php echo $this->security->get_csrf_token_name(); ?>' value="<?php echo $this->security->get_csrf_hash(); ?>">
 
