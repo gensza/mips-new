@@ -91,7 +91,7 @@
 <div class="modal fade" id="<?php echo $id_modal; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-header modal-lg">
         <button class="close" data-dismiss="modal">×</button>
-        <h3>Tabel COA <?php echo $id_row2 ?></h3>
+        <h3>Tabel COA</h3>
     </div>
     <div class="modal-body">
         <div class="table-responsive">

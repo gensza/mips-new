@@ -81,8 +81,9 @@ class Serv_side_coa_by_kategori_popup_model extends CI_Model
         return $query->num_rows();
     }
 
-    public function count_all()
+    public function count_all($code_filter, $kategori)
     {
+        $this->mips_gl->like('noac', $code_filter, 'both');
         $this->mips_gl->from($this->table);
         return $this->mips_gl->count_all_results();
     }

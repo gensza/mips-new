@@ -207,7 +207,7 @@ class Gl extends CI_Controller
     public function transaksi_update_kurs()
     {
         $data['kurs_nominal']     = $this->input->post('kurs_nominal', TRUE);
-        $data['tgl_kurs_todays']  = $this->input->post('tgl_kurs_todays', TRUE);
+        // $data['tgl_kurs_todays']  = $this->input->post('tgl_kurs_todays', TRUE);
         $result = $this->gl_model->transaksi_update_kurs($data)->row_array();
         echo json_encode($result);
     }
@@ -730,12 +730,14 @@ class Gl extends CI_Controller
             $row[] = $customers->sbu;
             $row[] = $customers->group;
             $row[] = $customers->type;
+            $row[] = "<button class='btn btn-success btn-sm' onclick=selected_account(" . $customers->noac . "," . $customers->NOID . ") title=' Pilih- " . $customers->noac . " - " . $customers->nama . "'>Pilih</button>";
 
-            if ($customers->type == 'D') {
-                $row[] = "<button class='btn btn-success btn-sm' onclick=selected_account(" . $customers->noac . "," . $customers->NOID . ") title=' Pilih- " . $customers->noac . " - " . $customers->nama . "'>Pilih</button>";
-            } else {
-                $row[] = "<button class='btn btn-danger btn-sm'>x</button>";
-            }
+            // tadi nya dibawah ini dikasih kondisi, tapi karna sy ga tau kondisi nya jadi saya buka dulu
+            // if ($customers->type == 'D') {
+            //     $row[] = "<button class='btn btn-success btn-sm' onclick=selected_account(" . $customers->noac . "," . $customers->NOID . ") title=' Pilih- " . $customers->noac . " - " . $customers->nama . "'>Pilih</button>";
+            // } else {
+            //     $row[] = "<button class='btn btn-danger btn-sm'>x</button>";
+            // }
 
             $data[] = $row;
         }
@@ -743,7 +745,7 @@ class Gl extends CI_Controller
         $output = array(
             "draw" => $_POST['draw'],
             "recordsTotal" => $this->serv_side_coa_by_kategori_popup_model->count_all($code_filter, $kategori),
-            "recordsFiltered" => $this->serv_side_coa_by_kategori_popup_model->count_filtered(),
+            "recordsFiltered" => $this->serv_side_coa_by_kategori_popup_model->count_filtered($code_filter, $kategori),
             "data" => $data,
         );
         //output to json format

@@ -375,7 +375,8 @@ class Gl_model extends CI_Model
     {
 
         $data['kurs_nominal']     = $this->input->post('kurs_nominal', TRUE);
-        $data['tgl_kurs_todays']  = $this->input->post('tgl_kurs_todays', TRUE);
+        $data['tgl_kurs_todays']  = date('Y-m-d');
+        // $data['tgl_kurs_todays']  = $this->input->post('tgl_kurs_todays', TRUE);
 
         $kursd   = str_replace(",", "", $data['kurs_nominal']);
 
@@ -384,7 +385,7 @@ class Gl_model extends CI_Model
 
 
         if ($ret['kurs'] == 0) {
-            $sql2 = "INSERT INTO kursrate (kode,rate,tgl) VALUES ('$',$kursd','$data[tgl_kurs_todays]')";
+            $sql2 = "INSERT INTO kursrate (kode,rate,tgl) VALUES ('$','$kursd','$data[tgl_kurs_todays]')";
             return $this->mips_gl->query($sql2);
         } else {
             $sql3 = "UPDATE kursrate SET rate  = '$kursd', tgl = '$data[tgl_kurs_todays]' where ";

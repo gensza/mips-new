@@ -683,14 +683,14 @@
 
 
     $("#btn_update_kurs").click(function() {
-      var todaysx = new Date();
-      var tgl_kurs_todays = moment(todaysx).format('YYYY-MM-DD');
+      // var todaysx = new Date();
+      // var tgl_kurs_todays = moment(todaysx).format('YYYY-MM-DD');
 
       $.ajax({
         url: base_url + 'gl/transaksi_update_kurs',
         type: "post",
         data: {
-          tgl_kurs_todays: tgl_kurs_todays,
+          // tgl_kurs_todays: tgl_kurs_todays,
           kurs_nominal: $("#kurs_nominal").val(),
           <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
         },
@@ -782,11 +782,14 @@
         dataType: 'json',
         success: function(data) {
           var $kategori = $('#afd_unit');
-          $kategori.append('<option value="0">- Pilih -</option>');
+          if (kategori != '-') {
+            $kategori.append('<option value="0">- Pilih -</option>');
+          } else {
+            $kategori.append('<option value="0">-</option>');
+          }
           for (var i = 0; i < data.length; i++) {
             $kategori.append('<option value=' + data[i].afd + '>' + data[i].afd + ' </option>');
           }
-          $kategori.append('<option value="-">-</option>');
         },
         beforeSend: function() {
           loadingPannel.show();
@@ -814,7 +817,11 @@
         dataType: 'json',
         success: function(data) {
           var $kategori = $('#tahun_tanam');
-          $kategori.append('<option value="0">- Pilih -</option>');
+          if (kategori != '-') {
+            $kategori.append('<option value="0">- Pilih -</option>');
+          } else {
+            $kategori.append('<option value="0">-</option>');
+          }
           for (var i = 0; i < data.length; i++) {
             $kategori.append('<option value=' + data[i].tahuntanam + '>' + data[i].tahuntanam + ' </option>');
           }
