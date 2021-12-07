@@ -83,12 +83,10 @@ $login_failed = $this->session->flashdata('usersnotfound');
                     <input class="form-control input-sm fc-datepicker2" required="" type="text" id="c_periode" name="c_periode" placeholder="Periode" style="padding: 10px" />
                 </div>
 
-                <br>
-
-                <!--                    <div class="form-group">
-                      <select class="form-control" name="c_pt" id="c_pt" style="width:230px;height:40px;
+                <div class="form-group">
+                    <select class="form-control" name="c_pt" id="c_pt" required="" style="width:230px;height:40px;
         line-height:30px;"></select>
-                    </div>-->
+                </div>
 
             </div>
 
@@ -132,9 +130,9 @@ $login_failed = $this->session->flashdata('usersnotfound');
                 success: function(data) {
                     $('#c_pt').empty();
                     var $kategori = $('#c_pt');
-                    $kategori.append('<option value=0>-Pilih PT-</option>');
+                    $kategori.append('<option value="">-Pilih PT-</option>');
                     for (var i = 0; i < data.length; i++) {
-                        $kategori.append('<option value=' + data[i].id + '>' + data[i].nama + '</option>');
+                        $kategori.append('<option value=' + data[i].kode_pt + '>' + data[i].nama_pt + '</option>');
                     }
                 }
             });

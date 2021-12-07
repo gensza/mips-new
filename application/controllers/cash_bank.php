@@ -202,31 +202,7 @@ class Cash_bank extends CI_Controller
         echo json_encode($result);
     }
 
-    public function simpan_ali()
-    {
-        $data['kode_sementara']  = $this->input->post('kode_sementara', TRUE);
-        $data['nomor_voucher']   = $this->input->post('nomor_voucher', TRUE);
-        $data['pay_rec']         = $this->input->post('pay_rec', TRUE);
-        $data['kas_bank']        = $this->input->post('kas_bank', TRUE);
-        $data['bank_descript']   = $this->input->post('bank_descript', TRUE);
-        $data['tanggal']         = $this->input->post('tanggal', TRUE);
-        $data['kepada']          = $this->input->post('kepada', TRUE);
-        $data['jumlah']          = $this->input->post('jumlah', TRUE);
-        $data['terbilang']       = $this->input->post('terbilang', TRUE);
-        $data['bank_nama']       = $this->input->post('bank_nama', TRUE);
-        $data['bank_no']         = $this->input->post('bank_no', TRUE);
-        $data['bank_tanggal']    = $this->input->post('bank_tanggal', TRUE);
-        $data['sumber_dana']     = $this->input->post('sumber_dana', TRUE);
-        $data['sumber_dana_nominal'] = $this->input->post('sumber_dana_nominal', TRUE);
-        $data['lokasi_users']    = $this->input->post('lokasi_users', TRUE);
 
-        $data['noref_select']    = $this->input->post('noref_select', TRUE);
-        $data['no_ref']          = $this->input->post('no_ref', TRUE);
-
-
-        $result = $this->cash_bank_model->simpan_voucher_header($data);
-        echo json_encode($result);
-    }
 
     public function simpan_voucher_header()
     {

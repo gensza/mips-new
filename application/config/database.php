@@ -72,6 +72,24 @@ $db['default']['swap_pre'] = '{PRE}';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
+/* DB CENTER */
+$db['mips_center']['hostname'] = '192.168.1.237';
+$db['mips_center']['username'] = 'mis';
+$db['mips_center']['password'] = 'msaljkt@88';
+$db['mips_center']['database'] = 'db_logistik_center';
+$db['mips_center']['dbdriver'] = 'mysqli';
+$db['mips_center']['dbprefix'] = '';
+$db['mips_center']['pconnect'] = TRUE;
+$db['mips_center']['db_debug'] = TRUE;
+$db['mips_center']['cache_on'] = FALSE;
+$db['mips_center']['cachedir'] = '';
+$db['mips_center']['char_set'] = 'utf8';
+$db['mips_center']['dbcollat'] = 'utf8_general_ci';
+$db['mips_center']['swap_pre'] = '{PRE}';
+$db['mips_center']['autoinit'] = TRUE;
+$db['mips_center']['stricton'] = FALSE;
+/* END DB CENTER */
+
 
 /* START-DB-GL */
 $db['mips_gl']['hostname'] = '192.168.1.237';

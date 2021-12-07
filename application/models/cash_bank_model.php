@@ -9,7 +9,6 @@ class Cash_bank_model extends CI_Model
     var $column_search = array('nopp', 'ref_po', 'nopo'); //field yang diizin untuk pencarian 
     var $order = array('id' => 'asc'); // default order
 
-
     function __construct()
     {
         parent::__construct();
@@ -91,40 +90,7 @@ class Cash_bank_model extends CI_Model
         $sql2 = "SELECT * FROM voucher_tmp where voucno = '$data[kode_sementara]'";
         // $n = $this->mips_caba->query($sql2)->result_array();
         $n = $this->mips_caba->query($sql2)->result();
-        // $data=array();
-        // foreach($n as $row){
-        //     $row_arr=array(
-        //         'TRANS' => $row->TRANS ,
-        //         'VOUCNO' =>  $row->VOUCNO ,
-        //         'DATE' => date('Y-m-d H:i:s'),
-        //         'ACCTNO' =>  $row->ACCTNO ,
-        //         'DEBIT' =>  $row->DEBIT ,
-        //         'CREDIT' =>  $row->CREDIT ,
-        //         'DESCRIPT' =>  $row->DESCRIPT ,
-        //         'JENIS' =>  $row->JENIS ,
-        //         'CHEQNO' =>  $row->CHEQNO ,
-        //         'TO' =>  $row->TO ,
-        //         'FROM' =>  $row->FROM ,
-        //         'PAY' =>  $row->PAY ,
-        //         'AMOUNT' =>  $row->AMOUNT ,
-        //         'POSTED' =>  $row->POSTED ,
-        //         'REMARKS' =>  $row->REMARKS ,
-        //         'LOKASI' =>  $row->LOKASI ,
-        //         'PROJECT' =>  $row->PROJECT ,
-        //         'PRINTED' =>  $row->PRINTED ,
-        //         'TGLTXT' =>  $row->TGLTXT ,
-        //         'KODE_PT' =>  $row->KODE_PT ,
-        //         'txtperiode' =>  $row->txtperiode ,
-        //         'module' =>  $row->module ,
-        //         'user' =>  $row->user ,
-        //         'NO_PP' =>  $row->NO_PP ,
-        //         'NO_PO' =>  $row->NO_PO ,
-        //         'PDO' =>  $row->PDO ,
-        //         'sumber' =>  $row->sumber ,
 
-        //     );
-        //     array_push($data,$row_arr);
-        // }
 
 
         // fungsi insert batch
@@ -310,10 +276,11 @@ class Cash_bank_model extends CI_Model
                     $no_urut_terakhir = $ditambah + $no_urut_pay;
 
                     //ini fungsi untuk menambah angka nol di depan
-                    $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
+                    // $fzeropadded      = sprintf("%03d", $no_urut_terakhir);
 
                     $inisial_pay      = $res['pay_inikas'];
-                    $nofix            = $inisial_pay . '' . $fzeropadded;
+                    // $nofix            = $inisial_pay . '' . $fzeropadded;
+                    $nofix            = $inisial_pay . sprintf("%03s", $no_urut_terakhir);
 
                     //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
                     //voucher detail

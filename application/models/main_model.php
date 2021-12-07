@@ -6,6 +6,7 @@ class Main_model extends CI_Model{
     function __construct() {
         parent::__construct();
         //$this->dps = $this->load->database('dps', TRUE);
+        $this->mips_center  = $this->load->database('mips_center', TRUE);
     }
 
     function user_id(){
@@ -21,8 +22,8 @@ class Main_model extends CI_Model{
 
         $id_pt = $this->session->userdata('sess_pt');
 
-        $sql = "SELECT * FROM site_pt WHERE is_deleted = 0 and id = '$id_pt'";
-        return $this->db->query($sql);
+        $sql = "SELECT * FROM tb_pt WHERE kode_pt = '$id_pt'";
+        return $this->mips_center->query($sql);
 
     }
     
@@ -73,4 +74,3 @@ class Main_model extends CI_Model{
     
 
 }
-?>
