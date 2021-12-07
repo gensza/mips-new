@@ -772,6 +772,7 @@
     get_afdunit = function() {
 
       var kategori = $("#kategori").val();
+      console.log(kategori + 'lele');
       $('#afd_unit').empty();
       $.ajax({
         type: 'POST',
