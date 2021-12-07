@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------
 | DATABASE CONNECTIVITY SETTINGS
@@ -49,7 +49,7 @@ $active_group = 'default';
 $active_record = TRUE;
 
 //start : koneksi_databases_dynamic
-$CI =& get_instance();
+$CI = &get_instance();
 $CI->load->library('lib_databases');
 $inis_config = $CI->lib_databases->inis_config();
 $inis_db     = $CI->lib_databases->inis_db();
@@ -59,7 +59,7 @@ $inis_db     = $CI->lib_databases->inis_db();
 $db['default']['hostname'] = '192.168.1.237';
 $db['default']['username'] = 'mis';
 $db['default']['password'] = 'msaljkt@88';
-$db['default']['database'] = 'db_mips_'.$inis_config.'';
+$db['default']['database'] = 'db_mips_' . $inis_config . '';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
@@ -77,7 +77,7 @@ $db['default']['stricton'] = FALSE;
 $db['mips_gl']['hostname'] = '192.168.1.237';
 $db['mips_gl']['username'] = 'mis';
 $db['mips_gl']['password'] = 'msaljkt@88';
-$db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db.'';
+$db['mips_gl']['database'] = 'db_mips_gl_' . $inis_db . '';
 // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db;
 // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db.'_sblmcoba10digit';
 $db['mips_gl']['dbdriver'] = 'mysqli';
@@ -98,7 +98,7 @@ $db['mips_gl']['stricton'] = FALSE;
 $db['mips_caba']['hostname'] = '192.168.1.237';
 $db['mips_caba']['username'] = 'mis';
 $db['mips_caba']['password'] = 'msaljkt@88';
-$db['mips_caba']['database'] = 'db_mips_cb_'.$inis_db.'';
+$db['mips_caba']['database'] = 'db_mips_cb_' . $inis_db . '';
 $db['mips_caba']['dbdriver'] = 'mysqli';
 $db['mips_caba']['dbprefix'] = '';
 $db['mips_caba']['pconnect'] = TRUE;
@@ -148,22 +148,31 @@ $db['mips_logistik']['dbcollat'] = 'utf8_general_ci';
 $db['mips_logistik']['swap_pre'] = '{PRE}';
 $db['mips_logistik']['autoinit'] = TRUE;
 $db['mips_logistik']['stricton'] = FALSE;
-// $db['mips_logistik']['hostname'] = '192.168.1.231';
-// $db['mips_logistik']['username'] = 'mis';
-// $db['mips_logistik']['password'] = 'msaljkt@88';
-// $db['mips_logistik']['database'] = 'msalgrou_logistikmsal_arman';
-// $db['mips_logistik']['dbdriver'] = 'mysqli';
-// $db['mips_logistik']['dbprefix'] = '';
-// $db['mips_logistik']['pconnect'] = TRUE;
-// $db['mips_logistik']['db_debug'] = TRUE;
-// $db['mips_logistik']['cache_on'] = FALSE;
-// $db['mips_logistik']['cachedir'] = '';
-// $db['mips_logistik']['char_set'] = 'utf8';
-// $db['mips_logistik']['dbcollat'] = 'utf8_general_ci';
-// $db['mips_logistik']['swap_pre'] = '{PRE}';
-// $db['mips_logistik']['autoinit'] = TRUE;
-// $db['mips_logistik']['stricton'] = FALSE;
-/* END-DB-GL */
+
+$db['db_msal_personalia'] = array(
+	'dsn'	=> '',
+	// 'hostname' => 'localhost',
+	// 'username' => 'root',
+	// 'password' => '',
+	'hostname' => '192.168.1.231',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'msalgrou_personalia',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
 
 
 /* End of file database.php */
