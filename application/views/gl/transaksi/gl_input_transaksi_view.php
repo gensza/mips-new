@@ -256,7 +256,6 @@
                       $("#btn_simpan_trans_detail").show();
                       $("#btn_update_trans_detail").hide();
 
-
                     } else {
                       Command: toastr["error"]("Simpan error, data tidak berhasil disimpan", "Error");
                     }
@@ -333,6 +332,9 @@
                 total_debit();
                 //table_caba_detail();
                 //get_balance();
+
+                $("#btn_simpan_trans_detail").show();
+                $("#btn_update_trans_detail").hide();
 
               } else {
                 Command: toastr["error"]("Simpan error, data tidak berhasil disimpan", "Error");
@@ -462,16 +464,16 @@
         async: 'false',
         success: function(result) {
 
-          $("#acctno").val(result.kode_noac);
+          $("#acctno").val(result.noac);
           $("#acctname").val(result.descac);
           $("#deskripsi").val(result.ket);
           $("#dc").val(result.dc);
           $("#dc_kurs").val(result.kurs);
 
           if (result.dc == 'D') {
-            $("#dc_nominal").val(result.dr_f);
+            $("#dc_nominal").val(result.dr);
           } else {
-            $("#dc_nominal").val(result.cr_f);
+            $("#dc_nominal").val(result.cr);
           }
 
         },
@@ -648,7 +650,7 @@
                   success: function(response) {
                     if (response == true) {
                       swal.close();
-                      //Command: toastr["success"]("Data Transkasi disimpan", "Transaksi Selesai & Tersimpan");
+                      Command: toastr["success"]("Data Transkasi disimpan", "Transaksi Selesai & Tersimpan");
                       getcontents('gl/transaksi_input', '<?php echo $tokens; ?>');
 
                     } else {
@@ -685,6 +687,7 @@
     $("#btn_update_kurs").click(function() {
       // var todaysx = new Date();
       // var tgl_kurs_todays = moment(todaysx).format('YYYY-MM-DD');
+      console.log($("#kurs_nominal").val());
 
       $.ajax({
         url: base_url + 'gl/transaksi_update_kurs',
@@ -839,7 +842,7 @@
     // ****** ------------------------------------------------------ ****** //
     // ***** END :  FUNGSI UNTUK MENCARI ITEM PEKERJAAN BERDASARKAN 3 KOMPONEN  ****** //
 
-    document.getElementById("acctno").addEventListener("keyup", function(event) {
+    document.getElementById("acctno").addEventListener("click", function(event) {
 
       var afd = $("#afd_unit").val();
       var thn_tanam = $("#tahun_tanam").val();
@@ -927,15 +930,9 @@ for ($i = 0; $i < 6; $i++) {
             </div>
           </div>
         </div>
-
-
         <div class="span8">
-
           <div class="span2">
-
           </div>
-
-
           <div class="span2">
             <label for="demo-vs-definput" class="control-label">Total (Dr)</label>
             <input type="text" class="form-control span17 maskmoney_money" name="totaldr" id="totaldr" placeholder="0" style="border-width: 2px;background:black;color:yellow">
@@ -950,19 +947,15 @@ for ($i = 0; $i < 6; $i++) {
 
           <div class="span2">
             <label for="demo-vs-definput" class="control-label">Update Kurs</label>
-            <input type="text" class="form-control span17 maskmoney_money_kurs" name="kurs_nominal" id="kurs_nominal" placeholder="0" style="border-width: 2px;background:black;color:yellow;border-color: red;">
+            <input type="text" class="form-control span17 maskmoney_money_kurs" name="kurs_nominal" id="kurs_nominal" placeholder="0" style="border-width: 2px;background:black;color:yellow;border-color: red;" disabled>
           </div>
-
 
           <div class="span2">
             <label for="demo-vs-definput" class="control-label" style="color:white">x</label>
-            <button type="button" class="btn btn-success" id="btn_update_kurs"> Update </button>
+            <button type="button" class="btn btn-success" id="btn_update_kurs" disabled> Update </button>
           </div>
-
         </div>
-
       </div>
-
 
       <div class="row-fluid">
 
@@ -1144,24 +1137,10 @@ for ($i = 0; $i < 6; $i++) {
               </div>
             </div>
           </div>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <!-- footer -->
-
     </div>
-
-
-
-
-
   </div>
 
 </form>

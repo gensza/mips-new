@@ -187,7 +187,7 @@ class Gl_model extends CI_Model
     function gl_transaksi_simpan($data)
     {
 
-        $noacc          = str_replace(".", "", $data['acctno']);
+        $noacc = str_replace(".", "", $data['acctno']);
 
         //ini untuk ambil data ke master noac
         $sqls = "SELECT  sbu,
@@ -212,12 +212,12 @@ class Gl_model extends CI_Model
 
         $tgl_explode    = explode("-", $data['tanggal']);
         $tgltxt         = $tgl_explode[2] . $tgl_explode[1] . $tgl_explode[0];
-        $tgltxtperiode  = $tgl_explode[2] . $tgl_explode[1];
+        $tgltxtperiode  = $tgl_explode[0] . $tgl_explode[1];
 
         $sess_lokasi = $this->get_nama_lokasi();
 
         $tgl_ymd = date('Y-m-d', strtotime($data['tanggal']));
-        $today = date('Y-m-d');
+        $today = date('Y-m-d H:i:s');
 
         $entry_temp['ref'] = $data['no_ref'];
         $entry_temp['noref'] = $data['kode_sementara'];
@@ -229,15 +229,17 @@ class Gl_model extends CI_Model
         $entry_temp['date'] = $tgl_ymd;
         $entry_temp['periode'] = $tgl_ymd;
         $entry_temp['ket'] = $data['deskripsi'];
-        $entry_temp['periodetxt'] = $tgltxt;
+        $entry_temp['periodetxt'] = $tgltxtperiode;
+        $entry_temp['module'] = 'GL';
         $entry_temp['tglinput'] = $today;
-        $entry_temp['sbu'] = $dt['sbu'];
+        $entry_temp['sbu'] = $data['divisi_v'];
         $entry_temp['group'] = $dt['group'];
         $entry_temp['type'] = $dt['type'];
         $entry_temp['level'] = $dt['level'];
         $entry_temp['general'] = $dt['general'];
         $entry_temp['lokasi'] = $sess_lokasi;
         $entry_temp['kurs'] = $data['dc_kurs'];
+        $entry_temp['USER'] = $this->session->userdata('sess_nama');
 
         return $this->mips_gl->insert('entry_temp', $entry_temp);
     }
@@ -371,7 +373,7 @@ class Gl_model extends CI_Model
         return $this->mips_gl->query($sql);
     }
 
-    function transaksi_update_kurs($data)
+    function transaksi_update_kurs()
     {
 
         $data['kurs_nominal']     = $this->input->post('kurs_nominal', TRUE);
@@ -400,6 +402,7 @@ class Gl_model extends CI_Model
         // ini select dulu ke table tmp , lalu insert ke table voucher dengan fungsi insert batch
         // $sql2 = "SELECT date, sbu, noac, desc, group, type, level, general, dc, dr, cr, periode, converse, ref,  noref, descac, ketbegindr, begincr, kurs, kursrate, tglkurs, periodetxt, module, lokasi, POST, tglinput, USER FROM entry_temp where noref = '$data[kode_sementara]'";
         $this->mips_gl->select('date, sbu, noac, desc, group, type, level, general, dc, dr, cr, periode, converse, ref,  noref, descac, ket, begindr, begincr, kurs, kursrate, tglkurs, periodetxt, module, lokasi, POST, tglinput, USER');
+        $this->mips_gl->where('noref', $data['kode_sementara']);
         $this->mips_gl->from('entry_temp');
         $n = $this->mips_gl->get()->result_array();
         // fungsi insert batch
@@ -409,13 +412,12 @@ class Gl_model extends CI_Model
         $sql3 = "DELETE FROM entry_temp WHERE noref = '$data[kode_sementara]'";
         $this->mips_gl->query($sql3);
 
-
-        $sql88 = "UPDATE entry SET noref  = 'NULL' , ref = '$data[no_ref]' WHERE noref = '$data[kode_sementara]'";
-        $this->mips_gl->query($sql88);
+        // $sql88 = "UPDATE entry SET noref  = 'NULL' , ref = '$data[no_ref]' WHERE noref = '$data[kode_sementara]'";
+        // $this->mips_gl->query($sql88);
 
         $tgl_explode    = explode("-", $data['tanggal']);
         $tgltxt         = $tgl_explode[2] . $tgl_explode[1] . $tgl_explode[0];
-        $tgltxtperiode  = $tgl_explode[2] . $tgl_explode[1];
+        $tgltxtperiode  = $tgl_explode[0] . $tgl_explode[1];
 
         $sess_lokasi = $this->get_nama_lokasi();
 
@@ -426,8 +428,12 @@ class Gl_model extends CI_Model
         $header_entry["ref"] = $data['no_ref'];
         $header_entry["totaldr"] = $data['totaldr'];
         $header_entry["totalcr"] = $data['totalcr'];
+        $header_entry["SBU"] = $data['divisi_v'];
+        $header_entry["USER"] = $this->session->userdata('sess_nama');
         $header_entry["lokasi"] = $sess_lokasi;
+        $header_entry["modul"] = 'GL';
         $header_entry["periodetxt"] = $tgltxtperiode;
+        $header_entry["noref"] = $data['kode_sementara'];
 
         return $this->mips_gl->insert('header_entry', $header_entry);
     }
@@ -436,11 +442,14 @@ class Gl_model extends CI_Model
     function get_trans_gl_detail($data)
     {
 
-        $sql = "SELECT  *,
-                        FORMAT(cr, 2) cr_f,
-                        FORMAT(dr, 2) dr_f,
-                        CONCAT(SUBSTR(noac,1,2), '.', SUBSTR(noac,3,2), '.', SUBSTR(noac,5,2), '.', SUBSTR(noac,7,2), '.', SUBSTR(noac,9,2))  AS kode_noac 
-                FROM entry_temp WHERE noid = '$data[noid]'";
+        // $sql = "SELECT  *,
+        //                 FORMAT(cr, 2) cr_f,
+        //                 FORMAT(dr, 2) dr_f,
+        //                 CONCAT(SUBSTR(noac,1,2), '.', SUBSTR(noac,3,2), '.', SUBSTR(noac,5,2), '.', SUBSTR(noac,7,2), '.', SUBSTR(noac,9,2))  AS kode_noac 
+        //         FROM entry_temp WHERE noid = '$data[noid]'";
+
+        $sql = "SELECT * FROM entry_temp WHERE noid = '$data[noid]'";
+
         return $this->mips_gl->query($sql);
     }
 

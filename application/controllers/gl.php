@@ -97,7 +97,7 @@ class Gl extends CI_Controller
     {
 
         $data['kode_sementara'] = $this->input->post('kode_sementara', TRUE);
-        $data['no_ref']          = $this->input->post('no_ref', TRUE);
+        $data['no_ref']         = $this->input->post('no_ref', TRUE);
         $data['tanggal']        = $this->input->post('tanggal', TRUE);
         $data['divisi_v']       = $this->input->post('divisi_v', TRUE);
         $data['tm_tbm']         = $this->input->post('tm_tbm', TRUE);
@@ -206,9 +206,9 @@ class Gl extends CI_Controller
 
     public function transaksi_update_kurs()
     {
-        $data['kurs_nominal']     = $this->input->post('kurs_nominal', TRUE);
+        // $data['kurs_nominal']     = $this->input->post('kurs_nominal', TRUE);
         // $data['tgl_kurs_todays']  = $this->input->post('tgl_kurs_todays', TRUE);
-        $result = $this->gl_model->transaksi_update_kurs($data)->row_array();
+        $result = $this->gl_model->transaksi_update_kurs()->row_array();
         echo json_encode($result);
     }
 
