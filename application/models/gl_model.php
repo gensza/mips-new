@@ -1001,9 +1001,8 @@ class Gl_model extends CI_Model
 
         $sess_lokasi = $this->get_nama_lokasi();
         //$sess_periode = $this->session->userdata('sess_periode');
-        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
+        $txtperiode = $this->session->userdata('sess_periode');
 
-        $dv_start;
         if (($divisi_start == '-') && ($divisi_end == '-')) {
             $dv_start = "";
         } else if ($divisi_start != '-' && $divisi_end == '-') {
@@ -1014,7 +1013,6 @@ class Gl_model extends CI_Model
             $dv_start = "";
         }
 
-        $acc;
         if ($noacc_start == 0 && $noacc_end == 0) {
             $acc = "";
         } else if ($noacc_start != 0 && $noacc_end == 0) {
@@ -1027,7 +1025,7 @@ class Gl_model extends CI_Model
 
         if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
 
-            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,cr CREDIT_F2 ,dr DEBET_F2,FORMAT(dr, 0) DEBET_F,FORMAT(cr, 0) CREDIT_F FROM entry WHERE STR_TO_DATE(periode, '%Y-%m') = STR_TO_DATE('$periodes', '%Y-%m') $dv_start $acc ORDER BY `DATE`,dr DESC";
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,cr CREDIT_F2 ,dr DEBET_F2,FORMAT(dr, 0) DEBET_F,FORMAT(cr, 0) CREDIT_F FROM entry WHERE periodetxt = '$txtperiode' $dv_start $acc ORDER BY `DATE`,dr DESC";
             return $this->mips_gl->query($sql);
         } else {
 
@@ -1043,7 +1041,6 @@ class Gl_model extends CI_Model
         $sess_periode = $this->session->userdata('sess_periode');
         $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
 
-        $dv_start;
         if ($divisi_start == '-' && $divisi_end == '-') {
             $dv_start = "";
         } else if ($divisi_start != '-' && $divisi_end == '-') {
@@ -1051,10 +1048,9 @@ class Gl_model extends CI_Model
         } else if ($divisi_start != '-' && $divisi_end != '-') {
             $dv_start = "AND sbu >= '" . $divisi_start . "' AND sbu <= '" . $divisi_end . "'";
         } else {
-            //;
+            $dv_start = '';
         }
 
-        $acc;
         if ($noacc_start == 0 && $noacc_end == 0) {
             $acc = "";
         } else if ($noacc_start != 0 && $noacc_end == 0) {
@@ -1065,10 +1061,9 @@ class Gl_model extends CI_Model
             $acc = "";
         }
 
-
         if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
 
-            $sql = "SELECT ref,SUM(dr) AS DBT_NF,FORMAT(SUM(dr), 0) DBT,FORMAT(SUM(cr), 0) KRD,SUM(cr) KRD_NF FROM entry WHERE STR_TO_DATE(periode, '%Y-%m') = STR_TO_DATE('$periodes', '%Y-%m') $dv_start $acc GROUP BY ref ORDER BY `DATE` ASC";
+            $sql = "SELECT ref,SUM(dr) AS DBT_NF,FORMAT(SUM(dr), 0) DBT,FORMAT(SUM(cr), 0) KRD,SUM(cr) KRD_NF FROM entry WHERE periodetxt = $sess_periode $dv_start $acc GROUP BY ref ORDER BY `DATE` ASC";
             return $this->mips_gl->query($sql);
         } else {
 
@@ -1083,9 +1078,8 @@ class Gl_model extends CI_Model
 
         $sess_lokasi = $this->get_nama_lokasi();
 
-        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
+        $txtperiode = $this->session->userdata('sess_periode');
 
-        $dv_start;
         if (($divisi_start == '-') && ($divisi_end == '-')) {
             $dv_start = "";
         } else if ($divisi_start != '-' && $divisi_end == '-') {
@@ -1096,7 +1090,6 @@ class Gl_model extends CI_Model
             $dv_start = "";
         }
 
-        $acc;
         if ($noacc_start == 0 && $noacc_end == 0) {
             $acc = "";
         } else if ($noacc_start != 0 && $noacc_end == 0) {
@@ -1109,7 +1102,7 @@ class Gl_model extends CI_Model
 
         if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
 
-            $sql = "SELECT SUM(cr) as grand_total_cr, SUM(dr) as grand_total_dr FROM entry WHERE STR_TO_DATE(periode, '%Y-%m') = STR_TO_DATE('$periodes', '%Y-%m') $dv_start $acc ORDER BY `DATE`,dr DESC";
+            $sql = "SELECT SUM(cr) as grand_total_cr, SUM(dr) as grand_total_dr FROM entry WHERE periodetxt = $txtperiode $dv_start $acc ORDER BY `DATE`,dr DESC";
             return $this->mips_gl->query($sql);
         } else {
 

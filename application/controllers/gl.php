@@ -16,8 +16,11 @@ class Gl extends CI_Controller
         $this->load->model('serv_side_coa_by_kategori_popup_model');
         $this->load->model('serv_side_gl_account_detail_model');
         $this->load->model('serv_side_gl_transaksi_entry_model');
+        $this->load->model('serv_side_list_acc');
+
 
         $this->db_msal_personalia = $this->load->database('db_msal_personalia', TRUE);
+        $this->mips_gl = $this->load->database('mips_gl', TRUE);
 
         date_default_timezone_set('Asia/Jakarta');
     }
@@ -1012,7 +1015,21 @@ class Gl extends CI_Controller
             $row[] = $customers->general;
             $row[] = "<div style='text-align:center'>" . $customers->level . "</div>";
             $row[] = "<div style='text-align:center'>" . $customers->type . "</div>";
-            $row[] = $customers->nama;
+            if ($customers->level == '1') {
+                $row[] = $customers->nama;
+            } else if ($customers->level == '2') {
+                $row[] = "<div>&emsp;" . $customers->nama . "</div>";
+            } else if ($customers->level == '3') {
+                $row[] = "<div>&emsp;&emsp;" . $customers->nama . "</div>";
+            } else if ($customers->level == '4') {
+                $row[] = "<div>&emsp;&emsp;&emsp;" . $customers->nama . "</div>";
+            } else if ($customers->level == '5') {
+                $row[] = "<div>&emsp;&emsp;&emsp;&emsp;" . $customers->nama . "</div>";
+            } else if ($customers->level == '6') {
+                $row[] = "<div>&emsp;&emsp;&emsp;&emsp;&emsp;" . $customers->nama . "</div>";
+            } else {
+                $row[] = "<div style='text-align:right'>" . $customers->nama . "</div>";
+            }
             $row[] = $customers->group;
             $data[] = $row;
             //<a href='javascript:void(0)' onclick=getpopup('gl/master_input_saldo','".$tokensapp."','popupedit','".$customers->NOID."') title='Input Saldo - ".$customers->nama."'><i class='splashy-application_windows_edit'></i></a>
@@ -1561,5 +1578,36 @@ class Gl extends CI_Controller
         $data['kode_sementara']     = $this->input->post('kode_sementara', TRUE);
         $result = $this->gl_model->alokasi_jurnal_transaksi_total_debit($data)->row_array();
         echo json_encode($result);
+    }
+
+    public function list_acc()
+    {
+        $list = $this->serv_side_list_acc->get_datatables();
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $field) {
+
+            $no++;
+            $row = array();
+
+            $row[] = $no;
+            $row[] = "<button class='btn btn-success btn-sm' id='pilih_akun' data-noac='" . $field->noac . "' title=' Pilih- " . $field->noac . " - " . $field->nama . "'>Pilih</button>";
+            $row[] = $field->noac;
+            $row[] = $field->nama;
+            $row[] = $field->sbu;
+            $row[] = $field->group;
+            $row[] = $field->type;
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->serv_side_list_acc->count_all(),
+            "recordsFiltered" => $this->serv_side_list_acc->count_filtered(),
+            "data" => $data,
+        );
+        //output dalam format JSON
+        echo json_encode($output);
     }
 }

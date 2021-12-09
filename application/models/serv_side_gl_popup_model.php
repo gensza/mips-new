@@ -81,4 +81,3 @@ class Serv_side_gl_popup_model extends CI_Model{
         }
 
 }
-?>

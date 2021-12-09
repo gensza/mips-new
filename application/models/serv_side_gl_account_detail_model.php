@@ -2,10 +2,10 @@
 class Serv_side_gl_account_detail_model extends CI_Model{	
     
     //nama tabel dari database
-    //var $table = 'noac'; 
+    var $table = 'noac'; 
     //field yang ada di table user
-    var $column_order = array(null, 'VOUCNO','FROM','txtperiode','AMOUNT'); 
-    var $column_search = array('nama','lokasi','noac'); //field yang diizin untuk pencarian 
+    var $column_order = array(null, 'noac','general','level','type', 'nama', 'group'); 
+    var $column_search = array('noac','general','level','type', 'nama', 'group'); //field yang diizin untuk pencarian 
     var $order = array('noac' => 'asc'); // default order
 
 
@@ -19,10 +19,7 @@ class Serv_side_gl_account_detail_model extends CI_Model{
     private function _get_datatables_query(){
     
         $this->mips_gl->select('noac,general,level,type,nama,group');
-        $this->mips_gl->from('noac');    
-
-
-        //$this->mstcode->from($this->table);
+        $this->mips_gl->from($this->table);    
  
         $i = 0;
      
@@ -84,4 +81,3 @@ class Serv_side_gl_account_detail_model extends CI_Model{
         }
 
 }
-?>
