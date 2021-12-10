@@ -1,3 +1,9 @@
+<?php
+header("Content-type: application/octet-stream");
+header("Content-Disposition: attachment; filename=Laporan.xls");
+header("Pragma: no-cache");
+header("Expires: 0");
+?>
 <table width="100%" border="0" align="center">
   <tr>
     <td rowspan="2" width="0%" height="10px"><img src="<?php echo base_url('assets/theme/adm2/img/logo.jpg'); ?>" style="width: 80px"></td>

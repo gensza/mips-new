@@ -383,42 +383,44 @@ class Cetak extends CI_Controller
     }
 
 
-    public function gl_lap_module($periode_terkini, $tgl_start, $tgl_end, $divisi_start, $divisi_end, $module)
+    public function gl_lap_module($periode_terkini, $tgl_start, $tgl_end, $divisi_start, $divisi_end, $module, $cetakan)
     {
-
         $nama_dokumen = 'Laporan_GL_Module_' . $tgl_start . '_' . $tgl_end . '';
 
-        $data['data_entry']        = $this->gl_model->get_data_entry($periode_terkini, $tgl_start, $tgl_end, $divisi_start, $divisi_end, $module)->result_array();
-        $data['data_entry_head']   = $this->gl_model->get_data_entry_head($periode_terkini, $tgl_start, $tgl_end, $divisi_start, $divisi_end, $module)->result_array();
+        $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+        $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
 
+        if ($cetakan == 'pdf') {
+            ini_set('memory_limit', '200M');
+            ini_set('upload_max_filesize', '200M');
+            ini_set('post_max_size', '200M');
+            ini_set('max_input_time', 3600);
+            ini_set('max_execution_time', 3600);
 
-        ini_set('memory_limit', '200M');
-        ini_set('upload_max_filesize', '200M');
-        ini_set('post_max_size', '200M');
-        ini_set('max_input_time', 3600);
-        ini_set('max_execution_time', 3600);
+            ini_set("memory_limit", "512M");
 
-        ini_set("memory_limit", "512M");
+            // Tentukan path yang tepat ke mPDF
+            $this->load->library('mpdf/mpdf');
+            //$result['datapiutang'] = $this->piutang_model->data()->result_array();
 
-        // Tentukan path yang tepat ke mPDF
-        $this->load->library('mpdf/mpdf');
-        //$result['datapiutang'] = $this->piutang_model->data()->result_array();
+            // Define a Landscape page size/format by name
+            $mpdf = new mPDF('utf-8', 'A4-L');
+            //Memulai proses untuk menyimpan variabel php dan html
+            ob_start();
 
-        // Define a Landscape page size/format by name
-        $mpdf = new mPDF('utf-8', 'A4-L');
-        //Memulai proses untuk menyimpan variabel php dan html
-        ob_start();
+            $this->load->view('cetak/gl/gl_laporan_module_view', $data);
 
-        $this->load->view('cetak/gl/gl_laporan_module_view', $data);
-
-        //$mpdf->setFooter('{PAGENO}');
-        //penulisan output selesai, sekarang menutup mpdf dan generate kedalam format pdf
-        $html = ob_get_contents(); //Proses untuk mengambil hasil dari OB..
-        ob_end_clean();
-        //Disini dimulai proses convert UTF-8, kalau ingin ISO-8859-1 cukup dengan mengganti $mpdf->WriteHTML($html);
-        $mpdf->WriteHTML(utf8_encode($html));
-        $mpdf->Output($nama_dokumen . ".pdf", 'I');
-        exit;
+            //$mpdf->setFooter('{PAGENO}');
+            //penulisan output selesai, sekarang menutup mpdf dan generate kedalam format pdf
+            $html = ob_get_contents(); //Proses untuk mengambil hasil dari OB..
+            ob_end_clean();
+            //Disini dimulai proses convert UTF-8, kalau ingin ISO-8859-1 cukup dengan mengganti $mpdf->WriteHTML($html);
+            $mpdf->WriteHTML(utf8_encode($html));
+            $mpdf->Output($nama_dokumen . ".pdf", 'I');
+            exit;
+        } else {
+            $this->load->view('cetak/gl/gl_laporan_module_view_excel', $data);
+        }
     }
 
 
