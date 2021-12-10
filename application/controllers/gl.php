@@ -924,7 +924,6 @@ class Gl extends CI_Controller
 
         $res_data       = $this->gl_model->get_data_entry_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
         $res_data_head  = $this->gl_model->get_data_entry_head_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
-        $html;
 
         $nos = 0 + 1;
         foreach ($res_data_head as $v) {
@@ -944,7 +943,7 @@ class Gl extends CI_Controller
               <td align="center">' . $a['ref'] . '</td>
               <td align="center">' . $a['sbu'] . '</td>
               <td align="left">' . $a['noac'] . '</td>
-              <td align="left" style="width:50px">' . $a['desc'] . '</td>
+              <td align="left" style="width:50px">' . $a['descac'] . '</td>
               <td align="left">' . $a['ket'] . '</td>
               <td align="right" width="150px"><div style="float:right">' . $a['DEBET_F'] . '</div></td>
               <td align="right" width="150px"><div style="float:right">' . $a['CREDIT_F'] . '</div></td>
@@ -956,11 +955,8 @@ class Gl extends CI_Controller
             $total_debit = $v['DBT'];
             $total_kredit = $v['KRD'];
 
-
             $total_kredit_nf = $v['KRD_NF'];
             $total_debit_nf = $v['DBT_NF'];
-
-            $bg_color;
             if ($total_kredit_nf != $total_debit_nf) {
                 $bg_color = 'red';
             } else {
