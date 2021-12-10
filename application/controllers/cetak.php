@@ -105,8 +105,8 @@ class Cetak extends CI_Controller
         foreach ($res_data_head as $v) {
 
             $html .= '<tr >
-              <td width="100px" colspan="5" style="background-color:#cef58e"><b>Account : () ' . $v['ACCTNO'] . ' ' . $v['ACCTNAME'] . '</b></td>
-              <td align="right" width="150px" style="background-color:#cef58e"><div style="float:right">0</div></td>
+              <td width="100px" colspan="4" style="background-color:#cef58e"><b>Account : () ' . $v['ACCTNO'] . ' ' . $v['ACCTNAME'] . '</b></td>
+              <td align="right" width="150px" style="background-color:#cef58e"><div style="float:right">' . number_format($v['saldo'], 2, ",", ".") . ' </div></td>
               <td align="right" width="150px" style="background-color:#cef58e"><div style="float:right">0</div></td>
               </tr>';
 
@@ -123,7 +123,6 @@ class Cetak extends CI_Controller
                     $html .= '<tr>
               <td width="100px" align="center">' . $a['TGL'] . '</td>
               <td width="100px">' . $a['VOUCNO'] . '</td>
-              <td width="100px">' . $a['KODE_REF'] . '</td>
               <td align="left">' . $a['FROM'] . '</td>
               <td align="left" width="500px">' . $a['REMARKS'] . '</td>
               <td align="right" width="150px"><div style="float:right">' . $a['DEBET_F'] . '</div></td>
@@ -138,13 +137,12 @@ class Cetak extends CI_Controller
 
 
 
-            //          $html .='<tr>
-            //          <td width="100px" colspan="5" style="text-align: right;background:#f7f2a0;color:black;font-weight: bold;">TOTAL</td>
-            //
-            //          <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right">'. number_format($tot_deb,2,',','.').'</div></td>
-            //          <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right"><div style="float:right">'. number_format($tot_cre,2,',','.').'</div></td>
-            //          </tr>';
-
+            $html .= '<tr>
+                     <td width="100px" colspan="4" style="text-align: right;background:#f7f2a0;color:black;font-weight: bold;">TOTAL</td>
+            
+                     <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right">' . number_format($v['saldo'], 2, ',', '.') . '</div></td>
+                     <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right"><div style="float:right">' . number_format($v['saldo'], 2, ',', '.') . '</div></td>
+                     </tr>';
         }
 
         echo $html;
@@ -194,6 +192,7 @@ class Cetak extends CI_Controller
         $data['res_data_head'] = $this->cetak_model->get_data_vouch_register_head_2($tgl_start, $tgl_end, $cbx_periode)->result_array();
         // Tentukan path yang tepat ke mPDF
         $this->load->library('mpdf/mpdf');
+        $data['namapt']  = $this->main_model->get_pt()->row_array();
         //$result['datapiutang'] = $this->piutang_model->data()->result_array();
 
         // Define a Landscape page size/format by name

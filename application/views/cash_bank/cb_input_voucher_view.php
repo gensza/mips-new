@@ -735,9 +735,13 @@
         Command: toastr["warning"]("Silahkan masukan nomor account !", "Opps !");
         $("#acct").focus();
       }
+      else if ($("#sumber_dana_nominal").val() == '') {
+        Command: toastr["warning"]("No. PDDO tidak boleh kosong !", "Opps !");
+        $("#sumber_dana_nominal").focus();
+      }
       else if ($("#divisi_v").val() == 0) {
         Command: toastr["warning"]("Silahkan pilih divisi !", "Opps !");
-        $("#acct").focus();
+        $("#divisi_v").focus();
       }
       else if ($("#transaksi_remark").val() == 0) {
         Command: toastr["warning"]("Silahkan isi pada kolom transaksi !", "Opps !");
@@ -1154,7 +1158,7 @@ for ($i = 0; $i < 6; $i++) {
                     <div class="form-group">
                       <label for="demo-vs-definput" class="control-label">Sumber Dana</label>
                       <select class="form-control span17" name="sumber_dana" id="sumber_dana">
-                        <option value="0">-Pilih-</option>
+                        <!-- <option value="0">-Pilih-</option> -->
                         <option value="PDO Gaji|1">PDO Gaji</option>
                         <option value="PDDO IM|2">PDDO IM</option>
                         <option value="PDDO GRTT|3">PDDO GRTT</option>
@@ -1310,6 +1314,12 @@ for ($i = 0; $i < 6; $i++) {
       .tables_nowrap {
         /*white-space: nowrap;*/
       }
+
+      table#tabel_detail_caba td {
+        padding: 3px;
+        padding-left: 10px;
+        font-size: 12px;
+      }
     </style>
 
     <div class="span6">
@@ -1322,13 +1332,13 @@ for ($i = 0; $i < 6; $i++) {
           <table id="tabel_detail_caba" class="tables_nowrap table table-hover table-striped table-bordered" style="width: 100%">
             <thead>
               <tr>
-                <th>SBU</th>
-                <th>Acct</th>
-                <th>Nama Account</th>
-                <th>Keterangan</th>
-                <th>Debit</th>
-                <th>Kredit</th>
-                <th style="width: 15%">Link</th>
+                <th style="font-size: 12px; padding:10px">SBU</th>
+                <th style="font-size: 12px; padding:10px">Acct</th>
+                <th style="font-size: 12px; padding:10px">Nama Account</th>
+                <th style="font-size: 12px; padding:10px">Keterangan</th>
+                <th style="font-size: 12px; padding:10px">Debit</th>
+                <th style="font-size: 12px; padding:10px">Kredit</th>
+                <th style="font-size: 12px; padding:10px;width: 15%">Link</th>
               </tr>
             </thead>
           </table>
