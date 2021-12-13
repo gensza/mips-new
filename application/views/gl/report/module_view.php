@@ -71,18 +71,26 @@
         sf_tgl_end = $("#tgl_end").val();
       }
 
-      //window.open(base_url+'cetak/cash_bank_lap_register/'+tgl_start+'/'+tgl_end+'');
+      if ($("#chx_lpbbkb").is(":checked")) {
+        var chx_lpbbkb = 1;
+      } else {
+        var chx_lpbbkb = 0;
+      }
+
+      var data_chxbox = [
+        chx_lpbbkb, // lpb vs bkv
+      ];
 
       var url = '<?php echo base_url('cetak/gl_lap_module/'); ?>';
 
       if (cetak == 'pdf') {
-        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + modules + '/' + cetak, '_blank');
+        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + modules + '/' + cetak + '/' + data_chxbox + '/' + 'Journal Module', '_blank');
         // if (window.focus) {
         //   newwindow.focus()
         // }
         // return false;
       } else {
-        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + modules + '/' + cetak, );
+        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + modules + '/' + cetak + '/' + data_chxbox + '/' + 'Journal Module');
       }
     }
 
@@ -403,7 +411,7 @@
 
   <br>
 
-  <button type="button" class="btn btn-info btn-min-width mr-1 mb-1" id="btn_tampilkan"><i class="fa fa-save"></i><i class="splashy-zoom"></i> Tampilkan </button>
+  <!-- <button type="button" class="btn btn-info btn-min-width mr-1 mb-1" id="btn_tampilkan"><i class="fa fa-save"></i><i class="splashy-zoom"></i> Tampilkan </button> -->
   <button type="button" class="btn btn-danger btn-min-width mr-1 mb-1" id="btn_cetak_pdf"><i class="fa fa-print"></i><i class="splashy-printer"></i> PDF</button>
   <button type="button" class="btn btn-success btn-min-width mr-1 mb-1" id="btn_cetak_excel"><i class="fa fa-print"></i><i class="splashy-printer"></i> Excel</button>
 

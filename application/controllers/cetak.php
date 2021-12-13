@@ -382,12 +382,21 @@ class Cetak extends CI_Controller
     }
 
 
-    public function gl_lap_module($periode_terkini, $tgl_start, $tgl_end, $divisi_start, $divisi_end, $module, $cetakan)
+    public function gl_lap_module($periode_terkini, $tgl_start, $tgl_end, $divisi_start, $divisi_end, $module, $cetakan, $data_chxbox)
     {
         $nama_dokumen = 'Laporan_GL_Module_' . $tgl_start . '_' . $tgl_end . '';
 
-        $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
-        $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+        $data['tgl_start'] = $tgl_start;
+        $data['tgl_end'] = $tgl_end;
+        $data['periode_terkini'] = $periode_terkini;
+        if ($data_chxbox[0] == 1) // ini jika LPB vs BKB
+        {
+            // $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module_lpbbkb($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+            $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module_lpbbkb($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+        } else {
+            $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+            $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+        }
 
         if ($cetakan == 'pdf') {
             ini_set('memory_limit', '200M');
@@ -407,7 +416,11 @@ class Cetak extends CI_Controller
             //Memulai proses untuk menyimpan variabel php dan html
             ob_start();
 
-            $this->load->view('cetak/gl/gl_laporan_module_view', $data);
+            if ($data_chxbox[0] == 1) { // ini jika LPB vs BKB
+                $this->load->view('cetak/gl/gl_laporan_module_view_lpbbkb', $data);
+            } else {
+                $this->load->view('cetak/gl/gl_laporan_module_view', $data);
+            }
 
             //$mpdf->setFooter('{PAGENO}');
             //penulisan output selesai, sekarang menutup mpdf dan generate kedalam format pdf
@@ -418,7 +431,11 @@ class Cetak extends CI_Controller
             $mpdf->Output($nama_dokumen . ".pdf", 'I');
             exit;
         } else {
-            $this->load->view('cetak/gl/gl_laporan_module_view_excel', $data);
+            if ($data_chxbox[0] == 1) { // ini jika LPB vs BKB
+                $this->load->view('cetak/gl/gl_laporan_module_view_lpbbkb_excel', $data);
+            } else {
+                $this->load->view('cetak/gl/gl_laporan_module_view_excel', $data);
+            }
         }
     }
 

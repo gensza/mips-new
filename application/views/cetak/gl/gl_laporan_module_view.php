@@ -14,7 +14,17 @@
 <div style="width: 100%;text-align: center;">
   <span style="font-weight: bold;font-size: 18px">GL - Module Report</span>
   <br>
-  <span style="font-size: 14px">Periode : <?php echo $this->uri->segment(4); ?> s/d <?php echo $this->uri->segment(5); ?></span>
+  <?php
+  if ($periode_terkini == 1) {
+  ?>
+    <span style="font-size: 14px">Periode : <?php echo date('01-m-Y'); ?> s/d <?php echo date('30-m-Y'); ?></span>
+  <?php
+  } else {
+  ?>
+    <span style="font-size: 14px">Periode : <?php echo $tgl_start; ?> s/d <?php echo $tgl_end; ?></span>
+  <?php
+  }
+  ?>
 </div>
 
 <style>
