@@ -1184,40 +1184,160 @@ class Gl_model extends CI_Model
         }
     }
 
+    function get_data_entry_rpt_module_estpks($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)
+    {
+
+        $sess_lokasi = $this->get_nama_lokasi();
+        $sess_periode = $this->session->userdata('sess_periode');
+
+        $dv_start = "AND (sbu != '01' AND sbu != '02')";
+
+        if ($module == '-') {
+            $modules = "";
+        } else {
+            $modules = "AND module = '" . $module . "'";
+        }
+
+        if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,dr DEBET_F2,FORMAT(dr, 2) DEBET_F,FORMAT(cr, 2) CREDIT_F FROM entry WHERE periodetxt = '$sess_periode' $dv_start $modules ORDER BY `DATE`, ref ASC";
+            return $this->mips_gl->query($sql);
+        } else {
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,dr DEBET_F2,FORMAT(dr, 2) DEBET_F,FORMAT(cr, 2) CREDIT_F FROM entry WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') $dv_start $modules ORDER BY `DATE`, ref ASC";
+            return $this->mips_gl->query($sql);
+        }
+    }
+
+    function get_data_entry_head_rpt_module_estpks($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)
+    {
+
+        $sess_lokasi = $this->get_nama_lokasi();
+        $sess_periode = $this->session->userdata('sess_periode');
+
+        $dv_start = "AND (sbu != '01' AND sbu != '02')";
+
+        if ($module == '-') {
+            $modules = "";
+        } else {
+            $modules = "AND module = '" . $module . "'";
+        }
+
+
+        if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
+
+            $sql = "SELECT ref,SUM(dr) AS DBT_NF,FORMAT(SUM(dr), 2) DBT,FORMAT(SUM(cr), 2) KRD,SUM(cr) KRD_NF FROM entry WHERE periodetxt = '$sess_periode' $dv_start $modules GROUP BY ref ORDER BY `DATE`, ref ASC ";
+            return $this->mips_gl->query($sql);
+        } else {
+
+            $sql = "SELECT ref,SUM(dr) AS DBT_NF,FORMAT(SUM(dr), 2) DBT,FORMAT(SUM(cr), 2) KRD,SUM(cr) KRD_NF FROM entry WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') $dv_start $modules GROUP BY ref ORDER BY `DATE`, ref ASC ";
+            return $this->mips_gl->query($sql);
+        }
+    }
+
+    function get_data_entry_rpt_module_est($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)
+    {
+
+        $sess_lokasi = $this->get_nama_lokasi();
+        $sess_periode = $this->session->userdata('sess_periode');
+
+        $dv_start = "AND (sbu != '01' AND sbu != '02' AND sbu != '03')";
+
+        if ($module == '-') {
+            $modules = "";
+        } else {
+            $modules = "AND module = '" . $module . "'";
+        }
+
+        if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,dr DEBET_F2,FORMAT(dr, 2) DEBET_F,FORMAT(cr, 2) CREDIT_F FROM entry WHERE periodetxt = '$sess_periode' $dv_start $modules ORDER BY `DATE`, ref ASC";
+            return $this->mips_gl->query($sql);
+        } else {
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,dr DEBET_F2,FORMAT(dr, 2) DEBET_F,FORMAT(cr, 2) CREDIT_F FROM entry WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') $dv_start $modules ORDER BY `DATE`, ref ASC";
+            return $this->mips_gl->query($sql);
+        }
+    }
+
+    function get_data_entry_head_rpt_module_est($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)
+    {
+
+        $sess_lokasi = $this->get_nama_lokasi();
+        $sess_periode = $this->session->userdata('sess_periode');
+
+        $dv_start = "AND (sbu != '01' AND sbu != '02' AND sbu != '03')";
+
+        if ($module == '-') {
+            $modules = "";
+        } else {
+            $modules = "AND module = '" . $module . "'";
+        }
+
+
+        if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
+
+            $sql = "SELECT ref,SUM(dr) AS DBT_NF,FORMAT(SUM(dr), 2) DBT,FORMAT(SUM(cr), 2) KRD,SUM(cr) KRD_NF FROM entry WHERE periodetxt = '$sess_periode' $dv_start $modules GROUP BY ref ORDER BY `DATE`, ref ASC ";
+            return $this->mips_gl->query($sql);
+        } else {
+
+            $sql = "SELECT ref,SUM(dr) AS DBT_NF,FORMAT(SUM(dr), 2) DBT,FORMAT(SUM(cr), 2) KRD,SUM(cr) KRD_NF FROM entry WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') $dv_start $modules GROUP BY ref ORDER BY `DATE`, ref ASC ";
+            return $this->mips_gl->query($sql);
+        }
+    }
+
+    function get_data_entry_rpt_module_pks($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)
+    {
+
+        $sess_lokasi = $this->get_nama_lokasi();
+        $sess_periode = $this->session->userdata('sess_periode');
+
+        $dv_start = "AND sbu = '03'";
+
+        if ($module == '-') {
+            $modules = "";
+        } else {
+            $modules = "AND module = '" . $module . "'";
+        }
+
+        if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,dr DEBET_F2,FORMAT(dr, 2) DEBET_F,FORMAT(cr, 2) CREDIT_F FROM entry WHERE periodetxt = '$sess_periode' $dv_start $modules ORDER BY `DATE`, ref ASC";
+            return $this->mips_gl->query($sql);
+        } else {
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,dr DEBET_F2,FORMAT(dr, 2) DEBET_F,FORMAT(cr, 2) CREDIT_F FROM entry WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') $dv_start $modules ORDER BY `DATE`, ref ASC";
+            return $this->mips_gl->query($sql);
+        }
+    }
+
+    function get_data_entry_head_rpt_module_pks($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)
+    {
+
+        $sess_lokasi = $this->get_nama_lokasi();
+        $sess_periode = $this->session->userdata('sess_periode');
+
+        $dv_start = "AND sbu = '03'";
+
+        if ($module == '-') {
+            $modules = "";
+        } else {
+            $modules = "AND module = '" . $module . "'";
+        }
+
+
+        if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
+
+            $sql = "SELECT ref,SUM(dr) AS DBT_NF,FORMAT(SUM(dr), 2) DBT,FORMAT(SUM(cr), 2) KRD,SUM(cr) KRD_NF FROM entry WHERE periodetxt = '$sess_periode' $dv_start $modules GROUP BY ref ORDER BY `DATE`, ref ASC ";
+            return $this->mips_gl->query($sql);
+        } else {
+
+            $sql = "SELECT ref,SUM(dr) AS DBT_NF,FORMAT(SUM(dr), 2) DBT,FORMAT(SUM(cr), 2) KRD,SUM(cr) KRD_NF FROM entry WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') $dv_start $modules GROUP BY ref ORDER BY `DATE`, ref ASC ";
+            return $this->mips_gl->query($sql);
+        }
+    }
+
     /* Report Journal */
-
-    // function get_data_entry_rpt_module_lpbbkb($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)
-    // {
-
-    //     $sess_lokasi = $this->get_nama_lokasi();
-    //     $sess_periode = $this->session->userdata('sess_periode');
-
-    //     if (($divisi_start == '-') && ($divisi_end == '-')) {
-    //         $dv_start = "";
-    //     } else if ($divisi_start != '-' && $divisi_end == '-') {
-    //         $dv_start = "AND sbu = '" . $divisi_start . "'";
-    //     } else if ($divisi_start != '-' && $divisi_end != '-') {
-    //         $dv_start = "AND sbu >= '" . $divisi_start . "' AND sbu <= '" . $divisi_end . "'";
-    //     } else {
-    //         $dv_start = "";
-    //     }
-
-    //     if ($module == '-') {
-    //         $modules = "";
-    //     } else {
-    //         $modules = "AND module = '" . $module . "'";
-    //     }
-
-    //     if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
-
-    //         $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,dr DEBET_F2,FORMAT(dr, 2) DEBET_F,FORMAT(cr, 2) CREDIT_F FROM entry WHERE periodetxt = '$sess_periode' $dv_start $modules ORDER BY `DATE`, ref ASC";
-    //         return $this->mips_gl->query($sql);
-    //     } else {
-
-    //         $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,dr DEBET_F2,FORMAT(dr, 2) DEBET_F,FORMAT(cr, 2) CREDIT_F FROM entry WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') $dv_start $modules ORDER BY `DATE`, ref ASC";
-    //         return $this->mips_gl->query($sql);
-    //     }
-    // }
 
     function get_data_entry_head_rpt_module_lpbbkb($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)
     {

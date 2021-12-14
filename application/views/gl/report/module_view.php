@@ -71,26 +71,37 @@
         sf_tgl_end = $("#tgl_end").val();
       }
 
-      if ($("#chx_lpbbkb").is(":checked")) {
-        var chx_lpbbkb = 1;
-      } else {
-        var chx_lpbbkb = 0;
+      // ini untuk cekbox tapi sy blm ngerti fungsi nya
+      if ($("#chx_khusus").is(":checked")) {
+        var jenis_cbx = 'KHUSUS';
       }
 
-      var data_chxbox = [
-        chx_lpbbkb, // lpb vs bkv
-      ];
+      if ($("#chx_lpbbkb").is(":checked")) {
+        var jenis_cbx = 'LOGISTIK';
+      }
+
+      if ($("#chx_estpks").is(":checked")) {
+        var jenis_cbx = 'ESTPKS';
+      }
+
+      if ($("#chx_estate").is(":checked")) {
+        var jenis_cbx = 'EST';
+      }
+
+      if ($("#chx_pks").is(":checked")) {
+        var jenis_cbx = 'PKS';
+      }
 
       var url = '<?php echo base_url('cetak/gl_lap_module/'); ?>';
 
       if (cetak == 'pdf') {
-        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + modules + '/' + cetak + '/' + data_chxbox + '/' + 'Journal Module', '_blank');
+        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + modules + '/' + cetak + '/' + jenis_cbx + '/' + 'Journal Module', '_blank');
         // if (window.focus) {
         //   newwindow.focus()
         // }
         // return false;
       } else {
-        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + modules + '/' + cetak + '/' + data_chxbox + '/' + 'Journal Module');
+        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + modules + '/' + cetak + '/' + jenis_cbx + '/' + 'Journal Module');
       }
     }
 
@@ -123,27 +134,6 @@
 
 
     $("#btn_tampilkan").click(function() {
-
-      // ini untuk cekbox tapi sy blm ngerti fungsi nya
-      // if ($("#chx_khusus").is(":checked")) {
-      //   var chx_khusus = 1;
-      // }
-
-      // if ($("#chx_lpbbkb").is(":checked")) {
-      //   var chx_lpbbkb = 'LOGISTIK';
-      // }
-
-      // if ($("#chx_estpks").is(":checked")) {
-      //   var chx_estpks = 1;
-      // }
-
-      // if ($("#chx_estate").is(":checked")) {
-      //   var chx_estate = 1;
-      // }
-
-      // if ($("#chx_pks").is(":checked")) {
-      //   var chx_pks = 1;
-      // }
 
       if ($('#chx_periode').val() == 1) {
 

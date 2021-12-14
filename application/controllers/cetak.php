@@ -389,10 +389,25 @@ class Cetak extends CI_Controller
         $data['tgl_start'] = $tgl_start;
         $data['tgl_end'] = $tgl_end;
         $data['periode_terkini'] = $periode_terkini;
-        if ($data_chxbox[0] == 1) // ini jika LPB vs BKB
+        if ($data_chxbox == 'KHUSUS') {
+            $data['jenis_khusus'] = $module;
+            $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+            $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+        } else if ($data_chxbox == 'LOGISTIK') // ini jika LPB vs BKB
         {
-            // $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module_lpbbkb($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
             $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module_lpbbkb($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+        } else if ($data_chxbox == 'ESTPKS') {
+            $data['jenis_khusus'] = $module;
+            $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module_estpks($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+            $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module_estpks($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+        } else if ($data_chxbox == 'EST') {
+            $data['jenis_khusus'] = $module;
+            $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module_est($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+            $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module_est($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+        } else if ($data_chxbox == 'PKS') {
+            $data['jenis_khusus'] = $module;
+            $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module_pks($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
+            $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module_pks($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
         } else {
             $data['data_entry']        = $this->gl_model->get_data_entry_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
             $data['data_entry_head']   = $this->gl_model->get_data_entry_head_rpt_module($tgl_start, $tgl_end, $periode_terkini, $divisi_start, $divisi_end, $module)->result_array();
@@ -416,8 +431,16 @@ class Cetak extends CI_Controller
             //Memulai proses untuk menyimpan variabel php dan html
             ob_start();
 
-            if ($data_chxbox[0] == 1) { // ini jika LPB vs BKB
+            if ($data_chxbox == 'KHUSUS') {
+                $this->load->view('cetak/gl/gl_laporan_module_view_khusus', $data);
+            } else if ($data_chxbox == 'LOGISTIK') { // ini jika LPB vs BKB
                 $this->load->view('cetak/gl/gl_laporan_module_view_lpbbkb', $data);
+            } else if ($data_chxbox == 'ESTPKS') {
+                $this->load->view('cetak/gl/gl_laporan_module_view_estpks', $data);
+            } else if ($data_chxbox == 'EST') {
+                $this->load->view('cetak/gl/gl_laporan_module_view_est', $data);
+            } else if ($data_chxbox == 'PKS') {
+                $this->load->view('cetak/gl/gl_laporan_module_view_pks', $data);
             } else {
                 $this->load->view('cetak/gl/gl_laporan_module_view', $data);
             }
@@ -431,8 +454,16 @@ class Cetak extends CI_Controller
             $mpdf->Output($nama_dokumen . ".pdf", 'I');
             exit;
         } else {
-            if ($data_chxbox[0] == 1) { // ini jika LPB vs BKB
+            if ($data_chxbox == 'KHUSUS') {
+                $this->load->view('cetak/gl/gl_laporan_module_view_khusus_excel', $data);
+            } elseif ($data_chxbox == 'LOGISTIK') { // ini jika LPB vs BKB
                 $this->load->view('cetak/gl/gl_laporan_module_view_lpbbkb_excel', $data);
+            } elseif ($data_chxbox == 'ESTPKS') {
+                $this->load->view('cetak/gl/gl_laporan_module_view_estpks_excel', $data);
+            } elseif ($data_chxbox == 'EST') {
+                $this->load->view('cetak/gl/gl_laporan_module_view_est_excel', $data);
+            } elseif ($data_chxbox == 'PKS') {
+                $this->load->view('cetak/gl/gl_laporan_module_view_pks_excel', $data);
             } else {
                 $this->load->view('cetak/gl/gl_laporan_module_view_excel', $data);
             }
