@@ -183,10 +183,21 @@ class Cetak_model extends CI_Model
             $var_bulan = '-';
         }
 
-        $sql = "SELECT id,ACCTNO,SITENO,ACCTNAME,FORMAT(saldo, 2) saldo_master_f,FORMAT(saldo_" . $var_bulan . ", 2) saldo_f FROM saldo_voucher WHERE thn = $tahun";
+        $sql = "SELECT id,ACCTNO,SITENO,ACCTNAME,saldo as saldo_master_f, saldo_$var_bulan as saldo_f FROM saldo_voucher WHERE thn = '$tahun'";
         return $this->mips_caba->query($sql);
     }
 
+    function get_saldo_awal($coa)
+    {
+        $cek = $this->mips_caba->query("SELECT ACCTNO FROM voucher WHERE ACCTNO='$coa'")->num_rows();
+        if ($cek > 0) {
+            # code...
+            return $this->mips_caba->query("SELECT saldo FROM master_accountcb WHERE ACCTNO='$coa'")->row();
+        } else {
+            return "alidev";
+            # code...
+        }
+    }
 
     function get_list_saldo_akhir_aktifitas_account()
     {
@@ -205,5 +216,10 @@ class Cetak_model extends CI_Model
         // $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') and lokasi = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
         $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND lokasi = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
         return $this->mips_caba->query($sql);
+    }
+
+    function get_vocer($coa)
+    {
+        return $this->mips_caba->query("SELECT ACCTNO FROM voucher WHERE ACCTNO='$coa'")->num_rows();
     }
 }

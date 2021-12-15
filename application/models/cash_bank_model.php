@@ -4862,27 +4862,26 @@ class Cash_bank_model extends CI_Model
         }
         // return $bulan;
 
-        // $dt = $this->mips_caba->query("SELECT FROM saldo_voucher")->result_array();
+        $dt = $this->mips_caba->query("SELECT DISTINCT(ACCTNO) FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun'")->result();
+        // $arr = [];
+        foreach ($dt as $d) {
+            // $arr[] = array(
+            //     'ACCTNO' => $d->ACCTNO
+            // );
 
-        $sql = "SELECT ACCTNO,
-            DESCRIPT,
-                    SUM(DEBIT) AS sum_debit, 
-                    SUM(CREDIT) AS sum_credit
-            FROM voucher
-            WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND (POSTED = 0 OR POSTED IS NULL)
-            GROUP BY ACCTNO";
-        $result = $this->mips_caba->query($sql)->result_array();
 
-        foreach ($result as $a) {
+            $sql = "SELECT ACCTNO, DESCRIPT, SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$d->ACCTNO' AND (POSTED = 0 OR POSTED IS NULL) GROUP BY ACCTNO";
+            $result = $this->mips_caba->query($sql)->result_array();
 
-            $saldos = $a['sum_debit'] - $a['sum_credit'];
+            foreach ($result as $a) {
 
-            $dt =
-                $sqlv = "UPDATE saldo_voucher SET saldo_$var_bulan= '$saldos' WHERE ACCTNO = '$a[ACCTNO]' AND thn = $tahun";
-            $this->mips_caba->query($sqlv);
+                $saldos = $a['sum_debit'] - $a['sum_credit'];
+
+
+                $sqlv = "UPDATE saldo_voucher SET saldo_$var_bulan='$saldos' WHERE ACCTNO ='$a[ACCTNO]' AND thn = $tahun";
+                $this->mips_caba->query($sqlv);
+            }
         }
-
-
         //$h = "b'1'";
         $sqlc = "UPDATE voucher SET POSTED = 1 AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' WHERE POSTED = 0";
         return $this->mips_caba->query($sqlc);

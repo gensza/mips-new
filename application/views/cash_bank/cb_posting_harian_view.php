@@ -49,7 +49,7 @@
                                 swal("Selesai", "Data Berhasil di Posting", "success");
                             }
 
-                            console.log('íni data nya ya', response);
+                            // console.log('Ini data nya ya', response);
                             //Command: toastr["success"]("Proses posting selesai", "Ok Posting Tersimpan");
                         },
                         beforeSend: function() {
