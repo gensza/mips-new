@@ -1633,8 +1633,6 @@ class Gl_model extends CI_Model
 
     function posting_harian()
     {
-
-
         //ini group dulu berdasarkan noac
         $period = $this->periode();
         $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
@@ -1642,22 +1640,22 @@ class Gl_model extends CI_Model
         $DEBIT  = 'saldo' . substr($period, 4, 6) . 'd';
         $KREDIT = 'saldo' . substr($period, 4, 6) . 'c';
 
-        //kosongkan dulu saldonya untuk bulan periode
+        // kosongkan dulu saldonya untuk bulan periode
         $sqlclear = "UPDATE noac SET balancedr  = 0,
                                          balancecr  = 0,
-                                         " . $DEBIT . " = 0,
-                                         " . $KREDIT . "= 0";
+                                         $DEBIT = 0,
+                                         $KREDIT= 0";
         $this->mips_gl->query($sqlclear);
 
         //SUBSTR(periodetxt,1,6) = '$period'
         $sql = "SELECT  noac,
-                    periode,
+                    periodetxt,
                     `group`, 
                     SUM(dr) AS SumOfdr, 
                     SUM(cr) AS SumOfcr 
             FROM entry
-            WHERE STR_TO_DATE(periode, '%Y-%m') = STR_TO_DATE('$periodes', '%Y-%m')
-            GROUP BY periode,noac,`group`
+            WHERE periodetxt = $period
+            GROUP BY periodetxt,noac,`group`
             ORDER BY noac DESC";
         $sql_entry = $this->mips_gl->query($sql)->result_array();
 
@@ -1739,8 +1737,8 @@ class Gl_model extends CI_Model
 
             $sql3 = "UPDATE noac SET balancedr  = 0,
                                          balancecr  = 0,
-                                         " . $DEBIT . " = '$TOTALDR1',
-                                         " . $KREDIT . "= '$TOTALCR1' 
+                                         $DEBIT = '$TOTALDR1',
+                                         $KREDIT= '$TOTALCR1' 
                                         WHERE noac  = '$KODECOA'";
             $this->mips_gl->query($sql3);
 
@@ -1748,8 +1746,8 @@ class Gl_model extends CI_Model
             //end : ========================== step 1 =====================
 
             //start : ======================== step 2 ==== Filter Group Expenses
-            $sql_act_exp = "SELECT SUM(" . $DEBIT . ") AS TTLDB,
-                                       SUM(" . $KREDIT . ") AS TTLCR 
+            $sql_act_exp = "SELECT SUM($DEBIT) AS TTLDB,
+                                       SUM($KREDIT) AS TTLCR 
                             FROM noac WHERE `type` = 'D' AND `group` LIKE '%Expenses%'";
             $k_sql_exp   = $this->mips_gl->query($sql_act_exp)->row_array();
 
@@ -1768,8 +1766,8 @@ class Gl_model extends CI_Model
 
 
             //start : ======================== step 3 ==== Filter Group Revenue
-            $sql_act_rev = "SELECT  SUM(" . $DEBIT . ") AS TTLDB,
-                                        SUM(" . $KREDIT . ") AS TTLCR 
+            $sql_act_rev = "SELECT SUM($DEBIT) AS TTLDB,
+                                        SUM($KREDIT) AS TTLCR 
                             FROM noac WHERE `type` = 'D' AND `group` LIKE '%Revenue%'";
             $k_sql_rev   = $this->mips_gl->query($sql_act_rev)->row_array();
 
@@ -1823,8 +1821,8 @@ class Gl_model extends CI_Model
 
             //start : ========= step 5 =========
             $LR2 = '504500000000000'; // LABA TAHUN BERJALAN
-            $sql_act_lr = "UPDATE noac SET  " . $KREDIT . " = '$TTLRL',
-                                                " . $DEBIT . "  = 0,
+            $sql_act_lr = "UPDATE noac SET $KREDIT = '$TTLRL',
+                                                $DEBIT = 0,
                                                 balancedr   = 0,
                                                 balancecr   = '$TTLRL'
                                            WHERE noac = '$LR2'";
@@ -1835,7 +1833,7 @@ class Gl_model extends CI_Model
         // end ========= Menghitung Nilai Detail ========
 
 
-        $sql_act_etr = "UPDATE entry SET POST = 1 WHERE periode = '$period'";
+        $sql_act_etr = "UPDATE entry SET POST = 1 WHERE periodetxt = '$period'";
         return $this->mips_gl->query($sql_act_etr);
     }
 
@@ -2154,8 +2152,8 @@ class Gl_model extends CI_Model
         foreach ($res_sql_general_master as $a) {
 
 
-            $sql_sum_g = "SELECT   SUM(" . $DEBIT . ") AS TTLDB,
-                                            SUM(" . $KREDIT . ") AS TTLCR,
+            $sql_sum_g = "SELECT SUM($DEBIT) AS TTLDB,
+                                            SUM($KREDIT) AS TTLCR,
                                             SUM(YEARD) AS SALDOB,
                                             SUM(YEARC) AS SALDOC,
                                             SUM(BALANCEDR) AS AWALD,
@@ -2190,8 +2188,8 @@ class Gl_model extends CI_Model
                 }
 
                 //and `group` IN ('Asset','Expenses','Other Expenses')
-                $sql_act_grs = "UPDATE noac SET " . $KREDIT . " = '$TOTALCR',
-                                                        " . $DEBIT . "  = '$TOTALDR',
+                $sql_act_grs = "UPDATE noac SET $KREDIT = '$TOTALCR',
+                                                        $DEBIT  = '$TOTALDR',
                                                         balancedr = 0,
                                                         balancecr = 0 WHERE noac = '$a[noac]'";
                 $this->mips_gl->query($sql_act_grs);
@@ -2218,8 +2216,8 @@ class Gl_model extends CI_Model
                     $TOTALCR_R = 0;
                 }
 
-                $sql_act_grd = "UPDATE noac SET " . $KREDIT . " = '$TOTALCR_R',
-                                                        " . $DEBIT . "  = '$TOTALDR_R',
+                $sql_act_grd = "UPDATE noac SET $KREDIT = '$TOTALCR_R',
+                                                        $DEBIT  = '$TOTALDR_R',
                                                         balancedr    = 0,
                                                         balanceCr    = 0 WHERE noac = '$a[noac]'";
                 $this->mips_gl->query($sql_act_grd);
