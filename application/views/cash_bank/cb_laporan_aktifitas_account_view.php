@@ -9,13 +9,13 @@
         if (!$("#chx_periode").is(":checked")) {
 
         } else {
-            // $("#tgl_start").attr('disabled',true);
-            // $("#tgl_end").attr('disabled',true);
+            $("#tgl_start").attr('disabled', true);
+            $("#tgl_end").attr('disabled', true);
         }
         //$("#tgl_start").focus();
         document.getElementById('chx_periode').onchange = function() {
-            //  document.getElementById('tgl_start').disabled = this.checked;
-            //  document.getElementById('tgl_end').disabled = this.checked;
+            document.getElementById('tgl_start').disabled = this.checked;
+            document.getElementById('tgl_end').disabled = this.checked;
             //ini untuk merubah value checkbox
             if (!$("#chx_periode").is(":checked")) {
                 $("#tgl_start").focus();
@@ -91,12 +91,21 @@
             $("#tbl_vouc_regis").show();
             $("#btn_cetak").show();
             $("#tabel_lap_vouc_jurnal_list").html('');
+
+            if ($('#chx_periode').val() == 0) {
+                var tgl_start = $("#tgl_start").val();
+                var tgl_end = $("#tgl_end").val();
+            } else {
+                var d = new Date();
+                var tgl_start = (01) + '-' + d.getMonth() + '-' + d.getFullYear();
+                var tgl_end = (30) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
+            }
             $.ajax({
                 url: base_url + 'cetak/cb_laporan_aktifitas_account_view',
                 type: "post",
                 data: {
-                    tgl_start: $("#tgl_start").val(),
-                    tgl_end: $("#tgl_end").val(),
+                    tgl_start: tgl_start,
+                    tgl_end: tgl_end,
                     chx_periode: $("#chx_periode").val(),
                     <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
                 },
