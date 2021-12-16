@@ -10,6 +10,8 @@ class Cetak extends CI_Controller
         $this->load->model('cetak_model');
         $this->load->model('gl_model');
         $this->load->model('main_model');
+
+        $this->mips_caba = $this->load->database('mips_caba', TRUE);
     }
 
     public function cb_laporan_voucher_register_view()
@@ -87,6 +89,41 @@ class Cetak extends CI_Controller
         echo $html;
     }
 
+    public function cb_laporan_aktifitas_account($tgl_start, $tgl_end, $cbx_periode)
+    {
+
+        $nama_dokumen = 'Laporan_CB_Account_' . $tgl_start . '_' . $tgl_end . '';
+        $data['res_data'] = $this->cetak_model->get_data_aktifitas_account($tgl_start, $tgl_end)->result_array();
+        $data['res_data_head'] = $this->cetak_model->get_list_saldo_akhir_aktifitas_account($tgl_start, $tgl_end)->result_array();
+        // $data['vou'] = $this->cetak_model->get_vocer();
+        // Tentukan path yang tepat ke mPDF
+        $this->load->library('mpdf/mpdf');
+        $data['namapt']  = $this->main_model->get_pt()->row_array();
+        //$result['datapiutang'] = $this->piutang_model->data()->result_array();
+
+        // Define a Landscape page size/format by name
+        // $mpdf = new mPDF('utf-8', 'A4-P');
+        $mpdf = new mPDF([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            // 'format' => [190, 236],
+            'margin_top' => '3',
+            'orientation' => 'P'
+        ]);
+        //Memulai proses untuk menyimpan variabel php dan html
+        ob_start();
+
+        $this->load->view('cetak/cash_bank/lap_voucher_acc', $data);
+
+        //$mpdf->setFooter('{PAGENO}');
+        //penulisan output selesai, sekarang menutup mpdf dan generate kedalam format pdf
+        $html = ob_get_contents(); //Proses untuk mengambil hasil dari OB..
+        ob_end_clean();
+        //Disini dimulai proses convert UTF-8, kalau ingin ISO-8859-1 cukup dengan mengganti $mpdf->WriteHTML($html);
+        $mpdf->WriteHTML(utf8_encode($html));
+        $mpdf->Output($nama_dokumen . ".pdf", 'I');
+        exit;
+    }
 
     public function cb_laporan_aktifitas_account_view()
     {
@@ -111,7 +148,7 @@ class Cetak extends CI_Controller
 
             if ($vou > 0) {
                 # code...
-                $html .= '<tr >
+                $html .= '<tr>
                   <td width="100px" colspan="4" style="background-color:#cef58e"><b>Account : () ' . $v['ACCTNO'] . ' ' . $v['ACCTNAME'] . '</b></td>
                   <td align="right" width="150px" style="background-color:#cef58e"><div style="float:right">' . number_format($v['saldo'], 2, ",", ".") . ' </div></td>
                   <td align="right" width="150px" style="background-color:#cef58e"><div style="float:right">0</div></td>
@@ -134,21 +171,21 @@ class Cetak extends CI_Controller
                                     <td align="right" width="150px"><div style="float:right">' . $a['CREDIT_F'] . '</div></td>
                                 </tr>';
 
-                        $tot_deb += $a['DEBET_F2'];
-                        $tot_cre += $a['CREDIT_F2'];
+                        // $tot_deb += $a['DEBET_F2'];
+                        // $tot_cre += $a['CREDIT_F2'];
                     }
                     $nos++;
                 }
+                // $coa = $v['ACCTNO'];
+                $dc = $this->cetak_model->get_dc($v['ACCTNO']);
+                $sd = $this->cetak_model->saldo_awal($v['ACCTNO']);
+                $total = $sd->saldo + $dc->totaldr - $dc->totalcr;
                 $html .= '<tr>
                          <td width="100px" colspan="4" style="text-align: right;background:#f7f2a0;color:black;font-weight: bold;">TOTAL Transaki PerAccount :</td>
                 
-                         <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right">' . number_format($tot_deb, 2, ',', '.') . '</div></td>
-                         <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right"><div style="float:right">' . number_format($tot_cre, 2, ',', '.') . '</div></td>
+                         <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right">' . number_format($dc->totaldr, 2, ',', '.') . '</div></td>
+                         <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right"><div style="float:right">' . number_format($dc->totalcr, 2, ',', '.') . '</div></td>
                          </tr>';
-
-                $tot_dc = $tot_deb - $tot_cre;
-                $total = $v['saldo'] - $tot_dc;
-
                 $html .= '<tr>
                          <td width="100px" colspan="4" style="text-align: right;background:#f7f2a0;color:black;font-weight: bold;">SALDO AKHIR :</td>
                 
@@ -266,17 +303,26 @@ class Cetak extends CI_Controller
         $bulan  = $this->input->post('bulan', TRUE);
         $tahun  = $this->input->post('tahun', TRUE);
 
-        $res_data       = $this->cetak_model->get_list_saldo_akhir($bulan, $tahun)->result_array();
+        $res_data = $this->cetak_model->get_list_saldo_akhir($bulan, $tahun)->result_array();
 
-        $html;
+        $html = 0;
         $nos = 0 + 1;
+        $saldo = 0;
         foreach ($res_data as $a) {
+            $saldoawal = $this->cetak_model->get_saldo_awal($a['ACCTNO']);
+            $saldo = $a['saldo_f'];
+            // if ($saldoawal == 'alidev') {
+            //     # code...
+            // } else {
+            //     # code...
+            //     $saldo = $saldoawal->saldo - $a['saldo_f'];
+            // }
 
             $html .= '<tr>
               <td width="20px" align="center">' . $nos . '</td>
               <td width="100px" align="center">' . $a['ACCTNO'] . '</td>
               <td width="100px">' . $a['ACCTNAME'] . '</td>
-              <td width="100px"><div style="float:right">' . $a['saldo_f'] . '</div></td>
+              <td width="100px"><div style="float:right">' . number_format($saldo, 2, ".", ",") . '</div></td>
               </tr>';
             $nos++;
         }
@@ -294,6 +340,7 @@ class Cetak extends CI_Controller
 
         // Tentukan path yang tepat ke mPDF
         $this->load->library('mpdf/mpdf');
+        $data['namapt']  = $this->main_model->get_pt()->row_array();
         //$result['datapiutang'] = $this->piutang_model->data()->result_array();
 
         // Define a Landscape page size/format by name

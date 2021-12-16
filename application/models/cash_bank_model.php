@@ -4607,7 +4607,7 @@ class Cash_bank_model extends CI_Model
         $saldo = str_replace(",", "", $data['saldo']);
         $bln   = $data['bulan'];
 
-        $var_bulan;
+        $var_bulan = 0;
         if ($bln == 01) {
             $var_bulan = 'saldo_1 = ' . $saldo . '';
         } else if ($bln == 02) {
@@ -4650,7 +4650,7 @@ class Cash_bank_model extends CI_Model
         $saldo = str_replace(",", "", $data['saldo']);
         $bln   = $data['bulan'];
 
-        $var_bulan;
+        $var_bulan = 0;
         if ($bln == '01') {
             $var_bulan = '1';
         } else if ($bln == '02') {
@@ -4860,7 +4860,7 @@ class Cash_bank_model extends CI_Model
         } else if ($bulan == '12') {
             $var_bulan = '12';
         }
-        // return $bulan;
+        // return $tahun . 'dan' . $bulan;
 
         $dt = $this->mips_caba->query("SELECT DISTINCT(ACCTNO) FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun'")->result();
         // $arr = [];
@@ -4868,18 +4868,22 @@ class Cash_bank_model extends CI_Model
             // $arr[] = array(
             //     'ACCTNO' => $d->ACCTNO
             // );
-
+            $saldoawal = $this->mips_caba->query("SELECT saldo_$var_bulan as saldone FROM master_accountcb WHERE ACCTNO='$d->ACCTNO'")->row();
 
             $sql = "SELECT ACCTNO, DESCRIPT, SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$d->ACCTNO' AND (POSTED = 0 OR POSTED IS NULL) GROUP BY ACCTNO";
             $result = $this->mips_caba->query($sql)->result_array();
 
             foreach ($result as $a) {
 
-                $saldos = $a['sum_debit'] - $a['sum_credit'];
+                $saldos = $saldoawal->saldone + $a['sum_debit'] - $a['sum_credit'];
 
-
-                $sqlv = "UPDATE saldo_voucher SET saldo_$var_bulan='$saldos' WHERE ACCTNO ='$a[ACCTNO]' AND thn = $tahun";
-                $this->mips_caba->query($sqlv);
+                $saldo_vou["saldo"] = $saldos;
+                $saldo_vou["saldo_$var_bulan"] = $saldos;
+                $this->mips_caba->set($saldo_vou);
+                $this->mips_caba->where(['ACCTNO' => $a['ACCTNO'], 'thn' => $tahun]);
+                $this->mips_caba->update('saldo_voucher');
+                // $sqlv = "UPDATE saldo_voucher SET saldo='$saldos' AND saldo_$var_bulan='$saldos' WHERE ACCTNO='$a[ACCTNO]' AND thn='$tahun'";
+                // $this->mips_caba->query($sqlv);
             }
         }
         //$h = "b'1'";
@@ -4894,19 +4898,13 @@ class Cash_bank_model extends CI_Model
         $period = $this->periode();
 
         $tahun  = substr($period, 0, 4);
-        $bulan  = substr($period, 4, 6);
+        $bulan  = substr($period, 4, 5);
 
         $lokasi = $this->get_nama_lokasi();
 
 
         //head entry
-        $sql_head = "SELECT   *,
-                                    ACCTNO,
-                                    DESCRIPT,
-                                    SUM(DEBIT) AS sum_debit, 
-                                    SUM(CREDIT) AS sum_credit
-                            FROM head_voucher
-                            WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun'";
+        $sql_head = "SELECT * FROM head_voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun'";
         $result_head = $this->mips_caba->query($sql_head)->result_array();
         $ses_nama = $this->session->userdata('sess_nama');
         foreach ($result_head as $a) {
@@ -4916,30 +4914,40 @@ class Cash_bank_model extends CI_Model
 
             if ($kd == 0) {
 
-                $saaa = "SELECT SUM(DEBIT) AS totaldr,
-                                   SUM(CREDIT) AS totalcr
-                            FROM voucher
-                            WHERE VOUCNO = '$a[VOUCNO]'";
-                $bb = $this->mips_caba->query($saaa)->row_array();
+                $saaa = "SELECT SUM(DEBIT) AS totaldr, SUM(CREDIT) AS totalcr FROM voucher WHERE VOUCNO='$a[VOUCNO]'";
+                $bb = $this->mips_caba->query($saaa)->row();
 
-                $sql_ins = "INSERT INTO header_entry (`date`,
-                                    periode,
-                                    ref,
-                                    totaldr,
-                                    totalcr,
-                                    periodetxt,
-                                    modul,
-                                    lokasi,
-                                    user) 
-                            VALUES ('$a[DATE]',
-                                    '$a[DATE]',
-                                    '$a[VOUCNO]',
-                                    '$bb[totaldr]',
-                                    '$bb[totalcr]',
-                                    '$a[txtperiode]',
-                                    'CABA','$a[LOKASI]','$ses_nama')";
 
-                $this->mips_gl->query($sql_ins);
+                $head['date'] =  $a['DATE'];
+                $head['periode'] =  $a['DATE'];
+                $head['ref'] =  $a['VOUCNO'];
+                $head['totaldr'] =  $bb->totaldr;
+                $head['totalcr'] =  $bb->totalcr;
+                $head['periodetxt'] =  $a['txtperiode'];
+                $head['modul'] =  "CABA";
+                $head['lokasi'] =  $a['LOKASI'];
+                $head['user'] =  $ses_nama;
+                $head['SBU'] =  $a['KODE_PT'];
+
+                $this->mips_gl->insert('header_entry', $head);
+                // $sql_ins = "INSERT INTO header_entry (`date`,
+                //                     periode,
+                //                     ref,
+                //                     totaldr,
+                //                     totalcr,
+                //                     periodetxt,
+                //                     modul,
+                //                     lokasi,
+                //                     user) 
+                //             VALUES ('$a[DATE]',
+                //                     '$a[DATE]',
+                //                     '$a[VOUCNO]',
+                //                     '$bb[totaldr]',
+                //                     '$bb[totalcr]',
+                //                     '$a[txtperiode]',
+                //                     'CABA','$a[LOKASI]','$ses_nama')";
+
+                // $this->mips_gl->query($sql_ins);
             }
         }
 

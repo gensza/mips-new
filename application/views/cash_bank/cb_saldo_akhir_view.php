@@ -18,37 +18,43 @@
 
         $("#btn_tampilkan").click(function() {
 
+            if ($("#tgl_periode").val() == '') {
+                Command: toastr["warning"]("Silahkan masukan periode !", "Opps !");
+                $("#tgl_periode").focus();
+            }
+            else {
 
-            $("#list_lap_saldo_akhir").empty();
-            $("#div_lap_saldo_akhir").show();
-            $("#btn_cetak").show();
+                $("#list_lap_saldo_akhir").empty();
+                $("#div_lap_saldo_akhir").show();
+                $("#btn_cetak").show();
 
-            var tglperiode = $("#tgl_periode").val();
-            var bulan_periode = tglperiode.substr(0, 2);
-            var tahun_periode = tglperiode.substr(2, 4);
+                var tglperiode = $("#tgl_periode").val();
+                var bulan_periode = tglperiode.substr(0, 2);
+                var tahun_periode = tglperiode.substr(2, 4);
 
-            $.ajax({
-                url: base_url + 'cetak/cb_laporan_saldo_akhir',
-                type: "post",
-                data: {
-                    bulan: bulan_periode,
-                    tahun: tahun_periode,
-                    <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
-                },
-                dataType: "html",
-                async: 'false',
-                success: function(result) {
+                $.ajax({
+                    url: base_url + 'cetak/cb_laporan_saldo_akhir',
+                    type: "post",
+                    data: {
+                        bulan: bulan_periode,
+                        tahun: tahun_periode,
+                        <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+                    },
+                    dataType: "html",
+                    async: 'false',
+                    success: function(result) {
 
-                    $("#list_lap_saldo_akhir").append(result);
+                        $("#list_lap_saldo_akhir").append(result);
 
-                },
-                beforeSend: function() {
-                    loadingPannel.show();
-                },
-                complete: function() {
-                    loadingPannel.hide();
-                }
-            });
+                    },
+                    beforeSend: function() {
+                        loadingPannel.show();
+                    },
+                    complete: function() {
+                        loadingPannel.hide();
+                    }
+                });
+            }
         });
 
 

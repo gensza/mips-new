@@ -189,10 +189,14 @@ class Cetak_model extends CI_Model
 
     function get_saldo_awal($coa)
     {
-        $cek = $this->mips_caba->query("SELECT ACCTNO FROM voucher WHERE ACCTNO='$coa'")->num_rows();
+        $period = $this->periode();
+
+        $tahun  = substr($period, 0, 4);
+        $bulan  = substr($period, 4, 6);
+        $cek = $this->mips_caba->query("SELECT ACCTNO FROM voucher WHERE ACCTNO='$coa' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun'")->num_rows();
         if ($cek > 0) {
             # code...
-            return $this->mips_caba->query("SELECT saldo FROM master_accountcb WHERE ACCTNO='$coa'")->row();
+            return $this->mips_caba->query("SELECT saldo FROM master_accountcb WHERE ACCTNO='$coa' ")->row();
         } else {
             return "alidev";
             # code...
@@ -205,7 +209,7 @@ class Cetak_model extends CI_Model
         $period   = $this->periode();
         $tahun    = substr($period, 0, 4);
 
-        $sql = "SELECT * FROM saldo_voucher WHERE thn = '$tahun'";
+        $sql = "SELECT * FROM master_accountcb WHERE thn = '$tahun'";
         return $this->mips_caba->query($sql);
     }
 
@@ -220,6 +224,25 @@ class Cetak_model extends CI_Model
 
     function get_vocer($coa)
     {
-        return $this->mips_caba->query("SELECT ACCTNO FROM voucher WHERE ACCTNO='$coa'")->num_rows();
+        $period = $this->periode();
+
+        $tahun  = substr($period, 0, 4);
+        $bulan  = substr($period, 4, 5);
+        return $this->mips_caba->query("SELECT ACCTNO FROM voucher WHERE ACCTNO='$coa' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' ")->num_rows();
+    }
+    function get_dc($coa)
+    {
+        $period = $this->periode();
+
+        $tahun  = substr($period, 0, 4);
+        $bulan  = substr($period, 4, 5);
+        return $this->mips_caba->query("SELECT SUM(DEBIT) AS totaldr, SUM(CREDIT) AS totalcr FROM voucher WHERE ACCTNO='$coa' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' ")->row();
+    }
+    function saldo_awal($coa)
+    {
+        $period = $this->periode();
+
+        $tahun  = substr($period, 0, 4);
+        return $this->mips_caba->query("SELECT saldo FROM master_accountcb WHERE ACCTNO='$coa' AND thn ='$tahun' ")->row();
     }
 }

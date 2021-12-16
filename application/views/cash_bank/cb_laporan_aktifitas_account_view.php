@@ -38,15 +38,18 @@
 
             var cbxs;
             if ($('#chx_periode').val() == 0) {
-                var url = '<?php echo base_url('cetak/cb_laporan_voucher_journal/'); ?>';
+                var url = '<?php echo base_url('cetak/cb_laporan_aktifitas_account/'); ?>';
                 newwindow = window.open(url + '/' + tgl_start + '/' + tgl_end + '/0', 'Perincian Aktivitas', '_blank');
                 if (window.focus) {
                     newwindow.focus()
                 }
                 return false;
             } else {
-                var url = '<?php echo base_url('cetak/cb_laporan_voucher_journal/'); ?>';
-                newwindow = window.open(url + '/0/0/1', 'Perincian Aktivitas', '_blank');
+                var d = new Date();
+                var today = (01) + '-' + d.getMonth() + '-' + d.getFullYear();
+                var today1 = (30) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
+                var url = '<?php echo base_url('cetak/cb_laporan_aktifitas_account/'); ?>';
+                newwindow = window.open(url + '/' + today + '/' + today1 + '/1', 'Perincian Aktivitas', '_blank');
                 if (window.focus) {
                     newwindow.focus()
                 }
