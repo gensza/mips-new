@@ -17,6 +17,7 @@ class Gl extends CI_Controller
         $this->load->model('serv_side_gl_account_detail_model');
         $this->load->model('serv_side_gl_transaksi_entry_model');
         $this->load->model('serv_side_list_acc');
+        $this->load->model('serv_side_list_acc_saldo');
 
 
         $this->db_msal_personalia = $this->load->database('db_msal_personalia', TRUE);
@@ -1601,6 +1602,77 @@ class Gl extends CI_Controller
             "draw" => $_POST['draw'],
             "recordsTotal" => $this->serv_side_list_acc->count_all(),
             "recordsFiltered" => $this->serv_side_list_acc->count_filtered(),
+            "data" => $data,
+        );
+        //output dalam format JSON
+        echo json_encode($output);
+    }
+
+    public function saldo_awal()
+    {
+
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        if ($result == '1') {
+            $this->load->view('gl/coa/coa_saldo_awal_view', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
+    public function list_acc_saldo()
+    {
+        $list = $this->serv_side_list_acc_saldo->get_datatables();
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $field) {
+
+            $no++;
+            $row = array();
+
+            $row[] = $no;
+            $row[] = $field->noac;
+            $row[] = $field->nama;
+            $row[] = $field->group;
+            $row[] = $field->type;
+            $row[] = $field->level;
+            $row[] = number_format($field->balancedr, 2);
+            $row[] = number_format($field->balancecr, 2);
+            $row[] = number_format($field->saldo01d, 2);
+            $row[] = number_format($field->saldo01c, 2);
+            $row[] = number_format($field->saldo02d, 2);
+            $row[] = number_format($field->saldo02c, 2);
+            $row[] = number_format($field->saldo03d, 2);
+            $row[] = number_format($field->saldo03c, 2);
+            $row[] = number_format($field->saldo04d, 2);
+            $row[] = number_format($field->saldo04c, 2);
+            $row[] = number_format($field->saldo05d, 2);
+            $row[] = number_format($field->saldo05c, 2);
+            $row[] = number_format($field->saldo06d, 2);
+            $row[] = number_format($field->saldo06c, 2);
+            $row[] = number_format($field->saldo07d, 2);
+            $row[] = number_format($field->saldo07c, 2);
+            $row[] = number_format($field->saldo08d, 2);
+            $row[] = number_format($field->saldo08c, 2);
+            $row[] = number_format($field->saldo09d, 2);
+            $row[] = number_format($field->saldo09c, 2);
+            $row[] = number_format($field->saldo10d, 2);
+            $row[] = number_format($field->saldo10c, 2);
+            $row[] = number_format($field->saldo11d, 2);
+            $row[] = number_format($field->saldo11c, 2);
+            $row[] = number_format($field->saldo12d, 2);
+            $row[] = number_format($field->saldo12c, 2);
+            $row[] = number_format($field->yeard, 2);
+            $row[] = number_format($field->yearc, 2);
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->serv_side_list_acc_saldo->count_all(),
+            "recordsFiltered" => $this->serv_side_list_acc_saldo->count_filtered(),
             "data" => $data,
         );
         //output dalam format JSON
