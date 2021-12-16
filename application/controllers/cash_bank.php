@@ -159,7 +159,7 @@ class Cash_bank extends CI_Controller
 
         $data['tokens'] = $tokens;
         if ($result == '1') {
-            $this->load->view('cash_bank/cb_monthly_closing_view', $data);
+            $this->load->view('cash_bank/cb_posting_monthly_closing_view', $data);
         } else {
             echo "<script> window.location = 'main/logout' </script>";
         }

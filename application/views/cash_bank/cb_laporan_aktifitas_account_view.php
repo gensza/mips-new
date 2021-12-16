@@ -46,7 +46,7 @@
                 return false;
             } else {
                 var d = new Date();
-                var today = (01) + '-' + d.getMonth() + '-' + d.getFullYear();
+                var today = (01) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
                 var today1 = (30) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
                 var url = '<?php echo base_url('cetak/cb_laporan_aktifitas_account/'); ?>';
                 newwindow = window.open(url + '/' + today + '/' + today1 + '/1', 'Perincian Aktivitas', '_blank');
@@ -100,7 +100,7 @@
                 var tgl_end = $("#tgl_end").val();
             } else {
                 var d = new Date();
-                var tgl_start = (01) + '-' + d.getMonth() + '-' + d.getFullYear();
+                var tgl_start = (01) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
                 var tgl_end = (30) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
             }
             $.ajax({

@@ -145,6 +145,9 @@
                     $dc = $this->mips_caba->query("SELECT SUM(DEBIT) AS totaldr, SUM(CREDIT) AS totalcr FROM voucher WHERE ACCTNO='$coa' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' ")->row();
                     $sd = $this->mips_caba->query("SELECT saldo FROM master_accountcb WHERE ACCTNO='$coa' AND thn ='$tahun' ")->row();
                     $total = $sd->saldo + $dc->totaldr - $dc->totalcr;
+
+                    $vou = $this->mips_caba->query("SELECT ACCTNO FROM voucher WHERE ACCTNO='$coa' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' ")->num_rows();
+                    if ($vou > 0) {
                 ?>
             <tr>
                 <td width="100px" colspan="4"><b>Account : () <?= $v['ACCTNO']; ?> <?= $v['ACCTNAME']; ?> </b></td>
@@ -155,7 +158,7 @@
             </tr>
 
             <?php foreach ($res_data as $a) {
-                        if ($a['ACCTNO'] == $v['ACCTNO']) {
+                            if ($a['ACCTNO'] == $v['ACCTNO']) {
             ?>
                     <tr>
                         <td width="100px" align="center"><?= $a['TGL'] ?></td>
@@ -166,7 +169,7 @@
                         <td align="right" width="150px"><?= $a['CREDIT_F'] ?></td>
                     </tr>
             <?php }
-                    }
+                        }
 
 
             ?>
@@ -187,7 +190,8 @@
                 <td align="right" width="150px" style="color: black;font-weight: bold">
                 </td>
             </tr>
-    <?php }
+<?php }
+                }
             } ?>
     </tbody>
 </table>
