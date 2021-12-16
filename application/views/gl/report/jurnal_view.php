@@ -38,7 +38,16 @@
 
     loading();
 
-    $("#btn_cetak").click(function() {
+    $("#btn_cetak_pdf").click(function() {
+      cetak_journal('pdf');
+    });
+
+    $("#btn_cetak_excel").click(function() {
+      cetak_journal('excel');
+    });
+
+    function cetak_journal(cetak) {
+
       var base_url = '<?php echo base_url(); ?>';
       var tgl_start = $("#tgl_start").val();
       var tgl_end = $("#tgl_end").val();
@@ -81,13 +90,17 @@
 
       var url = '<?php echo base_url('cetak/gl_lap_jurnal/'); ?>';
 
-      newwindow = window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + sf_noac_start + '/' + sf_noac_end, 'Laporan GL Jurnal', '_blank');
-      if (window.focus) {
-        newwindow.focus()
+      if (cetak == 'pdf') {
+        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + sf_noac_start + '/' + sf_noac_end + '/' + cetak + '/' + 'Laporan GL Jurnal', '_blank');
+      } else {
+        window.open(url + '/' + periode_terkini + '/' + sf_tgl_start + '/' + sf_tgl_end + '/' + divstart + '/' + divisiend + '/' + sf_noac_start + '/' + sf_noac_end + '/' + cetak + '/' + 'Laporan GL Jurnal');
       }
-      return false;
+      // if (window.focus) {
+      //   newwindow.focus()
+      // }
+      // return false;
 
-    });
+    };
 
 
     // Datepicker
@@ -490,8 +503,9 @@
 
   <br>
 
-  <button type="button" class="btn btn-info btn-min-width mr-1 mb-1" id="btn_tampilkan"><i class="fa fa-save"></i><i class="splashy-zoom"></i> Tampilkan </button>
-  <button type="button" class="btn btn-warning btn-min-width mr-1 mb-1" id="btn_cetak" style="display:none"><i class="fa fa-print"></i><i class="splashy-printer"></i> Cetak </button>
+  <!-- <button type="button" class="btn btn-info btn-min-width mr-1 mb-1" id="btn_tampilkan"><i class="fa fa-save"></i><i class="splashy-zoom"></i> Tampilkan </button> -->
+  <button type="button" class="btn btn-danger btn-min-width mr-1 mb-1" id="btn_cetak_pdf"><i class="fa fa-print"></i><i class="splashy-printer"></i> PDF </button>
+  <button type="button" class="btn btn-success btn-min-width mr-1 mb-1" id="btn_cetak_excel"><i class="fa fa-print"></i><i class="splashy-printer"></i> Excel</button>
 
 </form>
 <input type="hidden" id="start_or_end">
