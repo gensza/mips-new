@@ -10,6 +10,7 @@ class Cetak extends CI_Controller
         $this->load->model('cetak_model');
         $this->load->model('gl_model');
         $this->load->model('main_model');
+        $this->load->model('saldo_akhir');
 
         $this->mips_caba = $this->load->database('mips_caba', TRUE);
     }
@@ -300,35 +301,102 @@ class Cetak extends CI_Controller
     public function cb_laporan_saldo_akhir()
     {
 
-        $bulan  = $this->input->post('bulan', TRUE);
+        $bln  = $this->input->post('bulan', TRUE);
         $tahun  = $this->input->post('tahun', TRUE);
 
-        $res_data = $this->cetak_model->get_list_saldo_akhir($bulan, $tahun)->result_array();
+        $list = $this->saldo_akhir->get_datatables($tahun);
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $customers) {
 
-        $html = 0;
-        $nos = 0 + 1;
-        $saldo = 0;
-        foreach ($res_data as $a) {
-            $saldoawal = $this->cetak_model->get_saldo_awal($a['ACCTNO']);
-            $saldo = $a['saldo_f'];
-            // if ($saldoawal == 'alidev') {
-            //     # code...
-            // } else {
-            //     # code...
-            //     $saldo = $saldoawal->saldo - $a['saldo_f'];
-            // }
+            if ($bln == '01') {
+                $var_bulan = '1';
+            } else if ($bln == '02') {
+                $var_bulan = '2';
+            } else if ($bln == '03') {
+                $var_bulan = '3';
+            } else if ($bln == '04') {
+                $var_bulan = '4';
+            } else if ($bln == '05') {
+                $var_bulan = '5';
+            } else if ($bln == '06') {
+                $var_bulan = '6';
+            } else if ($bln == '07') {
+                $var_bulan = '7';
+            } else if ($bln == '08') {
+                $var_bulan = '8';
+            } else if ($bln == '09') {
+                $var_bulan = '9';
+            } else if ($bln == '10') {
+                $var_bulan = '10';
+            } else if ($bln == '11') {
+                $var_bulan = '11';
+            } else if ($bln == '12') {
+                $var_bulan = '12';
+            } else {
+                $var_bulan = '-';
+            }
 
-            $html .= '<tr>
-              <td width="20px" align="center">' . $nos . '</td>
-              <td width="100px" align="center">' . $a['ACCTNO'] . '</td>
-              <td width="100px">' . $a['ACCTNAME'] . '</td>
-              <td width="100px"><div style="float:right">' . number_format($saldo, 2, ".", ",") . '</div></td>
-              </tr>';
-            $nos++;
+            $isi =  $this->mips_caba->query("SELECT saldo_$var_bulan as saldo_f FROM saldo_voucher WHERE id='$customers->id' AND thn = '$tahun'")->row();
+            $saldo = $isi->saldo_f;
+
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $customers->ACCTNO;
+            $row[] = $customers->ACCTNAME;
+            $row[] = number_format($saldo, 2, ",", ".");
+
+
+            $data[] = $row;
         }
 
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->saldo_akhir->count_all($tahun),
+            "recordsFiltered" => $this->saldo_akhir->count_filtered($tahun),
+            "data" => $data,
+        );
+        //output to json format
+        echo json_encode($output);
+    }
 
-        echo $html;
+    function sum_saldo_akhir()
+    {
+        $bln  = $this->input->post('bulan', TRUE);
+        $tahun  = $this->input->post('tahun', TRUE);
+
+        if ($bln == '01') {
+            $var_bulan = '1';
+        } else if ($bln == '02') {
+            $var_bulan = '2';
+        } else if ($bln == '03') {
+            $var_bulan = '3';
+        } else if ($bln == '04') {
+            $var_bulan = '4';
+        } else if ($bln == '05') {
+            $var_bulan = '5';
+        } else if ($bln == '06') {
+            $var_bulan = '6';
+        } else if ($bln == '07') {
+            $var_bulan = '7';
+        } else if ($bln == '08') {
+            $var_bulan = '8';
+        } else if ($bln == '09') {
+            $var_bulan = '9';
+        } else if ($bln == '10') {
+            $var_bulan = '10';
+        } else if ($bln == '11') {
+            $var_bulan = '11';
+        } else if ($bln == '12') {
+            $var_bulan = '12';
+        } else {
+            $var_bulan = '-';
+        }
+
+        $dt = $this->mips_caba->query("SELECT SUM(saldo_$var_bulan) as saldo_f FROM saldo_voucher WHERE thn = '$tahun'")->row();
+        $saldo = number_format($dt->saldo_f, 2, ",", ".");
+        echo json_encode($saldo);
     }
 
     public function cb_laporan_saldo_akhir_cetak($bulan, $tahun)
@@ -337,6 +405,8 @@ class Cetak extends CI_Controller
         $nama_dokumen = 'Laporan_Saldo_Akhir_' . $bulan . '_' . $tahun . '';
 
         $data['list_saldo_akhir']       = $this->cetak_model->get_list_saldo_akhir($bulan, $tahun)->result_array();
+        $data['total'] = $this->mips_caba->query("SELECT SUM(saldo_$bulan) as saldo_f FROM saldo_voucher WHERE thn = '$tahun'")->row();
+
 
         // Tentukan path yang tepat ke mPDF
         $this->load->library('mpdf/mpdf');

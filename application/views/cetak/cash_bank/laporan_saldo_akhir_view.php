@@ -119,6 +119,14 @@
     }
     ?>
   </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="3" style="text-align:right">Total&nbsp;:</th>
+      <th style="text-align:right">
+        <p id="total"><?= number_format($total->saldo_f, 2, ".", ","); ?></p>
+      </th>
+    </tr>
+  </tfoot>
 </table>
 
 <br>

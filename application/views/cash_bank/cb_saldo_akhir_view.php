@@ -24,7 +24,7 @@
             }
             else {
 
-                $("#list_lap_saldo_akhir").empty();
+                // $("#list_lap_saldo_akhir").empty();
                 $("#div_lap_saldo_akhir").show();
                 $("#btn_cetak").show();
 
@@ -32,28 +32,70 @@
                 var bulan_periode = tglperiode.substr(0, 2);
                 var tahun_periode = tglperiode.substr(2, 4);
 
-                $.ajax({
-                    url: base_url + 'cetak/cb_laporan_saldo_akhir',
-                    type: "post",
-                    data: {
-                        bulan: bulan_periode,
-                        tahun: tahun_periode,
-                        <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
-                    },
-                    dataType: "html",
-                    async: 'false',
-                    success: function(result) {
+                $('#tbl_lap_saldo_akhir').hide();
+                $('#tbl_lap_saldo_akhir').DataTable().destroy();
+                $('#tbl_lap_saldo_akhir').DataTable({
+                    "processing": true, //Feature control the processing indicator.
+                    "serverSide": true, //Feature control DataTables' server-side processing mode.
+                    "order": [], //Initial no order.
 
-                        $("#list_lap_saldo_akhir").append(result);
+                    "language": {
+                        searchPlaceholder: 'Cari',
+                        sSearch: '',
+                        lengthMenu: '_MENU_',
+                        "emptyTable": "Maaf, Saldo akhir tidak tersedia !"
+                    },
+
+                    // Load data for the table's content from an Ajax source
+                    "ajax": {
+                        url: base_url + 'cetak/cb_laporan_saldo_akhir',
+                        type: 'POST',
+                        data: {
+                            <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
+                            bulan: bulan_periode,
+                            tahun: tahun_periode,
+                        },
+                        dataType: "json",
+                        beforeSend: function() {
+                            //loadingPannel.show();
+                        },
+                        complete: function() {
+                            //loadingPannel.hide();
+                            $('#tbl_lap_saldo_akhir').show();
+                            sum_saldo(bulan_periode, tahun_periode);
+                        },
 
                     },
-                    beforeSend: function() {
-                        loadingPannel.show();
-                    },
-                    complete: function() {
-                        loadingPannel.hide();
-                    }
+                    "columnDefs": [{
+                        "targets": [0], //first column / numbering column
+                        "orderable": false, //set not orderable
+                    }, ],
+
+
                 });
+
+                // $.ajax({
+                //     url: base_url + 'cetak/cb_laporan_saldo_akhir',
+                //     type: "post",
+                //     data: {
+                //         bulan: bulan_periode,
+                //         tahun: tahun_periode,
+                //         <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+                //     },
+                //     dataType: "html",
+                //     async: 'false',
+                //     success: function(result) {
+
+                //         $("#list_lap_saldo_akhir").append(result);
+
+                //     },
+                //     beforeSend: function() {
+                //         loadingPannel.show();
+                //     },
+                //     complete: function() {
+                //         loadingPannel.hide();
+                //     }
+                // });
             }
         });
 
@@ -77,6 +119,25 @@
 
 
     });
+
+
+    function sum_saldo(bulan_periode, tahun_periode) {
+        $.ajax({
+            url: base_url + 'cetak/sum_saldo_akhir',
+            type: 'POST',
+            data: {
+                <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
+                bulan: bulan_periode,
+                tahun: tahun_periode,
+            },
+            dataType: "json",
+            success: function(result) {
+                // console.log('totalnya ya', result);
+                $('#total').html(result);
+            },
+
+        });
+    }
 </script>
 
 
@@ -149,6 +210,14 @@
                 </tr>
             </thead>
             <tbody id="list_lap_saldo_akhir"></tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="3" style="text-align:right">Total:</th>
+                    <th>
+                        <p id="total"></p>
+                    </th>
+                </tr>
+            </tfoot>
         </table>
 
     </div>

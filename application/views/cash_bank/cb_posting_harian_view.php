@@ -45,10 +45,10 @@
                         cache: false,
                         processData: false,
                         success: function(response) {
-                            console.log(response);
-                            if (response == true) {
-                                swal("Selesai", "Data Berhasil di Posting", "success");
-                            }
+                            // console.log(response);
+                            // if (response == true) {
+                            //     swal("Selesai", "Data Berhasil di Posting", "success");
+                            // }
 
                             // console.log('Ini data nya ya', response);
                             //Command: toastr["success"]("Proses posting selesai", "Ok Posting Tersimpan");
@@ -129,10 +129,10 @@
                                 cache: false,
                                 processData: false,
                                 success: function(response) {
-                                    console.log(response);
-                                    if (response == true) {
-                                        swal("Selesai", "Data Berhasil di Posting", "success");
-                                    }
+                                    // console.log(response);
+                                    // if (response == true) {
+                                    //     swal("Selesai", "Data Berhasil di Posting", "success");
+                                    // }
                                     //Command: toastr["success"]("Proses posting selesai", "Ok Posting Tersimpan");
                                 },
                                 beforeSend: function() {
