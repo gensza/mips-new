@@ -192,7 +192,7 @@
 
 
         <div class="section-wrapper">
-            <h3 class="heading">Transfer Ke GL</h3>
+            <h3 class="heading">Monthly Closing</h3>
             <div class="row-fluid">
                 <div class="span2" style="margin-right:10px;">
                     <div class="form-group">

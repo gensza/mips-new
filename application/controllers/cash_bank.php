@@ -12,6 +12,7 @@ class Cash_bank extends CI_Controller
         $this->load->model('module_model');
         $this->load->model('serv_side_cb_voucher_model');
         $this->load->model('serv_side_po_logistik_model');
+        $this->mips_caba = $this->load->database('mips_caba', TRUE);
     }
 
     public function input_voucher()
@@ -192,7 +193,115 @@ class Cash_bank extends CI_Controller
 
     public function monthly_closing_submit()
     {
-        $result = $this->cash_bank_model->monthly_closing_submit();
+        $periode = $this->session->userdata('sess_periode');
+        $tahun  = substr($periode, 0, 4);
+        $bulan  = substr($periode, 4, 5);
+
+        if ($bulan == '01') {
+            $var_bulan = '1';
+        } else if ($bulan == '02') {
+            $var_bulan = '2';
+        } else if ($bulan == '03') {
+            $var_bulan = '3';
+        } else if ($bulan == '04') {
+            $var_bulan = '4';
+        } else if ($bulan == '05') {
+            $var_bulan = '5';
+        } else if ($bulan == '06') {
+            $var_bulan = '6';
+        } else if ($bulan == '07') {
+            $var_bulan = '7';
+        } else if ($bulan == '08') {
+            $var_bulan = '8';
+        } else if ($bulan == '09') {
+            $var_bulan = '9';
+        } else if ($bulan == '10') {
+            $var_bulan = '10';
+        } else if ($bulan == '11') {
+            $var_bulan = '11';
+        } else if ($bulan == '12') {
+            $var_bulan = '12';
+        }
+
+
+        if ($bulan == '12') {
+
+            $saldo_akhir = $this->mips_caba->query("SELECT acctno, acctname, thn,saldo ,saldo_$var_bulan as saldone FROM saldo_voucher WHERE thn='$tahun'")->result();
+            foreach ($saldo_akhir as $d) {
+                // $saldo = $d->saldone;
+                $saldoawal["ACCTNO"] = $d->acctno;
+                $saldoawal["ACCTNAME"] = $d->acctname;
+                $saldoawal["saldo"] = "0";
+                $saldoawal["saldo_$var_bulan"] = "0";
+                $saldoawal["thn"] = $d->thn + 1;
+
+                $thn = $tahun + 1;
+
+                /* untuk insert/update ke masteraccont_cb */
+                $dt = $this->mips_caba->query("SELECT ACCTNO, ACCTNAME FROM master_accountcb WHERE ACCTNO='$d->acctno' AND thn='$thn'")->num_rows();
+                $ms_cb["ACCTNO"] = $d->acctno;
+                $ms_cb["ACCTNAME"] = $d->acctname;
+                $ms_cb["saldo"] = $d->saldo;
+                $ms_cb["saldo_1"] = $d->saldone;
+                $ms_cb["thn"] = $d->thn + 1;
+
+                if ($dt > 0) {
+                    # code...
+                    $this->mips_caba->set($ms_cb);
+                    $this->mips_caba->where(['ACCTNO' => $d->acctno, 'thn' => $thn]);
+                    $this->mips_caba->update('master_accountcb');
+                    if ($this->mips_caba->affected_rows() > 0) {
+                        $saldo_awal = TRUE;
+                    } else {
+                        $saldo_awal = FALSE;
+                    }
+                } else {
+                    # code...
+                    $this->mips_caba->insert('master_accountcb', $ms_cb);
+                    if ($this->mips_caba->affected_rows() > 0) {
+                        $saldo_awal = TRUE;
+                    } else {
+                        $saldo_awal = FALSE;
+                    }
+                }
+                /* end untuk insert/update ke masteraccont_cb */
+
+                /* untuk insert/update saldo_vocher */
+                $cek = $this->mips_caba->query("SELECT ACCTNO, ACCTNAME FROM saldo_voucher WHERE ACCTNO='$d->acctno' AND thn='$thn'")->num_rows();
+                if ($cek > 0) {
+                    # code...
+                    $this->mips_caba->set($saldoawal);
+                    $this->mips_caba->where(['ACCTNO' => $d->acctno, 'thn' => $thn]);
+                    $this->mips_caba->update('saldo_voucher');
+                    if ($this->mips_caba->affected_rows() > 0) {
+                        $saldo_akhir = TRUE;
+                    } else {
+                        $saldo_akhir = FALSE;
+                    }
+                    // $result = "Diupdate";
+                } else {
+                    // $result = "insert";
+                    # code...
+                    $this->mips_caba->insert('saldo_voucher', $saldoawal);
+                    if ($this->mips_caba->affected_rows() > 0) {
+                        $saldo_akhir = TRUE;
+                    } else {
+                        $saldo_akhir = FALSE;
+                    }
+                }
+                /* end untuk insert/update saldo_vocher */
+            }
+        } else {
+            # code...
+            $result = "Bulanan";
+        }
+
+        $result = [
+            'saldo_akhir' => $saldo_akhir,
+            'saldo_awal' => $saldo_awal
+        ];
+
+
         echo json_encode($result);
     }
 

@@ -4726,7 +4726,7 @@ class Cash_bank_model extends CI_Model
 
         $bln   = $data['bulan'];
 
-        $var_bulan;
+        $var_bulan = 0;
         if ($bln == '01') {
             $var_bulan = '1';
         } else if ($bln == '02') {
@@ -4767,7 +4767,7 @@ class Cash_bank_model extends CI_Model
         $saldo = str_replace(",", "", $data['saldo']);
         $bln   = $data['bulan'];
 
-        $var_bulan;
+        $var_bulan = 0;
         if ($bln == '01') {
             $var_bulan = 'saldo_1 = ' . $saldo . '';
         } else if ($bln == '01') {
@@ -5039,9 +5039,67 @@ class Cash_bank_model extends CI_Model
         }
     }
 
-
-
     function monthly_closing_submit()
+    {
+        $period = $this->periode();
+
+        $tahun  = substr($period, 0, 4);
+        $bulan  = substr($period, 4, 5);
+
+        if ($bulan == '01') {
+            $var_bulan = '1';
+        } else if ($bulan == '02') {
+            $var_bulan = '2';
+        } else if ($bulan == '03') {
+            $var_bulan = '3';
+        } else if ($bulan == '04') {
+            $var_bulan = '4';
+        } else if ($bulan == '05') {
+            $var_bulan = '5';
+        } else if ($bulan == '06') {
+            $var_bulan = '6';
+        } else if ($bulan == '07') {
+            $var_bulan = '7';
+        } else if ($bulan == '08') {
+            $var_bulan = '8';
+        } else if ($bulan == '09') {
+            $var_bulan = '9';
+        } else if ($bulan == '10') {
+            $var_bulan = '10';
+        } else if ($bulan == '11') {
+            $var_bulan = '11';
+        } else if ($bulan == '12') {
+            $var_bulan = '12';
+        }
+
+        // $saldo_akhir = $this->mips_caba->query("SELECT acctno, acctname, thn FROM saldo_voucher WHERE thn='$tahun'")->result();
+        // foreach ($saldo_akhir as $d) {
+        //     // $saldo = $d->saldone;
+        //     $saldoawal["ACCTNO"] = $d->acctno;
+        //     $saldoawal["ACCTNAME"] = $d->acctname;
+        //     $saldoawal["saldo"] = "0";
+        //     if ($var_bulan != '-') {
+        //         # code...
+        //         $saldoawal["saldo_$var_bulan"] = "0";
+        //     }
+
+        //     $saldoawal["thn"] = $d->thn + 1;
+        //     // $this->mips_caba->insert('saldo_voucher', $saldoawal);
+        //     // if ($this->mips_caba->affected_rows() > 0) {
+        //     //     $bool_saldo_akhir = TRUE;
+        //     // } else {
+        //     //     $bool_saldo_akhir = FALSE;
+        //     // }
+        // }
+        // if ($bulan == '12') {
+        // } else {
+        //     # code...
+        // }
+
+        return $this->session->userdata('sess_periode');
+    }
+
+    function monthly_closing_submit_old()
     {
 
         $period = $this->periode();
