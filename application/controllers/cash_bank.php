@@ -66,6 +66,21 @@ class Cash_bank extends CI_Controller
         }
     }
 
+
+
+    public function rekap()
+    {
+
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        if ($result == '1') {
+            $this->load->view('cash_bank/cb_rekap_view', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
     function get_vouc_tmp_detail()
     {
 
@@ -223,6 +238,15 @@ class Cash_bank extends CI_Controller
             $var_bulan = '12';
         }
 
+        if ($var_bulan == '12') {
+            $bln = 1;
+            # code...
+        } else {
+            $bln = $var_bulan + 1;
+            # code...
+        }
+
+
 
         if ($bulan == '12') {
 
@@ -293,7 +317,37 @@ class Cash_bank extends CI_Controller
             }
         } else {
             # code...
-            $result = "Bulanan";
+            $saldo_akhir = $this->mips_caba->query("SELECT acctno, acctname, thn,saldo ,saldo_$var_bulan as saldone FROM saldo_voucher WHERE thn='$tahun'")->result();
+            foreach ($saldo_akhir as $dd) {
+                $ms_cb["ACCTNO"] = $dd->acctno;
+                $ms_cb["ACCTNAME"] = $dd->acctname;
+                $ms_cb["saldo"] = $dd->saldo;
+                $ms_cb["saldo_$bln"] = $dd->saldone;
+                $ms_cb["thn"] = $dd->thn;
+
+                $this->mips_caba->set($ms_cb);
+                $this->mips_caba->where(['ACCTNO' => $dd->acctno, 'thn' => $tahun]);
+                $this->mips_caba->update('master_accountcb');
+                if ($this->mips_caba->affected_rows() > 0) {
+                    $saldo_awal = TRUE;
+                } else {
+                    $saldo_awal = FALSE;
+                }
+
+                $saldoawal["ACCTNO"] = $dd->acctno;
+                $saldoawal["ACCTNAME"] = $dd->acctname;
+                $saldoawal["saldo"] = $dd->saldo;
+                $saldoawal["saldo_$bln"] = $dd->saldone;
+                $saldoawal["thn"] = $dd->thn;
+                $this->mips_caba->set($saldoawal);
+                $this->mips_caba->where(['ACCTNO' => $dd->acctno, 'thn' => $tahun]);
+                $this->mips_caba->update('saldo_voucher');
+                if ($this->mips_caba->affected_rows() > 0) {
+                    $saldo_akhir = TRUE;
+                } else {
+                    $saldo_akhir = FALSE;
+                }
+            }
         }
 
         $result = [

@@ -201,16 +201,18 @@
 
         <div class="alert alert-danger">
             <strong>Info !</strong> Periode Bulan & Tahun tidak sesuai dengan periode berjalan saat ini , silahkan masukan password untuk posting !
+
         </div>
 
 
         <div class="section-wrapper">
+
             <h3 class="heading">Posting Harian Cash Bank</h3>
             <div class="row-fluid">
                 <div class="span2" style="margin-right:10px;">
                     <div class="form-group">
                         <label for="demo-vs-definput" class="control-label">Password</label>
-                        <input type="text" id="password" name="password" class="form-control maskmoney" placeholder="Password">
+                        <input type="password" id="password" name="password" class="form-control maskmoney" placeholder="Password">
                     </div>
                 </div>
             </div>

@@ -107,9 +107,17 @@
             var bulan_periode = tglperiode.substr(0, 2);
             var tahun_periode = tglperiode.substr(2, 4);
 
+            var test = bulan_periode.substr(0, 1);
+            if (test == 0) {
+                var bln_periode = bulan_periode.replace(/^0+/, '')
+            } else {
+                var bln_periode = tglperiode.substr(0, 2);
+            }
+            // console.log(bln_periode);
+
             var url = '<?php echo base_url('cetak/cb_laporan_saldo_akhir_cetak/'); ?>';
 
-            newwindow = window.open(url + '/' + bulan_periode + '/' + tahun_periode, 'Laporan Saldo Akhir', '_blank');
+            newwindow = window.open(url + '/' + bln_periode + '/' + tahun_periode, 'Laporan Saldo Akhir', '_blank');
             if (window.focus) {
                 newwindow.focus()
             }

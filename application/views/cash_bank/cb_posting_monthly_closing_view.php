@@ -197,7 +197,7 @@
                 <div class="span2" style="margin-right:10px;">
                     <div class="form-group">
                         <label for="demo-vs-definput" class="control-label">Password</label>
-                        <input type="text" id="password" name="password" class="form-control maskmoney" placeholder="Password">
+                        <input type="password" id="password" name="password" class="form-control maskmoney" placeholder="Password">
                     </div>
                 </div>
             </div>

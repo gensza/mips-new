@@ -4605,7 +4605,16 @@ class Cash_bank_model extends CI_Model
 
 
         $saldo = str_replace(",", "", $data['saldo']);
-        $bln   = $data['bulan'];
+        // $bln   = $data['bulan'];
+
+        $period = $this->periode();
+
+        $tahun  = substr($period, 0, 4);
+        $bln  = substr($period, 4, 5);
+
+
+
+
 
         $var_bulan = 0;
         if ($bln == 01) {
@@ -4636,9 +4645,7 @@ class Cash_bank_model extends CI_Model
             $var_bulan = '-';
         }
 
-        $sql = "UPDATE master_accountcb SET  saldo  = '$saldo',
-                                            $var_bulan
-                                            WHERE ACCTNO = '$data[acctno]' AND thn = '$data[tahun]'";
+        $sql = "UPDATE master_accountcb SET  saldo  = '$saldo', $var_bulan WHERE ACCTNO = '$data[acctno]' AND thn = '$tahun'";
 
         return $this->mips_caba->query($sql);
     }
@@ -4869,13 +4876,13 @@ class Cash_bank_model extends CI_Model
             // $arr[] = array(
             //     'ACCTNO' => $d->ACCTNO
             // );
-            $saldoawal = $this->mips_caba->query("SELECT saldo_$var_bulan as saldone FROM master_accountcb WHERE ACCTNO='$d->ACCTNO' AND thn='$tahun'")->row();
+            $saldoawal = $this->mips_caba->query("SELECT saldo, saldo_$var_bulan as saldone FROM master_accountcb WHERE ACCTNO='$d->ACCTNO' AND thn='$tahun'")->row();
 
             $sql = "SELECT ACCTNO, DESCRIPT, SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$d->ACCTNO' GROUP BY ACCTNO";
             $sd = $this->mips_caba->query($sql)->row();
 
             $coa = $sd->ACCTNO;
-            $sal = $saldoawal->saldone + $sd->sum_debit;
+            $sal = $saldoawal->saldo + $sd->sum_debit;
             $saldos = $sal - $sd->sum_credit;
             $saldo_vou["saldo"] = $saldos;
             $saldo_vou["saldo_$var_bulan"] = $saldos;

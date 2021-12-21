@@ -11,6 +11,7 @@ class Cetak extends CI_Controller
         $this->load->model('gl_model');
         $this->load->model('main_model');
         $this->load->model('saldo_akhir');
+        $this->load->model('rekap_model');
 
         $this->mips_caba = $this->load->database('mips_caba', TRUE);
     }
@@ -355,6 +356,40 @@ class Cetak extends CI_Controller
             "draw" => $_POST['draw'],
             "recordsTotal" => $this->saldo_akhir->count_all($tahun),
             "recordsFiltered" => $this->saldo_akhir->count_filtered($tahun),
+            "data" => $data,
+        );
+        //output to json format
+        echo json_encode($output);
+    }
+
+
+    public function cb_laporan_rekap()
+    {
+
+        $tgl_start  = $this->input->post('tgl_start', TRUE);
+        $tgl_end  = $this->input->post('tgl_end', TRUE);
+        $chx_periode  = $this->input->post('chx_periode', TRUE);
+
+        $list = $this->rekap_model->get_datatables($tgl_start, $tgl_end, $chx_periode);
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $customers) {
+
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $customers->ACCTNO;
+            $row[] = $customers->ACCTNAME;
+            $row[] = number_format($saldo, 2, ",", ".");
+
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->rekap_model->count_all($tgl_start, $tgl_end, $chx_periode),
+            "recordsFiltered" => $this->rekap_model->count_filtered($tgl_start, $tgl_end, $chx_periode),
             "data" => $data,
         );
         //output to json format
