@@ -1390,10 +1390,9 @@ class Gl_model extends CI_Model
     {
 
         $sess_lokasi = $this->get_nama_lokasi();
-        //$sess_periode = $this->session->userdata('sess_periode');
-        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
+        $periodes = $this->session->userdata('sess_periode');
+        // $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
 
-        $dv_start;
         if (($divisi_start == '-') && ($divisi_end == '-')) {
             $dv_start = "";
         } else if ($divisi_start != '-' && $divisi_end == '-') {
@@ -1404,7 +1403,6 @@ class Gl_model extends CI_Model
             $dv_start = "";
         }
 
-        $acc;
         if ($noacc_start == 0 && $noacc_end == 0) {
             $acc = "";
         } else if ($noacc_start != 0 && $noacc_end == 0) {
@@ -1452,7 +1450,7 @@ class Gl_model extends CI_Model
                                 b.group
                         FROM entry AS a
                         INNER JOIN noac AS b ON a.noac = b.noac 
-                        WHERE STR_TO_DATE(a.periode, '%Y-%m') = STR_TO_DATE('$periodes', '%Y-%m') $dv_start $acc
+                        WHERE periodetxt = $periodes $dv_start $acc
                         GROUP BY a.noac ORDER BY a.noac ASC";
             return $this->mips_gl->query($sql);
         } else {
@@ -1507,10 +1505,9 @@ class Gl_model extends CI_Model
     {
 
         $sess_lokasi = $this->get_nama_lokasi();
-        //$//sess_periode = $this->session->userdata('sess_periode');
-        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
+        $periodes = $this->session->userdata('sess_periode');
+        // $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
 
-        $dv_start;
         if (($divisi_start == '-') && ($divisi_end == '-')) {
             $dv_start = "";
         } else if ($divisi_start != '-' && $divisi_end == '-') {
@@ -1521,7 +1518,6 @@ class Gl_model extends CI_Model
             $dv_start = "";
         }
 
-        $acc;
         if ($noacc_start == 0 && $noacc_end == 0) {
             $acc = "";
         } else if ($noacc_start != 0 && $noacc_end == 0) {
@@ -1534,7 +1530,7 @@ class Gl_model extends CI_Model
 
         if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
 
-            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,cr CREDIT_F2,dr DEBET_F2,FORMAT(dr, 0) DEBET_F,FORMAT(cr, 0) CREDIT_F FROM entry WHERE STR_TO_DATE(periode, '%Y-%m') = STR_TO_DATE('$periodes', '%Y-%m') $dv_start $acc ORDER BY `date`,noac ASC";
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,cr CREDIT_F2,dr DEBET_F2,FORMAT(dr, 0) DEBET_F,FORMAT(cr, 0) CREDIT_F FROM entry WHERE periodetxt = $periodes $dv_start $acc ORDER BY `date`,noac ASC";
             return $this->mips_gl->query($sql);
         } else {
 
@@ -2823,10 +2819,10 @@ class Gl_model extends CI_Model
     function get_data_sum_entry_buku_besar($periode_terkini, $tgl_start, $tgl_end, $divisi_start, $divisi_end, $noacc_start, $noacc_end)
     {
 
-        //$//sess_periode = $this->session->userdata('sess_periode');
-        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
+        $periodes = $this->session->userdata('sess_periode');
+        // $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
 
-        $dv_start;
+        // $dv_start;
         if (($divisi_start == '-') && ($divisi_end == '-')) {
             $dv_start = "";
         } else if ($divisi_start != '-' && $divisi_end == '-') {
@@ -2837,7 +2833,6 @@ class Gl_model extends CI_Model
             $dv_start = "";
         }
 
-        $acc;
         if ($noacc_start == 0 && $noacc_end == 0) {
             $acc = "";
         } else if ($noacc_start != 0 && $noacc_end == 0) {
@@ -2850,7 +2845,7 @@ class Gl_model extends CI_Model
 
         if ($periode_terkini == 1) { //ini artinya pakai periode, filter tanggal tidak berlaku
 
-            $sql = "SELECT SUM(dr) DEBET,SUM(cr) CREDIT FROM entry WHERE STR_TO_DATE(periode, '%Y-%m') = STR_TO_DATE('$periodes', '%Y-%m') $dv_start $acc ORDER BY `date`,noac ASC";
+            $sql = "SELECT SUM(dr) DEBET,SUM(cr) CREDIT FROM entry WHERE periodetxt = $periodes $dv_start $acc ORDER BY `date`,noac ASC";
             return $this->mips_gl->query($sql);
         } else {
 
