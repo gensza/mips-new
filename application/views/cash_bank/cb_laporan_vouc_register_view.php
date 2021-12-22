@@ -60,7 +60,7 @@
                 return false;
             } else {
                 var d = new Date();
-                var today = (01) + '-' + d.getMonth() + '-' + d.getFullYear();
+                var today = (01) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
                 var today1 = (30) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
                 // $('#tgl_start').val(today);
                 // $('#tgl_end').val(today1)
