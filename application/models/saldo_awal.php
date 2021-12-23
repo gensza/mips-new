@@ -1,12 +1,14 @@
 <?php
-class Serv_side_cb_voucher_model extends CI_Model
-{
 
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class saldo_awal extends CI_Model
+{
     //nama tabel dari database
-    var $table = 'head_voucher';
+    var $table = 'master_accountcb';
     //field yang ada di table user
-    var $column_order = array(null, 'VOUCNO', 'FROM', 'txtperiode', 'AMOUNT');
-    var $column_search = array('VOUCNO', 'FROM', 'txtperiode'); //field yang diizin untuk pencarian 
+    var $column_order = array(null, 'id', 'ACCTNO', 'ACCTNAME', 'saldo', 'saldo_1', 'saldo_2', 'saldo_3', 'saldo_4', 'saldo_5', 'saldo_6', 'saldo_7', 'saldo_8', 'saldo_9', 'saldo_10', 'saldo_11', 'saldo_12', 'thn');
+    var $column_search = array('ACCTNO', 'ACCTNAME'); //field yang diizin untuk pencarian 
     var $order = array('id' => 'DESC'); // default order
 
 
@@ -20,15 +22,11 @@ class Serv_side_cb_voucher_model extends CI_Model
     private function _get_datatables_query()
     {
         $periode = $this->session->userdata('sess_periode');
+        $tahun  = substr($periode, 0, 4);
+
+        $this->mips_caba->where('thn', $tahun);
         $this->mips_caba->from($this->table);
-        if ($this->session->userdata('sess_nama_lokasi') == 'HO') {
-            $this->mips_caba->where('LOKASI', 'HO');
-            $this->mips_caba->where('txtperiode', $periode);
-        } else {
-            $this->mips_caba->where('LOKASI', 'ESTATE');
-            $this->mips_caba->where('txtperiode', $periode);
-            # code...
-        }
+
 
         $i = 0;
 
@@ -82,3 +80,5 @@ class Serv_side_cb_voucher_model extends CI_Model
         return $this->mips_caba->count_all_results();
     }
 }
+
+/* End of file saldo_awal.php */

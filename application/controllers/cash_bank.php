@@ -10,6 +10,8 @@ class Cash_bank extends CI_Controller
         $this->load->model('main_model');
         $this->load->model('cash_bank_model');
         $this->load->model('module_model');
+        $this->load->model('saldo_awal');
+        $this->load->model('aktifitas_account');
         $this->load->model('serv_side_cb_voucher_model');
         $this->load->model('serv_side_po_logistik_model');
         $this->mips_caba = $this->load->database('mips_caba', TRUE);
@@ -92,9 +94,76 @@ class Cash_bank extends CI_Controller
 
     function get_data_saldo_awal()
     {
-
         $result = $this->cash_bank_model->get_data_saldo_awal()->result_array();
         echo json_encode($result);
+    }
+
+    function data_saldo_awal()
+    {
+        $list = $this->saldo_awal->get_datatables();
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $d) {
+
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $d->ACCTNO;
+            $row[] = $d->ACCTNAME;
+            $row[] = number_format($d->saldo, 2, ",", ".");
+            $row[] = number_format($d->saldo_1, 2, ",", ".");
+            $row[] = number_format($d->saldo_2, 2, ",", ".");
+            $row[] = number_format($d->saldo_3, 2, ",", ".");
+            $row[] = number_format($d->saldo_4, 2, ",", ".");
+            $row[] = number_format($d->saldo_5, 2, ",", ".");
+            $row[] = number_format($d->saldo_6, 2, ",", ".");
+            $row[] = number_format($d->saldo_7, 2, ",", ".");
+            $row[] = number_format($d->saldo_8, 2, ",", ".");
+            $row[] = number_format($d->saldo_9, 2, ",", ".");
+            $row[] = number_format($d->saldo_10, 2, ",", ".");
+            $row[] = number_format($d->saldo_11, 2, ",", ".");
+            $row[] = number_format($d->saldo_12, 2, ",", ".");
+            $row[] = $d->thn;
+
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->saldo_awal->count_all(),
+            "recordsFiltered" => $this->saldo_awal->count_filtered(),
+            "data" => $data,
+        );
+        //output to json format
+        echo json_encode($output);
+    }
+    function cb_laporan_aktifitas_account_view()
+    {
+        $list = $this->aktifitas_account->get_datatables();
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $d) {
+
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $d->ACCTNO;
+            $row[] = $d->ACCTNAME;
+            $row[] = $d->thn;
+
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->aktifitas_account->count_all(),
+            "recordsFiltered" => $this->aktifitas_account->count_filtered(),
+            "data" => $data,
+        );
+        //output to json format
+        echo json_encode($output);
     }
 
 

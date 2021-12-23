@@ -7,57 +7,43 @@
 
     var data_saldo_awal = function() {
 
-      $('#tabel_saldo_awal').hide();
+      // $('#tabel_saldo_awal').hide();
+      $('#tabel_saldo_awal').DataTable().destroy();
+      $('#tabel_saldo_awal').DataTable({
+        "processing": true, //Feature control the processing indicator.
+        "serverSide": true, //Feature control DataTables' server-side processing mode.
+        "scrollX": true,
+        "order": [], //Initial no order.
 
-      $.ajax({
-        url: base_url + 'cash_bank/get_data_saldo_awal',
-        type: "post",
-        data: {
-          <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
-        },
-        dataType: "json",
-        async: 'false',
-        success: function(result) {
-          var data = [];
-          for (var i = 0; i < result.length; i++) {
-            var no = i + 1;
 
-            var baseurl = '<?php echo base_url(); ?>';
 
-            var link_edit = "<a href='javascript:void(0)' onclick=\"getpopup('cash_bank/saldo_awal_edit','" + tokens + "','popupedit','" + result[i].id + "');\"><span class='btn btn-sm btn-default' title='Edit'>" + result[i].ACCTNO + "</span></a>";
-            //,'<div style="width:100%;text-align:center">'+link_edit+'</div>'
-            data.push([no, result[i].ACCTNO, result[i].ACCTNAME, result[i].saldo_f, result[i].saldo1_f, result[i].saldo2_f, result[i].saldo3_f, result[i].saldo4_f, result[i].saldo5_f, result[i].saldo6_f, result[i].saldo7_f, result[i].saldo8_f, result[i].saldo9_f, result[i].saldo10_f, result[i].saldo11_f, result[i].saldo12_f, result[i].thn]);
-          }
-
-          $('#tabel_saldo_awal').DataTable({
-            data: data,
-            deferRender: true,
-            processing: true,
-            ordering: true,
-            retrieve: false,
-            paging: true,
-            deferLoading: 57,
-            bDestroy: true,
-            autoWidth: false,
-            bFilter: true,
-            iDisplayLength: 10,
-            //responsive: true,
-            language: {
-              searchPlaceholder: 'Cari',
-              sSearch: '',
-              lengthMenu: '_MENU_',
-            },
-          });
+        // Load data for the table's content from an Ajax source
+        "ajax": {
+          url: base_url + 'cash_bank/data_saldo_awal',
+          type: 'POST',
+          data: {
+            <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+          },
+          dataType: "json",
+          beforeSend: function() {
+            //loadingPannel.show();
+          },
+          complete: function() {
+            //loadingPannel.hide();
+            $('#tabel_saldo_awal').show();
+          },
 
         },
-        beforeSend: function() {
-          loadingPannel.show();
-        },
-        complete: function() {
-          loadingPannel.hide();
-          $('#tabel_saldo_awal').show();
+        "columnDefs": [{
+          "targets": [0], //first column / numbering column
+          "orderable": false, //set not orderable
+        }, ],
+        "language": {
+          "infoFiltered": ""
         }
       });
+
+
     }
     data_saldo_awal();
 
@@ -211,7 +197,8 @@
           },
           complete: function() {
             //loadingPannel.hide();
-          }
+          },
+
         });
 
 
@@ -258,6 +245,13 @@
 
   });
 </script>
+<style>
+  table#tabel_saldo_awal td {
+    padding: 3px;
+    padding-left: 10px;
+    font-size: 12px;
+  }
+</style>
 
 
 <nav>
@@ -335,26 +329,27 @@
       <div class="span12">
 
         <br>
-        <table id="tabel_saldo_awal" class="table table-striped table-bordered table-condensed" width="100%">
+
+        <table id="tabel_saldo_awal" class="table table-striped table-bordered table-condensed">
           <thead>
             <tr>
-              <th>No</th>
-              <th>No. Account</th>
-              <th style="width:auto">Nama Account</th>
-              <th>Saldo</th>
-              <th>1</th>
-              <th>2</th>
-              <th>3</th>
-              <th>4</th>
-              <th>5</th>
-              <th>6</th>
-              <th>7</th>
-              <th>8</th>
-              <th>9</th>
-              <th>10</th>
-              <th>11</th>
-              <th>12</th>
-              <th>Tahun</th>
+              <th style="font-size: 12px; padding:10px">No</th>
+              <th style="font-size: 12px; padding:10px">No. Account</th>
+              <th style="width:auto; font-size: 12px; padding:10px">Nama Account</th>
+              <th style="font-size: 12px; padding:10px">Saldo</th>
+              <th style="font-size: 12px; padding:10px">1</th>
+              <th style="font-size: 12px; padding:10px">2</th>
+              <th style="font-size: 12px; padding:10px">3</th>
+              <th style="font-size: 12px; padding:10px">4</th>
+              <th style="font-size: 12px; padding:10px">5</th>
+              <th style="font-size: 12px; padding:10px">6</th>
+              <th style="font-size: 12px; padding:10px">7</th>
+              <th style="font-size: 12px; padding:10px">8</th>
+              <th style="font-size: 12px; padding:10px">9</th>
+              <th style="font-size: 12px; padding:10px">10</th>
+              <th style="font-size: 12px; padding:10px">11</th>
+              <th style="font-size: 12px; padding:10px">12</th>
+              <th style="font-size: 12px; padding:10px">Tahun</th>
             </tr>
           </thead>
           <tbody></tbody>

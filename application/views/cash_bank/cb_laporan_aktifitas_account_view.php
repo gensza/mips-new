@@ -1,60 +1,99 @@
 <script type="text/javascript">
+    function firstDateOfYearMonth(y, m) {
+        var firstDay = new Date(y, m - 1, 1);
+        return firstDay;
+    }
+
+    function lastDateOfYearMonth(y, m) {
+        var lastDay = new Date(y, m, 0);
+        return lastDay;
+
+    }
+
+    function format_date(d) {
+        month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [day, month, year].join('-');
+    }
     $(document).ready(function() {
 
         var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
 
-        $('#chx_periode').attr('checked', true);
-        $('#chx_periode').val('1');
+        // $('#chx_periode').attr('checked', true);
+        // $('#chx_periode').val('1');
 
-        if (!$("#chx_periode").is(":checked")) {
+        var periodenya = $('#periode').val();
+        var thn = periodenya.substring(0, 4);
+        var bln = periodenya.substring(4, 6);
 
-        } else {
-            $("#tgl_start").attr('disabled', true);
-            $("#tgl_end").attr('disabled', true);
-        }
+        // console.log(format_date(lastDateOfYearMonth(thn, bln)));
+
+        $('#tgl_1').val(format_date(firstDateOfYearMonth(thn, bln)));
+        $('#tgl_2').val(format_date(lastDateOfYearMonth(thn, bln)));
+
+        // Datepicker
+        $('#tgl_1').datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy',
+        });
+        $('#tgl_2').datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: 'dd-mm-yy',
+        });
+
+        // $('#datepicker_pointer').click(function() {
+        //     $(".fc-datepicker1").focus();
+        // });
+
+        // console.log('ini bulan nya', thn + ' dan ' + bln);
+
+
+
+        // if (!$("#chx_periode").is(":checked")) {
+
+        // } else {
+        //     $("#tgl_start").attr('disabled', true);
+        //     $("#tgl_end").attr('disabled', true);
+        // }
         //$("#tgl_start").focus();
-        document.getElementById('chx_periode').onchange = function() {
-            document.getElementById('tgl_start').disabled = this.checked;
-            document.getElementById('tgl_end').disabled = this.checked;
-            //ini untuk merubah value checkbox
-            if (!$("#chx_periode").is(":checked")) {
-                $("#tgl_start").focus();
-                $('#chx_periode').val('0');
-            } else {
-                //$("#tgl_start").val('');
-                //$("#tgl_end").val('');
-                $('#chx_periode').val('1');
-            }
-        };
+        // document.getElementById('chx_periode').onchange = function() {
+        //     document.getElementById('tgl_start').disabled = this.checked;
+        //     document.getElementById('tgl_end').disabled = this.checked;
+        //     //ini untuk merubah value checkbox
+        //     if (!$("#chx_periode").is(":checked")) {
+        //         $("#tgl_start").focus();
+        //         $('#chx_periode').val('0');
+        //     } else {
+        //         //$("#tgl_start").val('');
+        //         //$("#tgl_end").val('');
+        //         $('#chx_periode').val('1');
+        //     }
+        // };
 
 
         loading();
 
         $("#btn_cetak").click(function() {
             var base_url = '<?php echo base_url(); ?>';
-            var tgl_start = $("#tgl_start").val();
-            var tgl_end = $("#tgl_end").val();
+            var tgl_start = $("#tgl_1").val();
+            var tgl_end = $("#tgl_2").val();
             //window.open(base_url+'cetak/cash_bank_lap_register/'+tgl_start+'/'+tgl_end+'');
 
-            var cbxs;
-            if ($('#chx_periode').val() == 0) {
-                var url = '<?php echo base_url('cetak/cb_laporan_aktifitas_account/'); ?>';
-                newwindow = window.open(url + '/' + tgl_start + '/' + tgl_end + '/0', 'Perincian Aktivitas', '_blank');
-                if (window.focus) {
-                    newwindow.focus()
-                }
-                return false;
-            } else {
-                var d = new Date();
-                var today = (01) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
-                var today1 = (30) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
-                var url = '<?php echo base_url('cetak/cb_laporan_aktifitas_account/'); ?>';
-                newwindow = window.open(url + '/' + today + '/' + today1 + '/1', 'Perincian Aktivitas', '_blank');
-                if (window.focus) {
-                    newwindow.focus()
-                }
-                return false;
-            }
+
+            var url = '<?php echo base_url('cetak/cb_laporan_aktifitas_account/'); ?>';
+            newwindow = window.open(url + '/' + tgl_start + '/' + tgl_end + '/0', 'Perincian Aktivitas', '_blank');
+
 
 
 
@@ -63,30 +102,8 @@
         });
 
 
-        // Datepicker
-        $('.fc-datepicker1').datepicker({
-            showOtherMonths: true,
-            selectOtherMonths: true,
-            changeMonth: true,
-            changeYear: true,
-            dateFormat: 'dd-mm-yy'
-        });
 
-        $('.fc-datepicker2').datepicker({
-            showOtherMonths: true,
-            selectOtherMonths: true,
-            changeMonth: true,
-            changeYear: true,
-            dateFormat: 'dd-mm-yy'
-        });
 
-        $('#datepicker_pointer').click(function() {
-            $(".fc-datepicker1").focus();
-        });
-
-        $('#datepicker_pointer2').click(function() {
-            $(".fc-datepicker2").focus();
-        });
 
 
         $("#btn_tampilkan").click(function() {
@@ -95,14 +112,9 @@
             $("#btn_cetak").show();
             $("#tabel_lap_vouc_jurnal_list").html('');
 
-            if ($('#chx_periode').val() == 0) {
-                var tgl_start = $("#tgl_start").val();
-                var tgl_end = $("#tgl_end").val();
-            } else {
-                var d = new Date();
-                var tgl_start = (01) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
-                var tgl_end = (30) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
-            }
+            var tgl_start = $("#tgl_1").val();
+            var tgl_end = $("#tgl_2").val();
+
             $.ajax({
                 url: base_url + 'cetak/cb_laporan_aktifitas_account_view',
                 type: "post",
@@ -173,12 +185,23 @@
         <div class="span6">
             <h3 class="heading">Laporan Aktifitas Account</h3>
 
+            <input type="hidden" name="periode" id="periode" value="<?= $this->session->userdata('sess_periode') ?>">
             <div class="row-fluid">
                 <div class="span3">
                     <div class="form-group">
-                        <label for="demo-vs-definput" class="control-label">All Account</label>
+                        <label for="demo-vs-definput" class="control-label">Account</label>
                         <div class="input-prepend">
-                            <input type="text" size="20" class="span9 fc-datepicker1" id="tgl_start" name="tgl_start"><span class="add-on" id="tgl_start" style="cursor: pointer;"><i class="icon-calendar"></i></span>
+                            <input type="text" size="20" class="span9 form-control" id="accn" name="accn" autocomplete="off"><span class="add-on" id="accn" style="cursor: pointer;"><i class="icon-book"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="span3">
+                    <div class="form-group">
+                        <label for="demo-vs-definput" class="control-label">Tanggal Start</label>
+                        <div class="input-prepend">
+                            <input type="text" size="20" class="span9 fc-datepicker1" id="tgl_1" name="tgl_1" autocomplete="off"><span class="add-on" id="tgl_1" style="cursor: pointer;"><i class="icon-calendar"></i></span>
                         </div>
                     </div>
                 </div>
@@ -186,19 +209,19 @@
                     <div class="form-group">
                         <label for="demo-vs-definput" class="control-label">Tanggal End</label>
                         <div class="input-prepend">
-                            <input type="text" size="20" class="span9 fc-datepicker1" id="tgl_end" name="tgl_end"><span class="add-on" id="tgl_end" style="cursor: pointer;"><i class="icon-calendar"></i></span>
+                            <input type="text" size="20" class="span9 fc-datepicker1" id="tgl_2" name="tgl_2" autocomplete="off"><span class="add-on" id="tgl_2" style="cursor: pointer;"><i class="icon-calendar"></i></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="span3">
+                <!-- <div class="span3">
                     <div class="form-group">
                         <label for="demo-vs-definput" class="control-label">All Account</label>
                         <label class="uni-checkbox">
                             <input type="checkbox" id="chx_periode" name="chx_periode" class="uni_style" />
                         </label>
                     </div>
-                </div>
+                </div> -->
             </div>
 
 
