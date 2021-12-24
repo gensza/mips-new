@@ -1200,9 +1200,6 @@ class Cash_bank extends CI_Controller
     public function get_data_po_logistik()
     {
 
-        //onclick=\"getpopup('module/edit_sub','"+tokens+"','popupedit','"+result[i].id+"');\"
-
-        $tokensapp = $this->session->userdata('sess_token');
 
         $list = $this->serv_side_po_logistik_model->get_datatables();
         $data = array();
