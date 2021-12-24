@@ -134,6 +134,36 @@ class Cetak extends CI_Controller
         $tgl_end        = $this->input->post('tgl_end', TRUE);
         $chx_periode    = $this->input->post('chx_periode', TRUE);
 
+        $period = $this->session->userdata('sess_periode');
+        $tahun  = substr($period, 0, 4);
+        $bulan  = substr($period, 4, 5);
+
+        if ($bulan == '01') {
+            $var_bulan = '1';
+        } else if ($bulan == '02') {
+            $var_bulan = '2';
+        } else if ($bulan == '03') {
+            $var_bulan = '3';
+        } else if ($bulan == '04') {
+            $var_bulan = '4';
+        } else if ($bulan == '05') {
+            $var_bulan = '5';
+        } else if ($bulan == '06') {
+            $var_bulan = '6';
+        } else if ($bulan == '07') {
+            $var_bulan = '7';
+        } else if ($bulan == '08') {
+            $var_bulan = '8';
+        } else if ($bulan == '09') {
+            $var_bulan = '9';
+        } else if ($bulan == '10') {
+            $var_bulan = '10';
+        } else if ($bulan == '11') {
+            $var_bulan = '11';
+        } else if ($bulan == '12') {
+            $var_bulan = '12';
+        }
+
 
         $res_data       = $this->cetak_model->get_data_aktifitas_account($tgl_start, $tgl_end)->result_array();
         $res_data_head  = $this->cetak_model->get_list_saldo_akhir_aktifitas_account()->result_array();
@@ -152,7 +182,10 @@ class Cetak extends CI_Controller
                 # code...
                 $html .= '<tr>
                   <td width="100px" colspan="4" style="background-color:#cef58e"><b>Account : () ' . $v['ACCTNO'] . ' ' . $v['ACCTNAME'] . '</b></td>
-                  <td align="right" width="150px" style="background-color:#cef58e"><div style="float:right">' . number_format($v['saldo'], 2, ",", ".") . ' </div></td>
+                  <td style="display: none"></td>
+                  <td style="display: none"></td>
+                  <td style="display: none"></td>
+                  <td align="right" width="150px" style="background-color:#cef58e"><div style="float:right">' . number_format($v["saldo_$var_bulan"], 2, ",", ".") . ' </div></td>
                   <td align="right" width="150px" style="background-color:#cef58e"><div style="float:right">0</div></td>
                   </tr>';
 
@@ -184,16 +217,19 @@ class Cetak extends CI_Controller
                 $total = $sd->saldo + $dc->totaldr - $dc->totalcr;
                 $html .= '<tr>
                          <td width="100px" colspan="4" style="text-align: right;background:#f7f2a0;color:black;font-weight: bold;">TOTAL Transaki PerAccount :</td>
-                
+                         <td style="display: none"></td>
+                         <td style="display: none"></td>
+                         <td style="display: none"></td>
                          <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right">' . number_format($dc->totaldr, 2, ',', '.') . '</div></td>
                          <td align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right"><div style="float:right">' . number_format($dc->totalcr, 2, ',', '.') . '</div></td>
                          </tr>';
                 $html .= '<tr>
                          <td width="100px" colspan="4" style="text-align: right;background:#f7f2a0;color:black;font-weight: bold;">SALDO AKHIR :</td>
-                
+                         <td style="display: none"></td>
+                         <td style="display: none"></td>
+                         <td style="display: none"></td>
                          <td  align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right">' . number_format($total, 2, ',', '.') . '</div></td>
                          <td  align="right" width="150px" style="background: #84ffc5;color: black;font-weight: bold"><div style="float:right"></div></td>
-                        
                          </tr>';
             }
         }

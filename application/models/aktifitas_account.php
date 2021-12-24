@@ -8,9 +8,9 @@ class aktifitas_account extends CI_Model
     //nama tabel dari database
     var $table = 'master_accountcb';
     //field yang ada di table user
-    var $column_order = array(null, 'id', 'ACCTNO', 'ACCTNAME', 'thn');
-    var $column_search = array('ACCTNO', 'ACCTNAME'); //field yang diizin untuk pencarian 
-    var $order = array('id' => 'DESC'); // default order
+    var $column_order = array(null, 'id', 'ACCTNO', 'ACCTNAME', 'saldo', 'saldo_1', 'saldo_2', 'saldo_3', 'saldo_4', 'saldo_5', 'saldo_6', 'saldo_7', 'saldo_8', 'saldo_9', 'saldo_10', 'saldo_11', 'saldo_12', 'thn');
+    var $column_search = array('ACCTNO', 'VOUCNO'); //field yang diizin untuk pencarian 
+    var $order = array('ACCTNO' => 'DESC'); // default order
 
 
 
@@ -23,9 +23,8 @@ class aktifitas_account extends CI_Model
     private function _get_datatables_query()
     {
         $periode = $this->session->userdata('sess_periode');
-        $tahun  = substr($periode, 0, 4);
-
-        $this->mips_caba->where('thn', $tahun);
+        $thun  = substr($periode, 0, 4);
+        $this->mips_caba->where('thn', $thun);
         $this->mips_caba->from($this->table);
 
 
@@ -78,6 +77,7 @@ class aktifitas_account extends CI_Model
     public function count_all()
     {
         $this->mips_caba->from($this->table);
+
         return $this->mips_caba->count_all_results();
     }
 }
