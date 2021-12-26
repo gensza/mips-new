@@ -3,9 +3,6 @@ class serv_side_po_logistik_model extends CI_Model
 {
 
     //nama tabel dari database
-    // var $table = 'pp_logistik';
-    // //field yang ada di table user
-    // var $order = array('id' => 'DESC'); // default order
     var $table = 'pp_logistik';
     //field yang ada di table user
     var $column_order = array(null, 'nopp', 'nopo', 'ref_po', 'nama_supply', 'bayar', 'status_vou');
@@ -23,8 +20,17 @@ class serv_side_po_logistik_model extends CI_Model
     private function _get_datatables_query()
     {
 
-        $this->mips_caba->from($this->table);
-
+        //$this->mips_caba->where('pp_logistik.no_vou IS NULL AND pp_logistik.no_voutxt IS NULL');
+        // $this->mips_caba->where('status_vou !=', '1');
+        if ($this->session->userdata('sess_nama_lokasi') != 'HO') {
+            $this->mips_caba->from($this->table);
+            $this->mips_caba->where('status_vou = 0');
+            $this->mips_caba->like('ref_po', 'PO-LOKAL', 'both');
+        } else {
+            # code...
+            $this->mips_caba->from($this->table);
+            $this->mips_caba->where('status_vou = 0');
+        }
 
         $i = 0;
 
@@ -35,13 +41,15 @@ class serv_side_po_logistik_model extends CI_Model
 
                 if ($i === 0) // looping awal
                 {
-                    //$this->db->group_start(); 
+
+                    $this->mips_caba->group_start();
                     $this->mips_caba->like($item, $_POST['search']['value']);
                 } else {
                     $this->mips_caba->or_like($item, $_POST['search']['value']);
                 }
 
                 if (count($this->column_search) - 1 == $i) {
+                    $this->mips_caba->group_end();
                     //$this->db->group_end(); 
                 }
             }

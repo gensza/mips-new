@@ -43,7 +43,7 @@ if ($this->session->userdata('sess_level') == 1) {
 } else {
 ?>
   <div class="span2">
-    <span style="color:white">ax</span>
+    <span style="color:white">&nbsp;</span>
   </div>
   <div class="span8">
     <div class="section-wrapper">
