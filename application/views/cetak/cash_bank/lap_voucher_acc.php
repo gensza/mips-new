@@ -134,6 +134,36 @@
                 <td colspan="6" style="text-align: center;"> Tidak ada data</td>
             <tr>
                 <?php } else {
+
+                $period = $this->session->userdata('sess_periode');
+                $tahun  = substr($period, 0, 4);
+                $bulan  = substr($period, 4, 5);
+
+                if ($bulan == '01') {
+                    $var_bulan = '1';
+                } else if ($bulan == '02') {
+                    $var_bulan = '2';
+                } else if ($bulan == '03') {
+                    $var_bulan = '3';
+                } else if ($bulan == '04') {
+                    $var_bulan = '4';
+                } else if ($bulan == '05') {
+                    $var_bulan = '5';
+                } else if ($bulan == '06') {
+                    $var_bulan = '6';
+                } else if ($bulan == '07') {
+                    $var_bulan = '7';
+                } else if ($bulan == '08') {
+                    $var_bulan = '8';
+                } else if ($bulan == '09') {
+                    $var_bulan = '9';
+                } else if ($bulan == '10') {
+                    $var_bulan = '10';
+                } else if ($bulan == '11') {
+                    $var_bulan = '11';
+                } else if ($bulan == '12') {
+                    $var_bulan = '12';
+                }
                 $total = 0;
                 foreach ($res_data_head as $v) {
 
@@ -151,7 +181,7 @@
                 ?>
             <tr>
                 <td width="100px" colspan="4"><b>Account : () <?= $v['ACCTNO']; ?> <?= $v['ACCTNAME']; ?> </b></td>
-                <td align="right" width="150px"><?= number_format($v['saldo'], 2, ",", ".") ?>
+                <td align="right" width="150px"><?= number_format($v["saldo_$var_bulan"], 2, ",", ".") ?>
                 </td>
                 <td align="right" width="150px">0
                 </td>

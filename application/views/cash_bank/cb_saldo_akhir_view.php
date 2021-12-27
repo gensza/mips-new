@@ -5,6 +5,13 @@
 
         loading_posting();
 
+        var periodetxt = $('#periode').val();
+        var thn = periodetxt.substring(0, 4);
+        var bln = periodetxt.substring(4, 6);
+
+        // var periodenya = bln + thn;
+        // $('#tgl_periode').val(periodenya);
+
         $('.fc-datepicker2').datepicker({
             changeMonth: true,
             changeYear: true,
@@ -184,6 +191,7 @@
                 <div class="span3">
                     <div class="form-group">
                         <label for="demo-vs-definput" class="control-label">Periode</label>
+                        <input type="text" name="periode" id="periode" value="<?= $this->session->userdata('sess_periode') ?>">
                         <div class="input-prepend">
                             <input type="text" size="20" class="span9 fc-datepicker2" id="tgl_periode" name="tgl_periode"><span class="add-on" id="tgl_start" style="cursor: pointer;"><i class="icon-calendar"></i></span>
                         </div>

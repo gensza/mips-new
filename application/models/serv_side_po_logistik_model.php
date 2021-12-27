@@ -24,13 +24,12 @@ class serv_side_po_logistik_model extends CI_Model
         // $this->mips_caba->where('status_vou !=', '1');
         if ($this->session->userdata('sess_nama_lokasi') != 'HO') {
             $this->mips_caba->from($this->table);
-            $this->mips_caba->where('pp_logistik.status_vou = 0');
-            $this->mips_caba->where('pp_logistik.lokasi', 'SITE');
+            $this->mips_caba->where('status_vou = 0');
+            $this->mips_caba->like('ref_po', 'PO-LOKAL', 'both');
         } else {
             # code...
             $this->mips_caba->from($this->table);
-            $this->mips_caba->where('pp_logistik.status_vou = 0');
-            $this->mips_caba->where('pp_logistik.lokasi', 'HO');
+            $this->mips_caba->where('status_vou = 0');
         }
 
         $i = 0;
@@ -42,7 +41,7 @@ class serv_side_po_logistik_model extends CI_Model
 
                 if ($i === 0) // looping awal
                 {
-                    //$this->db->group_start(); 
+
                     $this->mips_caba->group_start();
                     $this->mips_caba->like($item, $_POST['search']['value']);
                 } else {

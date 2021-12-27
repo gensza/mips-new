@@ -21,6 +21,7 @@
         return [day, month, year].join('-');
     }
     $(document).ready(function() {
+        // $('#tb_accn').DataTable();
 
         var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
 
@@ -52,36 +53,6 @@
             dateFormat: 'dd-mm-yy',
         });
 
-        // $('#datepicker_pointer').click(function() {
-        //     $(".fc-datepicker1").focus();
-        // });
-
-        // console.log('ini bulan nya', thn + ' dan ' + bln);
-
-
-
-        // if (!$("#chx_periode").is(":checked")) {
-
-        // } else {
-        //     $("#tgl_start").attr('disabled', true);
-        //     $("#tgl_end").attr('disabled', true);
-        // }
-        //$("#tgl_start").focus();
-        // document.getElementById('chx_periode').onchange = function() {
-        //     document.getElementById('tgl_start').disabled = this.checked;
-        //     document.getElementById('tgl_end').disabled = this.checked;
-        //     //ini untuk merubah value checkbox
-        //     if (!$("#chx_periode").is(":checked")) {
-        //         $("#tgl_start").focus();
-        //         $('#chx_periode').val('0');
-        //     } else {
-        //         //$("#tgl_start").val('');
-        //         //$("#tgl_end").val('');
-        //         $('#chx_periode').val('1');
-        //     }
-        // };
-
-
         loading();
 
         $("#btn_cetak").click(function() {
@@ -102,18 +73,55 @@
         });
 
 
-
-
-
-
         $("#btn_tampilkan").click(function() {
 
             $("#tbl_vouc_regis").show();
             $("#btn_cetak").show();
-            $("#tabel_lap_vouc_jurnal_list").html('');
+            // $("#tabel_lap_vouc_jurnal_list").html('');
 
             var tgl_start = $("#tgl_1").val();
             var tgl_end = $("#tgl_2").val();
+
+            // $('#tbl_lap_saldo_akhir').hide();
+            // $('#tbl_lap_saldo_akhir').DataTable().destroy();
+            // $('#tbl_lap_saldo_akhir').DataTable({
+            //     "processing": true, //Feature control the processing indicator.
+            //     "serverSide": true, //Feature control DataTables' server-side processing mode.
+            //     "order": [], //Initial no order.
+
+            //     "language": {
+            //         searchPlaceholder: 'Cari',
+            //         sSearch: '',
+            //         lengthMenu: '_MENU_',
+            //         "emptyTable": "Maaf, Saldo akhir tidak tersedia !"
+            //     },
+
+            //     // Load data for the table's content from an Ajax source
+            //     "ajax": {
+            //         url: base_url + 'cetak/cb_laporan_saldo_akhir',
+            //         type: 'POST',
+            //         data: {
+            //             <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
+            //             tgl_start: tgl_start,
+            //             tgl_end: tgl_end,
+            //         },
+            //         dataType: "json",
+            //         beforeSend: function() {
+            //             //loadingPannel.show();
+            //         },
+            //         complete: function() {
+            //             //loadingPannel.hide();
+            //             $('#tbl_lap_saldo_akhir').show();
+            //         },
+
+            //     },
+            //     "columnDefs": [{
+            //         "targets": [0], //first column / numbering column
+            //         "orderable": false, //set not orderable
+            //     }, ],
+
+
+            // });
 
             $.ajax({
                 url: base_url + 'cetak/cb_laporan_aktifitas_account_view',
@@ -121,22 +129,26 @@
                 data: {
                     tgl_start: tgl_start,
                     tgl_end: tgl_end,
-                    chx_periode: $("#chx_periode").val(),
                     <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
                 },
                 dataType: "html",
                 async: 'false',
                 success: function(result) {
 
-
-                    $("#tabel_lap_vouc_jurnal_list").append(result);
-
+                    // console.log(result);
+                    // var table = $('#tb_accn').DataTable();
+                    // var table_rows = result;
+                    // table.rows.add($(table_rows)).draw();
+                    // $("#tb_accn").DataTable().row.add(result).draw();
+                    // $('#tb_accn').dataTable();
+                    $("#tb_accn").append(result);
                 },
                 beforeSend: function() {
                     loadingPannel.show();
                 },
                 complete: function() {
                     loadingPannel.hide();
+                    // $('#tb_accn').DataTable();
                 }
             });
         });
@@ -146,9 +158,10 @@
 
 
 <style type="text/css">
-    th,
-    td {
-        white-space: nowrap;
+    table#tb_accn td {
+        padding: 3px;
+        padding-left: 10px;
+        font-size: 12px;
     }
 
 
@@ -242,19 +255,21 @@
     <div class="span12" style="display:none" id="tbl_vouc_regis">
 
 
-        <table id="tabel_lap_vouc_jurnal" class="table table-hover table-striped table-bordered" style="width: 100%">
+        <table id="tb_accn" class="table table-hover table-striped table-bordered" style="width: 100%">
             <thead>
                 <tr>
-                    <th>Tgl</th>
-                    <th>No. Vouc</th>
-                    <th>Kepada / Dari</th>
-                    <th>Keterangan</th>
-                    <th>Debit</th>
-                    <th>Kredit</th>
+                    <th style="font-size: 12px; padding:10px">Tgl</th>
+                    <th style="font-size: 12px; padding:10px">No. Vouc</th>
+                    <th style="font-size: 12px; padding:10px">Kepada / Dari</th>
+                    <th style="font-size: 12px; padding:10px">Keterangan</th>
+                    <th style="font-size: 12px; padding:10px">Debit</th>
+                    <th style="font-size: 12px; padding:10px">Kredit</th>
                 </tr>
             </thead>
             <tbody id="tabel_lap_vouc_jurnal_list"></tbody>
         </table>
+
+        <div id="pagination-container"></div>
 
     </div>
 </div>

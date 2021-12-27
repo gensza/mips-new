@@ -140,17 +140,31 @@ class Cash_bank extends CI_Controller
     }
     function cb_laporan_aktifitas_account_view()
     {
+        $periode = $this->session->userdata('sess_periode');
+        $tahun  = substr($periode, 0, 4);
+        $bulan  = substr($periode, 4, 5);
+
+        $tglawal = date_format(date_create($this->input->post('tgl_start')), "Y-m-d");
+        $tglakhir = date_format(date_create($this->input->post('tgl_end')), "Y-m-d");
+
         $list = $this->aktifitas_account->get_datatables();
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $d) {
 
+            $isi = $this->aktifitas_account->query("SELECT * FROM master_accountcb WHERE ACCTNO='$d->ACCTNO' AND thn='$tahun' ORDER BY ACCTNO DESC")->row();
+
             $no++;
             $row = array();
-            $row[] = $no;
+            // $row[] = $no;
+            $row[] = date_format(date_create($d->DATE), 'd-m-Y');
             $row[] = $d->ACCTNO;
             $row[] = $d->ACCTNAME;
-            $row[] = $d->thn;
+            $row[] = $d->VOUCNO;
+            $row[] = $d->FROM;
+            $row[] = $d->REMARKS;
+            $row[] = number_format($d->DEBIT, 2, ",", ".");
+            $row[] = number_format($d->CREDIT, 2, ",", ".");
 
 
             $data[] = $row;
@@ -1186,9 +1200,6 @@ class Cash_bank extends CI_Controller
     public function get_data_po_logistik()
     {
 
-        //onclick=\"getpopup('module/edit_sub','"+tokens+"','popupedit','"+result[i].id+"');\"
-
-        $tokensapp = $this->session->userdata('sess_token');
 
         $list = $this->serv_side_po_logistik_model->get_datatables();
         $data = array();

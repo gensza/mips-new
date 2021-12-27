@@ -1,16 +1,49 @@
 <script type="text/javascript">
+    function firstDateOfYearMonth(y, m) {
+        var firstDay = new Date(y, m - 1, 1);
+        return firstDay;
+    }
+
+    function lastDateOfYearMonth(y, m) {
+        var lastDay = new Date(y, m, 0);
+        return lastDay;
+
+    }
+
+    function format_date(d) {
+        month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [day, month, year].join('-');
+    }
+
+
     $(document).ready(function() {
 
         var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
 
+        var periodenya = $('#periode').val();
+        var thn = periodenya.substring(0, 4);
+        var bln = periodenya.substring(4, 6);
+
         $('#chx_periode').attr('checked', true);
         $('#chx_periode').val('1');
+
+        // $('#tgl_start').val(format_date(firstDateOfYearMonth(thn, bln)));
+        // $('#tgl_end').val(format_date(lastDateOfYearMonth(thn, bln)));
+
 
         if (!$("#chx_periode").is(":checked")) {
 
         } else {
             $("#tgl_start").attr('disabled', true);
             $("#tgl_end").attr('disabled', true);
+            $('#tgl_start').val(format_date(firstDateOfYearMonth(thn, bln)));
+            $('#tgl_end').val(format_date(lastDateOfYearMonth(thn, bln)));
             // var d = new Date();
             // var today = (01) + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
             // var today1 = (30) + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
@@ -26,8 +59,8 @@
                 // console.log("ini checked");
                 $("#tgl_start").focus();
                 $('#chx_periode').val('0');
-                $("#tgl_start").val('');
-                $("#tgl_end").val('');
+                $('#tgl_start').val(format_date(firstDateOfYearMonth(thn, bln)));
+                $('#tgl_end').val(format_date(lastDateOfYearMonth(thn, bln)));
 
             } else {
                 // console.log("ini tidak checked");
@@ -36,8 +69,8 @@
                 // var today1 = (30) + '/' + (d.getMonth() + 1) + '/' + d.getFullYear();
                 // $('#tgl_start').val(today);
                 // $('#tgl_end').val(today1);
-                $("#tgl_start").val('');
-                $("#tgl_end").val('');
+                $('#tgl_start').val(format_date(firstDateOfYearMonth(thn, bln)));
+                $('#tgl_end').val(format_date(lastDateOfYearMonth(thn, bln)));
                 $('#chx_periode').val('1');
             }
         };
@@ -50,7 +83,8 @@
             var tgl_start = $("#tgl_start").val();
             var tgl_end = $("#tgl_end").val();
 
-            var cbxs;
+            // console.log(tgl_start);
+
             if ($('#chx_periode').val() == 0) {
                 var url = '<?php echo base_url('cetak/cb_laporan_voucher_register/'); ?>';
                 newwindow = window.open(url + '/' + tgl_start + '/' + tgl_end + '/0', 'Laporan Voucher Register', '_blank');
@@ -59,19 +93,16 @@
                 }
                 return false;
             } else {
-                var d = new Date();
-                var today = (01) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
-                var today1 = (30) + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
                 // $('#tgl_start').val(today);
                 // $('#tgl_end').val(today1)
                 var url = '<?php echo base_url('cetak/cb_laporan_voucher_register/'); ?>';
-                newwindow = window.open(url + '/' + today + '/' + today1 + '/1', 'Laporan Voucher Register', '_blank');
+                newwindow = window.open(url + '/' + tgl_start + '/' + tgl_end + '/1', 'Laporan Voucher Register', '_blank');
                 if (window.focus) {
                     newwindow.focus()
                 }
                 return false;
             }
-            //window.open(base_url+'cetak/cash_bank_lap_register/'+tgl_start+'/'+tgl_end+'');
+            window.open(base_url + 'cetak/cash_bank_lap_register/' + tgl_start + '/' + tgl_end + '');
 
 
 
@@ -190,7 +221,7 @@
     <div class="row-fluid">
         <div class="span6">
             <h3 class="heading">Laporan Voucher Register</h3>
-
+            <input type="hidden" name="periode" id="periode" value="<?= $this->session->userdata('sess_periode') ?>">
             <div class="row-fluid">
                 <div class="span3">
                     <div class="form-group">
