@@ -8,7 +8,8 @@ class Cetak_model extends CI_Model
     {
         parent::__construct();
         $this->mips_gl  = $this->load->database('mips_gl', TRUE);
-        $this->mips_caba = $this->load->database('mips_caba', TRUE);
+        $db_pt = check_db_pt();
+        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
     }
 
     function periode()
@@ -101,29 +102,38 @@ class Cetak_model extends CI_Model
         return $this->mips_caba->query($sql);
     }
 
-    function get_trans_cb_vou($no_vouc, $txtperiode)
+    function get_trans_cb_vou($no_vouc, $txtperiode, $coa)
     {
 
         $period = $this->periode();
 
         $tahun  = substr($txtperiode, 0, 4);
         $bulan  = substr($txtperiode, 4, 6);
-
+        //OLD
         $sql = "SELECT a.*,
-                        DATE_FORMAT(a.`DATE`, '%d-%m-%Y') TGL,
-                        a.DEBIT DEBET_F2,
-                        FORMAT(a.DEBIT, 2) DEBET_F,
-                        FORMAT(a.CREDIT, 2) CREDIT_F, 
-                        a.DEBIT AS DEBET_NO_F,
-                        a.CREDIT AS CREDIT_NO_F,
-                        a.ACCTNO AS DT_ACCTNO,
-                        b.JENIS AS HV_JENIS,
-                        b.ACCTNO AS HV_ACCTNO
+        DATE_FORMAT(a.`DATE`, '%d-%m-%Y') TGL,
+        a.DEBIT DEBET_F2,
+        FORMAT(a.DEBIT, 2) DEBET_F,
+        FORMAT(a.CREDIT, 2) CREDIT_F, 
+        a.DEBIT AS DEBET_NO_F,
+        a.CREDIT AS CREDIT_NO_F,
+        a.ACCTNO AS DT_ACCTNO,
+                        a.JENIS AS HV_JENIS,
+                        a.ACCTNO AS HV_ACCTNO
                         FROM voucher AS a
-                        INNER JOIN head_voucher AS b ON a.VOUCNO = b.VOUCNO
-                        WHERE a.VOUCNO = '$no_vouc' AND MONTH(a.`date`) = '$bulan' AND YEAR(a.`date`) = '$tahun' ORDER BY a.ID ASC";
+                        WHERE a.VOUCNO = '$no_vouc' AND MONTH(a.`date`) = '$bulan' AND YEAR(a.`date`) = '$tahun'  ORDER BY a.ID ASC";
+
+        /* NEW BY ALI */
+
 
         return $this->mips_caba->query($sql);
+        // return $this->mips_caba->query("SELECT  DATE_FORMAT(a.`DATE`, '%d-%m-%Y') TGL,
+        // a.DEBIT DEBET_F2,
+        // FORMAT(a.DEBIT, 2) DEBET_F,
+        // FORMAT(a.CREDIT, 2) CREDIT_F, 
+        // a.DEBIT AS DEBET_NO_F,
+        // a.CREDIT AS CREDIT_NO_F,
+        // a.ACCTNO AS DT_ACCTNO, a.REMARKS FROM voucher a WHERE VOUCNO='$no_vouc' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' ORDER BY ID ASC");
     }
 
     function get_data_vouc_list_detail_dr($no_vouc, $txtperiode)

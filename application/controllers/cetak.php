@@ -13,7 +13,8 @@ class Cetak extends CI_Controller
         $this->load->model('saldo_akhir');
         $this->load->model('rekap_model');
 
-        $this->mips_caba = $this->load->database('mips_caba', TRUE);
+        $db_pt = check_db_pt();
+        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
     }
 
     public function cb_laporan_voucher_register_view()
@@ -302,14 +303,14 @@ class Cetak extends CI_Controller
     }
 
 
-    public function cb_voucher($no_vouc, $id_vouc, $txtperiode)
+    public function cb_voucher($no_vouc, $id_vouc, $txtperiode, $coa)
     {
 
         $data['pt']  = $this->main_model->get_pt()->row_array();
 
         $nama_dokumen = 'Laporan_CB_Voucher_Register_' . $no_vouc . '';
         $data['h_vouc'] = $this->cetak_model->get_data_vouc_header_detail($no_vouc, $id_vouc, $txtperiode)->row_array();
-        $data['d_vouc'] = $this->cetak_model->get_trans_cb_vou($no_vouc, $txtperiode)->result_array();
+        $data['d_vouc'] = $this->cetak_model->get_trans_cb_vou($no_vouc, $txtperiode, $coa)->result_array();
         //$data['d_vouc_c'] = $this->cetak_model->get_data_vouc_list_detail_cr($no_vouc,$txtperiode)->result_array();
 
         // Tentukan path yang tepat ke mPDF

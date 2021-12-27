@@ -15,8 +15,8 @@
 <table width="1012" class="one" style="background: gray;border-collapse:collapse;">
   <tbody>
     <tr>
-      <td width="63" rowspan="2" class="b"><img src="./assets/logo/<?= $this->session->userdata('sess_logo'); ?>" style="width: 70px"></td>
-      <td colspan="3" rowspan="2" align="center"><b><?= $this->session->userdata('sess_nama_pt'); ?></b></td>
+      <td width="63" rowspan="2" style="border-right: 0px solid #FFF;"><img src="./assets/logo/<?= $this->session->userdata('sess_logo'); ?>" style="width: 70px"></td>
+      <td colspan="3" rowspan="2" style="border-left: 0px solid #FFF;" align="center"><b><?= $this->session->userdata('sess_nama_pt'); ?></b></td>
       <td height="27" colspan="3" align="center" class="b">
 
         <?php
@@ -30,20 +30,20 @@
         ?>
 
       </td>
-      <td width="100" class="b">&nbsp; No. : <?php echo $h_vouc['VOUCNO']; ?></td>
+      <td width="100" rowspan="2" class="b">&nbsp; No. : <?php echo $h_vouc['VOUCNO']; ?></td>
     </tr>
     <tr>
       <td colspan="3" class="ukuran_teks">&nbsp; No. Perk .</td>
-      <td>&nbsp;</td>
+      <!-- <td>&nbsp;</td> -->
     </tr>
     <tr>
       <td colspan="6" rowspan="2" class="ukuran_teks">&nbsp; Dibayarkan kepada : <?php echo $h_vouc['FROM']; ?></td>
-      <td width="93" height="32" class="ukuran_teks">&nbsp; Tanggal :</td>
-      <td width="170" align="center" class="ukuran_teks"> <?php echo $h_vouc['TGL']; ?></td>
+      <td width="93" height="32" class="ukuran_teks" style="border-right: 0px solid #FFF;">&nbsp;Tanggal&nbsp;&nbsp;:</td>
+      <td width="170" align="center" class="ukuran_teks" style="border-left: 0px solid #FFF;"><?php echo $h_vouc['TGL']; ?></td>
     </tr>
     <tr>
-      <td height="29" class="ukuran_teks">&nbsp; Lampiran : <?php echo $h_vouc['ACCTNO']; ?></td>
-      <td align="center" class="ukuran_teks">-</td>
+      <td height="29" class="ukuran_teks" style="border-right: 0px solid #FFF;">&nbsp;Lampiran&nbsp;&nbsp;:</td>
+      <td align="center" class="ukuran_teks" style="border-left: 0px solid #FFF;"></td>
     </tr>
     <tr>
       <td height="40" colspan="3" align="center" class="ukuran_teks">Perkiraan</td>
@@ -52,7 +52,8 @@
     </tr>
     <?php
     $sum = 0;
-    $nominals = 0;
+    // $nominals = 0;
+    // $nilai = array();
     foreach ($d_vouc as $v) {
 
       if ($v['DT_ACCTNO'] == $h_vouc['ACCTNO']) {
@@ -73,12 +74,15 @@
           <td colspan="4" class="ukuran_teks" style="width:50px;padding:5px">
             <div><?php echo $v['REMARKS']; ?></div>
           </td>
-          <td align="right" class="ukuran_teks">&nbsp; <?php echo number_format($nominals, 2); ?> &nbsp;</td>
+          <td align="right" class="ukuran_teks">&nbsp; <?= number_format($nominals, 2, ",", "."); ?> &nbsp;</td>
         </tr>
       <?php
         $sum += $nominals;
       } ?>
-    <?php } ?>
+    <?php
+
+    }
+    ?>
     <tr>
       <td height="100" colspan="7" align="left" class="ukuran_teks" valign="top">&nbsp;
         <br>&nbsp;<i>

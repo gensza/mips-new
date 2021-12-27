@@ -80,24 +80,12 @@ class Login extends CI_Controller
         $password = $this->input->post('c_pass', TRUE);
         $periode  = $this->input->post('c_periode', TRUE);
         $pt       = $this->input->post('c_pt', TRUE);
-
+        $kodept = ltrim($pt, '0');
 
         $recaptcha = $this->input->post('nama_tanggal', TRUE);
         $captcha = $this->input->post('kodecpt', TRUE);
 
-        $data['get_tb_pt_central'] = $this->db->get_where('tb_pt', array('kode_pt' => $pt))->row_array();
-        $pt_login = FALSE;
-        if ($data['get_tb_pt_central']['alias'] == 'MSAL') {
-            $pt_login = 'msal';
-        } else if ($data['get_tb_pt_central']['alias'] == 'MAPA') {
-            $pt_login = 'mapa';
-        } else if ($data['get_tb_pt_central']['alias'] == 'PEAK') {
-            $pt_login = 'peak';
-        } else if ($data['get_tb_pt_central']['alias'] == 'PSAM') {
-            $pt_login = 'psam';
-        } else if ($data['get_tb_pt_central']['alias'] == 'KPP') {
-            $pt_login = 'kpp';
-        }
+
 
         if ($recaptcha <> $captcha) {
             $this->session->set_flashdata('usersnotfound', '<div class="alert alert-danger"><i class="la la-warning"></i> Kode Captcha tidak sesuai !</div>');
@@ -107,11 +95,12 @@ class Login extends CI_Controller
             //inputan dibuat ke array
             $where = array(
                 'username' => $username,
-                'pt'       => $pt,
+                'pt'       => $kodept,
                 'password' => $this->cipasswordhash->verify_hash($password, $key)
             );
 
-            //var_dump($where);exit();
+            // var_dump($where);
+            // exit();
 
             //fungsi login , filter username dan password ke model
             $result_data = $this->login_model->authlogin($where)->row_array();
@@ -129,7 +118,8 @@ class Login extends CI_Controller
                     $namalokasi     = $result_data['nama_lokasi'];
                     $namapt     = $result_data['nama_pt'];
                     $logo     = $result_data['logo'];
-                    // $inis_db        = $result_data['inis_db'];
+                    // $logo     = $result_data['logo'];
+                    $inis_db        = $result_data['alias'];
                 }
 
                 if ($sf_id == null && $sf_token == null && $sf_aktif == '0') {
@@ -160,7 +150,21 @@ class Login extends CI_Controller
                     $namalokasi;
                     $namapt;
                     $logo;
-                    $inis_db = $pt_login;
+                    $inis_db;
+
+                    // $data['get_tb_pt_central'] = $this->db->get_where('tb_pt', array('kode_pt' => $pt))->row_array();
+                    $pt_login = FALSE;
+                    if ($inis_db == 'MSAL') {
+                        $pt_login = 'msal';
+                    } else if ($inis_db == 'MAPA') {
+                        $pt_login = 'mapa';
+                    } else if ($inis_db == 'PEAK') {
+                        $pt_login = 'peak';
+                    } else if ($inis_db == 'PSAM') {
+                        $pt_login = 'psam';
+                    } else if ($inis_db == 'KPP') {
+                        $pt_login = 'kpp';
+                    }
 
                     // ini session login
                     $data_session = array(
@@ -175,7 +179,7 @@ class Login extends CI_Controller
                         'sess_logo'      =>  $logo,
                         'sess_id_lokasi'    => $lokasi,
                         'sess_nama_lokasi'  => $namalokasi,
-                        'sess_db'           => $inis_db,
+                        'sess_db'           => $pt_login,
                         'sess_login'        => "1"
                     );
 

@@ -1,11 +1,11 @@
 <?php
-class Serv_side_cb_voucher_model extends CI_Model
+class serv_side_cb_voucher_model extends CI_Model
 {
 
     //nama tabel dari database
     var $table = 'head_voucher';
     //field yang ada di table user
-    var $column_order = array(null, 'VOUCNO', 'FROM', 'txtperiode', 'AMOUNT');
+    var $column_order = array(null, 'VOUCNO', 'FROM', 'txtperiode', 'AMOUNT', 'ACCTNO');
     var $column_search = array('VOUCNO', 'FROM', 'txtperiode'); //field yang diizin untuk pencarian 
     var $order = array('id' => 'DESC'); // default order
 
@@ -14,7 +14,8 @@ class Serv_side_cb_voucher_model extends CI_Model
     function __construct()
     {
         parent::__construct();
-        $this->mips_caba = $this->load->database('mips_caba', TRUE);
+        $db_pt = check_db_pt();
+        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
     }
 
     private function _get_datatables_query()

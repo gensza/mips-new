@@ -13,7 +13,9 @@ class Cash_bank_model extends CI_Model
     {
         parent::__construct();
         $this->mips_gl  = $this->load->database('mips_gl', TRUE);
-        $this->mips_caba = $this->load->database('mips_caba', TRUE);
+        // $this->mips_caba = $this->load->database('mips_caba', TRUE);
+        $db_pt = check_db_pt();
+        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
         $this->mstcode = $this->load->database('mstcode', TRUE);
         $this->mips_logistik = $this->load->database('mips_logistik', TRUE);
     }

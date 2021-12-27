@@ -70,11 +70,11 @@
         }
 
 
-        selected_voucher = function(no_vouc, txtperiode, id_vouc) {
+        selected_voucher = function(no_vouc, txtperiode, id_vouc, coa) {
 
             var url = '<?php echo base_url('cetak/cb_voucher/'); ?>';
 
-            newwindow = window.open(url + '/' + no_vouc + '/' + id_vouc + '/' + txtperiode, 'Lembar Cetak Voucher Transaksi', '_blank');
+            newwindow = window.open(url + '/' + no_vouc + '/' + id_vouc + '/' + txtperiode + '/' + coa, 'Lembar Cetak Voucher Transaksi', '_blank');
             if (window.focus) {
                 newwindow.focus()
             }

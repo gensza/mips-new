@@ -1,4 +1,9 @@
 <script type="text/javascript">
+  window.onbeforeunload = function() {
+    // return "Apakah anda akan meninggalkan halaman ini ?";
+    alert("Apakah anda akan meninggalkan halaman ini ?");
+  };
+
   $(document).ready(function() {
 
     var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';

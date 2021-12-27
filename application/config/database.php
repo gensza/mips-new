@@ -51,8 +51,11 @@ $active_record = TRUE;
 //start : koneksi_databases_dynamic
 $CI = &get_instance();
 $CI->load->library('lib_databases');
+// $CI->load->helper('sessioncheck');
 $inis_config = $CI->lib_databases->inis_config();
 $inis_db     = $CI->lib_databases->inis_db();
+
+// $inis_db = check_db_pt();
 //end : koneksi_databases_dynamic
 
 
@@ -113,21 +116,49 @@ $db['mips_gl']['stricton'] = FALSE;
 
 
 /* START-DB-CB */
-$db['mips_caba']['hostname'] = '192.168.1.237';
-$db['mips_caba']['username'] = 'mis';
-$db['mips_caba']['password'] = 'msaljkt@88';
-$db['mips_caba']['database'] = 'db_mips_cb_' . $inis_db . '';
-$db['mips_caba']['dbdriver'] = 'mysqli';
-$db['mips_caba']['dbprefix'] = '';
-$db['mips_caba']['pconnect'] = TRUE;
-$db['mips_caba']['db_debug'] = TRUE;
-$db['mips_caba']['cache_on'] = FALSE;
-$db['mips_caba']['cachedir'] = '';
-$db['mips_caba']['char_set'] = 'utf8';
-$db['mips_caba']['dbcollat'] = 'utf8_general_ci';
-$db['mips_caba']['swap_pre'] = '{PRE}';
-$db['mips_caba']['autoinit'] = TRUE;
-$db['mips_caba']['stricton'] = FALSE;
+$db['db_mips_cb_msal'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_cb_msal',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['db_mips_cb_psam'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_cb_psam',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
 /* END-DB-CB */
 
 
@@ -191,6 +222,9 @@ $db['db_msal_personalia'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+
+
 
 
 /* End of file database.php */

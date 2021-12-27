@@ -37,11 +37,12 @@ class Login_model extends CI_Model
                             b.nama AS nama_lokasi,
                             b.`value` AS id_lokasi,
                             c.`nama_pt`,
-                            c.`logo`
+                            c.`logo`,
+                            c.`alias`
                     FROM users AS a
                     INNER JOIN codegroup AS b ON a.id_lokasi = b.`value` AND b.group_n = 'LOKASI_USERS'
-                    INNER JOIN tb_pt AS c ON a.`id_pt` = c.`id_pt` 
-                    WHERE a.username = '$datapost[username]' AND a.password = '$datapost[password]'
+                    INNER JOIN tb_pt AS c ON a.`id_pt` = c.`kode_pt` 
+                    WHERE a.username = '$datapost[username]' AND a.password = '$datapost[password]' AND c.kode_pt = '$datapost[pt]'
                     AND a.`is_deleted` = 0 AND a.`aktif` = 1";
             //and a.id_pt = '$datapost[pt]'
             //$sql = "SELECT id,nama,id_module_role,token,aktif,id_lokasi FROM users WHERE username = '$datapost[username]' AND password = '$datapost[password]' and id_pt = '$datapost[pt]' AND `is_deleted` = 0 AND `aktif` = 1";

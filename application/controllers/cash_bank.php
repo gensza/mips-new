@@ -9,12 +9,15 @@ class Cash_bank extends CI_Controller
         parent::__construct();
         $this->load->model('main_model');
         $this->load->model('cash_bank_model');
-        $this->load->model('module_model');
         $this->load->model('saldo_awal');
         $this->load->model('aktifitas_account');
         $this->load->model('serv_side_cb_voucher_model');
         $this->load->model('serv_side_po_logistik_model');
-        $this->mips_caba = $this->load->database('mips_caba', TRUE);
+        // $this->mips_caba = $this->load->database('mips_caba', TRUE);
+        $db_pt = check_db_pt();
+        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
+        // $db_pt = check_db_pt();
+        // $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
     }
 
     public function input_voucher()
@@ -1012,7 +1015,7 @@ class Cash_bank extends CI_Controller
             $row[] = $customers->FROM;
             $row[] = $customers->txtperiode;
             $row[] = $amount;
-            $row[] = "<a href='javascript:void(0)' onclick=edit_trans_voucher('" . $customers->VOUCNO . "'," . $customers->ID . ",'" . $customers->txtperiode . "') title=' Edit - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_letter_edit'></i></a>    <a href='javascript:void(0)' onclick=selected_hapus_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Hapus - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_a4_remove'></i></a>   <a href='javascript:void(0)' onclick=selected_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Print - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-printer'></i></a>   ";
+            $row[] = "<a href='javascript:void(0)' onclick=edit_trans_voucher('" . $customers->VOUCNO . "'," . $customers->ID . ",'" . $customers->txtperiode . "') title=' Edit - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_letter_edit'></i></a>    <a href='javascript:void(0)' onclick=selected_hapus_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Hapus - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_a4_remove'></i></a>   <a href='javascript:void(0)' onclick=selected_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "','" . $customers->ID . "'," . $customers->ACCTNO . ") title=' Print - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-printer'></i></a>   ";
 
             $data[] = $row;
         }

@@ -47,7 +47,7 @@ if ($this->session->userdata('sess_level') == 1) {
   </div>
   <div class="span8">
     <div class="section-wrapper">
-      <h3 class="heading">Hi, <?php echo $ses_nama; ?><b>
+      <h3 class="heading">Hi, <?php echo $ses_nama; ?> &nbsp; <b>
           <?php
           //                echo substr($this->session->userdata('sess_periode'), 0, 4);
           //                echo "<br>";
@@ -57,7 +57,7 @@ if ($this->session->userdata('sess_level') == 1) {
           //            
           ?></b></h3>
       <div class="row-fluid">
-        <span class="alert alert-info">Selamat Datang di <b>MIPS - <?php echo $namamodul['nama']; ?> - <?php echo $namapt['nama']; ?></b></span>
+        <span class="alert alert-info">Selamat Datang di <b>MIPS - <?php echo $namamodul['nama']; ?> - <?php echo $namapt['nama']; ?> - <?= $this->session->userdata('sess_nama_pt') ?></b></span>
 
         <!--<br>
             <br>

@@ -14,7 +14,8 @@ class serv_side_po_logistik_model extends CI_Model
     function __construct()
     {
         parent::__construct();
-        $this->mips_caba = $this->load->database('mips_caba', TRUE);
+        $db_pt = check_db_pt();
+        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
     }
 
     private function _get_datatables_query()
