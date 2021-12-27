@@ -1,7 +1,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         var code_filter = '<?php echo $id_row2; ?>';
-        var kategori = '<?php echo $id_row; ?>';
+        var divisi = '<?php echo $id_row; ?>';
         var id_modal = '<?php echo $id_modal; ?>';
         var tokens = '<?php echo $tokens; ?>';
 
@@ -28,7 +28,7 @@
                 data: {
                     <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
                     code_filter: code_filter,
-                    kategori: kategori
+                    divisi: divisi
                 },
                 dataType: "json",
                 beforeSend: function() {

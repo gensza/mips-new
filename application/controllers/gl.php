@@ -717,9 +717,9 @@ class Gl extends CI_Controller
 
         $tokensapp   = $this->session->userdata('sess_token');
         $code_filter = $this->input->post('code_filter', TRUE);
-        $kategori    = $this->input->post('kategori', TRUE);
+        $divisi    = $this->input->post('divisi', TRUE);
 
-        $list = $this->serv_side_coa_by_kategori_popup_model->get_datatables($code_filter, $kategori);
+        $list = $this->serv_side_coa_by_kategori_popup_model->get_datatables($code_filter, $divisi);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $customers) {
@@ -748,8 +748,8 @@ class Gl extends CI_Controller
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->serv_side_coa_by_kategori_popup_model->count_all($code_filter, $kategori),
-            "recordsFiltered" => $this->serv_side_coa_by_kategori_popup_model->count_filtered($code_filter, $kategori),
+            "recordsTotal" => $this->serv_side_coa_by_kategori_popup_model->count_all($code_filter, $divisi),
+            "recordsFiltered" => $this->serv_side_coa_by_kategori_popup_model->count_filtered($code_filter, $divisi),
             "data" => $data,
         );
         //output to json format
