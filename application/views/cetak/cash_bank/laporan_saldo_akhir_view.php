@@ -1,7 +1,7 @@
 <table width="100%" border="0" align="center">
   <tr>
-    <td rowspan="2" width="0%" height="10px"><img src="./assets/logo/<?php echo $namapt['logo']; ?>" style="width: 50px"></td>
-    <td align="center" style="font-size:25px;font-weight:bold;">PT Mulia Sawit Agro Lestari</td>
+    <td rowspan="2" width="0%" height="10px"><img src="./assets/logo/<?= $this->session->userdata('sess_logo'); ?>" style="width: 50px"></td>
+    <td align="center" style="font-size:25px;font-weight:bold;"><?= $this->session->userdata('sess_nama_pt'); ?></td>
   </tr>
   <!--                                <tr>
                                     <td align="center">Jl. Radio Dalam Raya No.87A, RT.005/RW.014, Gandaria Utara, Kebayoran Baru,  JakartaSelatan, DKI Jakarta Raya-12140 <br /> Telp : 021-7231999, 7202418 (Hunting) <br /> Fax : 021-7231819

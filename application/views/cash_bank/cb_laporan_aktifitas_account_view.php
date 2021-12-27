@@ -269,7 +269,7 @@
             <tbody id="tabel_lap_vouc_jurnal_list"></tbody>
         </table>
 
-        <div id="pagination-container"></div>
+
 
     </div>
 </div>

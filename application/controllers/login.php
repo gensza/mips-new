@@ -85,6 +85,19 @@ class Login extends CI_Controller
         $recaptcha = $this->input->post('nama_tanggal', TRUE);
         $captcha = $this->input->post('kodecpt', TRUE);
 
+        $data['get_tb_pt_central'] = $this->db->get_where('tb_pt', array('kode_pt' => $pt))->row_array();
+        $pt_login = FALSE;
+        if ($data['get_tb_pt_central']['alias'] == 'MSAL') {
+            $pt_login = 'msal';
+        } else if ($data['get_tb_pt_central']['alias'] == 'MAPA') {
+            $pt_login = 'mapa';
+        } else if ($data['get_tb_pt_central']['alias'] == 'PEAK') {
+            $pt_login = 'peak';
+        } else if ($data['get_tb_pt_central']['alias'] == 'PSAM') {
+            $pt_login = 'psam';
+        } else if ($data['get_tb_pt_central']['alias'] == 'KPP') {
+            $pt_login = 'kpp';
+        }
 
         if ($recaptcha <> $captcha) {
             $this->session->set_flashdata('usersnotfound', '<div class="alert alert-danger"><i class="la la-warning"></i> Kode Captcha tidak sesuai !</div>');
@@ -105,14 +118,7 @@ class Login extends CI_Controller
 
             //ini fungsi cek query, jika ada
             if ($result_data) {
-                $sf_id;
-                $sf_nama;
-                $sf_token;
-                $sf_aktif;
-                $level;
-                $lokasi;
-                $namalokasi;
-                $inis_db;
+
                 if (isset($result_data)) {
                     $sf_id          = $result_data['id'];
                     $sf_nama        = $result_data['nama'];
@@ -121,7 +127,9 @@ class Login extends CI_Controller
                     $level          = $result_data['id_module_role'];
                     $lokasi         = $result_data['id_lokasi'];
                     $namalokasi     = $result_data['nama_lokasi'];
-                    $inis_db        = $result_data['inis_db'];
+                    $namapt     = $result_data['nama_pt'];
+                    $logo     = $result_data['logo'];
+                    // $inis_db        = $result_data['inis_db'];
                 }
 
                 if ($sf_id == null && $sf_token == null && $sf_aktif == '0') {
@@ -150,7 +158,9 @@ class Login extends CI_Controller
                     $level;
                     $lokasi;
                     $namalokasi;
-                    $inis_db;
+                    $namapt;
+                    $logo;
+                    $inis_db = $pt_login;
 
                     // ini session login
                     $data_session = array(
@@ -161,6 +171,8 @@ class Login extends CI_Controller
                         'sess_level'        => $level,
                         'sess_periode'      => $periode,
                         'sess_pt'           => $pt,
+                        'sess_nama_pt'      =>  $namapt,
+                        'sess_logo'      =>  $logo,
                         'sess_id_lokasi'    => $lokasi,
                         'sess_nama_lokasi'  => $namalokasi,
                         'sess_db'           => $inis_db,

@@ -102,6 +102,13 @@
                             }
                             else {
                                 get_acct_supplier(response.kode_supplytxt);
+                                $('#' + id_modal).modal('hide');
+                                setInterval(function() {
+                                    set_jumlah_tot();
+                                }, 1000);
+
+
+                                // selesai();
                             }
 
                         }
@@ -133,13 +140,25 @@
 
 
 
-        $("#btn_selesai_po").click(function() {
-            $('#' + id_modal).modal('hide');
-            set_jumlah_tot();
-        });
+        // $("#btn_selesai_po").click(function() {
+        //     $('#' + id_modal).modal('hide');
+        //     set_jumlah_tot();
+        // });
 
     });
 </script>
+
+<style type="text/css">
+    .tables_nowrap {
+        /*white-space: nowrap;*/
+    }
+
+    table#tabel_pp_logistik td {
+        padding: 3px;
+        padding-left: 10px;
+        font-size: 12px;
+    }
+</style>
 
 <div class="modal fade modal-lg modal-dialog-lg" id="<?php echo $id_modal; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-header">
@@ -151,21 +170,21 @@
             <table id="tabel_pp_logistik" class="table" style="width: 100%">
                 <thead>
                     <tr>
-                        <th style="width: 5%">NO PP</th>
-                        <th style="width: 5%">NO PO</th>
-                        <th style="width: 20%">REF PO</th>
-                        <th style="width: 10%">TGL PP</th>
-                        <th style="width: 20%">Supply</th>
-                        <th style="width: 5%">Bayar</th>
-                        <th style="width: 5%">Pilih</th>
+                        <th style="width: 5%; padding:10px">NO PP</th>
+                        <th style="width: 5%; padding:10px">NO PO</th>
+                        <th style="width: 20%; padding:10px">REF PO</th>
+                        <th style="width: 15%; padding:10px">TGL PP</th>
+                        <th style="width: 20%; padding:10px">Supply</th>
+                        <th style="width: 5%; padding:10px">Bayar</th>
+                        <th style="width: 5%; padding:10px">Pilih</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" style="background:white"><img src="<?php echo base_url('assets/img-gif.gif'); ?>" style="width:23px"></button>
-        <button type="button" class="btn btn-success" id="btn_selesai_po"><i class="fa fa-refresh"></i> Selesai dan Simpan</button>
+        <!-- <button type="button" class="btn btn-default" style="background:white"><img src="<?php echo base_url('assets/img-gif.gif'); ?>" style="width:23px"></button> -->
+        <!-- <button type="button" class="btn btn-success" id="btn_selesai_po"><i class="fa fa-refresh"></i> Selesai dan Simpan</button> -->
         <!--<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-refresh"></i> Close</button>-->
     </div>
 </div>

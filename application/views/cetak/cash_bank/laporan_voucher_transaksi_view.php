@@ -15,8 +15,8 @@
 <table width="1012" class="one" style="background: gray;border-collapse:collapse;">
   <tbody>
     <tr>
-      <td width="63" rowspan="2" class="b"><img src="./assets/logo/<?php echo $pt['logo']; ?>" style="width: 70px"></td>
-      <td colspan="3" rowspan="2" align="center"><b>PT. MULIA SAWIT AGRO LESTARI</b></td>
+      <td width="63" rowspan="2" class="b"><img src="./assets/logo/<?= $this->session->userdata('sess_logo'); ?>" style="width: 70px"></td>
+      <td colspan="3" rowspan="2" align="center"><b><?= $this->session->userdata('sess_nama_pt'); ?></b></td>
       <td height="27" colspan="3" align="center" class="b">
 
         <?php
@@ -52,12 +52,12 @@
     </tr>
     <?php
     $sum = 0;
+    $nominals = 0;
     foreach ($d_vouc as $v) {
 
       if ($v['DT_ACCTNO'] == $h_vouc['ACCTNO']) {
       } else {
-
-        $nominals;
+        $nominals = 0;
         if ($v['HV_JENIS'] == 'Payment') {
           if (($v['CREDIT_NO_F'] <> 0) && ($v['DT_ACCTNO'] <> $h_vouc['ACCTNO'])) {
             $nominals = 0 - $v['CREDIT_NO_F'];
@@ -67,7 +67,6 @@
         } else {
           $nominals = $v['CREDIT_NO_F'];
         }
-
     ?>
         <tr>
           <td height="10" colspan="3" align="center" class="ukuran_teks">&nbsp; <?php echo $v['DT_ACCTNO'] . '   ' . $v['KODE_PT']; ?></td>
@@ -77,18 +76,9 @@
           <td align="right" class="ukuran_teks">&nbsp; <?php echo number_format($nominals, 2); ?> &nbsp;</td>
         </tr>
       <?php
-
         $sum += $nominals;
-      }
-
-      ?>
-
-    <?php
-
-
-
-    }
-    ?>
+      } ?>
+    <?php } ?>
     <tr>
       <td height="100" colspan="7" align="left" class="ukuran_teks" valign="top">&nbsp;
         <br>&nbsp;<i>
@@ -97,13 +87,12 @@
             echo $h_vouc['ACCTNO'] . '-' . $h_vouc['GENERAL'] . ', ' . $h_vouc['DESCRIPT'];
           } else {
             echo $h_vouc['ACCTNO'] . ',' . $h_vouc['DESCRIPT'];
-          }
-          ?>
+          } ?>
         </i>
       </td>
       <td align="right" class="ukuran_teks">&nbsp; <?php echo number_format($sum, 2); ?> &nbsp;</td>
     </tr>
-    <!--    <tr>
+    <!-- <tr>
       <td height="100" colspan="7">&nbsp;</td>
     </tr>-->
     <tr>

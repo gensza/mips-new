@@ -949,7 +949,16 @@
       $("#jumlah").val(numberWithCommas(vals));
       buttonCode(vals);
       $("#balance").text(numberWithCommas('Rp. ' + vals));
+
     }
+
+    window.onbeforeunload = function() {
+      if (data_needs_saving()) {
+        return "Do you really want to leave our brilliant application?";
+      } else {
+        return;
+      }
+    };
 
 
   });

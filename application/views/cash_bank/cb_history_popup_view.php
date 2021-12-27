@@ -141,7 +141,17 @@
 
     });
 </script>
+<style type="text/css">
+    .tables_nowrap {
+        /*white-space: nowrap;*/
+    }
 
+    table#tabel_vouc_history td {
+        padding: 3px;
+        padding-left: 10px;
+        font-size: 12px;
+    }
+</style>
 <div class="modal fade modal-dialog-lg" id="<?php echo $id_modal; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button class="close" data-dismiss="modal">×</button>
@@ -152,12 +162,12 @@
             <table id="tabel_vouc_history" class="table table-hover table-striped" style="width: 100%">
                 <thead>
                     <tr>
-                        <th style="width: 2%">No</th>
-                        <th style="width: 10%">No.Vouc</th>
-                        <th style="width: 40%">From</th>
-                        <th style="width: 5%">Txt.Periode</th>
-                        <th style="width: 15%">Amount</th>
-                        <th style="width: 10%">Link</th>
+                        <th style="width: 2%; padding:10px ">No</th>
+                        <th style="width: 10%; padding:10px ">No.Vouc</th>
+                        <th style="width: 40%; padding:10px ">From</th>
+                        <th style="width: 5%; padding:10px ">Txt.Periode</th>
+                        <th style="width: 15%; padding:10px ">Amount</th>
+                        <th style="width: 10%; padding:10px ">Link</th>
                     </tr>
                 </thead>
             </table>

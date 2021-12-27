@@ -170,7 +170,7 @@
                         bDestroy: true,
                         autoWidth: false,
                         bFilter: true,
-                        iDisplayLength: 100,
+                        iDisplayLength: 25,
                         //responsive: true,
                         language: {
                             searchPlaceholder: 'Cari',
@@ -198,6 +198,14 @@
 
     });
 </script>
+
+<style>
+    table#tabel_lap_vouc_register td {
+        padding: 3px;
+        padding-left: 10px;
+        font-size: 12px;
+    }
+</style>
 
 <form id="form_input_transaksi" method=POST enctype='multipart/form-data'>
     <input type='hidden' class='form-control' name='<?php echo $this->security->get_csrf_token_name(); ?>' value="<?php echo $this->security->get_csrf_hash(); ?>">
@@ -267,12 +275,12 @@
         <table id="tabel_lap_vouc_register" class="table table-hover table-striped table-bordered" style="width: 100%">
             <thead>
                 <tr>
-                    <th>Tgl</th>
-                    <th>No. Vouc</th>
-                    <th>No. Ref</th>
-                    <th>Kepada / Dari</th>
-                    <th>Keterangan</th>
-                    <th>Nilai</th>
+                    <th style="font-size: 12px; padding:10px">Tgl</th>
+                    <th style="font-size: 12px; padding:10px">No. Vouc</th>
+                    <th style="font-size: 12px; padding:10px">No. Ref</th>
+                    <th style="font-size: 12px; padding:10px">Kepada / Dari</th>
+                    <th style="font-size: 12px; padding:10px">Keterangan</th>
+                    <th style="font-size: 12px; padding:10px">Nilai</th>
                 </tr>
             </thead>
         </table>

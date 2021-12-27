@@ -14,7 +14,7 @@
 <!-- timepicker -->
 <script src="<?php echo base_url('assets/theme/adm2/lib/datepicker/bootstrap-timepicker.min.js'); ?>"></script>
 <!-- datatable -->
-<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+<script src="<?php echo base_url('assets/theme/adm2/lib/datatables/js/jquery.dataTables.js'); ?>"></script>
 <!-- ...  -->
 <script src="<?php echo base_url('assets/theme/adm2/lib/datatables-responsive/js/dataTables.responsive.js'); ?>"></script>
 <!-- jBreadcrumbs -->
@@ -27,6 +27,8 @@
 <script src="<?php echo base_url('assets/theme/adm2/lib/antiscroll/antiscroll.js'); ?>"></script>
 <!-- ...  -->
 <script src="<?php echo base_url('assets/theme/adm2/lib/antiscroll/jquery-mousewheel.js'); ?>"></script>
+<!-- ...  -->
+<script src="<?php echo base_url('assets/theme/adm2/lib/datatables/js/jquery.dataTables.js'); ?>"></script>
 <!-- to top -->
 <script src="<?php echo base_url('assets/theme/adm2/lib/UItoTop/jquery.ui.totop.min.js'); ?>"></script>
 <!-- common functions -->

@@ -38,7 +38,7 @@
 
 <link rel="stylesheet" href="<?php echo base_url('assets/theme/adm2/lib/sweetalert/sweetalert.css'); ?>" type="text/css">
 
-<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css"> -->
+<!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css">-->
 
 
 <style type="text/css">

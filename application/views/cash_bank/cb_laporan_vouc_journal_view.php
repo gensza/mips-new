@@ -27,6 +27,9 @@
         var thn = periodenya.substring(0, 4);
         var bln = periodenya.substring(4, 6);
 
+        $('#tgl_start').val(format_date(firstDateOfYearMonth(thn, bln)));
+        $('#tgl_end').val(format_date(lastDateOfYearMonth(thn, bln)));
+
         $('#chx_periode').attr('checked', true);
         $('#chx_periode').val('1');
 

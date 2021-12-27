@@ -22,14 +22,23 @@ class serv_side_po_logistik_model extends CI_Model
 
         //$this->mips_caba->where('pp_logistik.no_vou IS NULL AND pp_logistik.no_voutxt IS NULL');
         // $this->mips_caba->where('status_vou !=', '1');
-        if ($this->session->userdata('sess_nama_lokasi') != 'HO') {
-            $this->mips_caba->from($this->table);
+        $lokasi = $this->session->userdata('sess_nama_lokasi');
+        $this->mips_caba->from($this->table);
+        if ($lokasi == 'ESTATE') {
             $this->mips_caba->where('status_vou = 0');
-            $this->mips_caba->like('ref_po', 'PO-LOKAL', 'both');
-        } else {
+            $this->mips_caba->like('ref_po', 'EST', 'both');
+        } else if ($lokasi == 'RO') {
             # code...
-            $this->mips_caba->from($this->table);
             $this->mips_caba->where('status_vou = 0');
+            $this->mips_caba->like('ref_po', 'ROM', 'both');
+        } elseif ($lokasi == 'PKS') {
+            # code...
+            $this->mips_caba->where('status_vou = 0');
+            $this->mips_caba->like('ref_po', 'FAC', 'both');
+        } else {
+            $this->mips_caba->where('status_vou = 0');
+            $this->mips_caba->like('ref_po', 'PST', 'both');
+            # code...
         }
 
         $i = 0;
