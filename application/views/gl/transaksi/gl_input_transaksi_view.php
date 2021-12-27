@@ -846,21 +846,36 @@
 
       var afd = $("#afd_unit").val();
       var thn_tanam = $("#tahun_tanam").val();
+      var divisi = $("#divisi_v").val();
+
+      if (!afd) {
+        var afd = "";
+      } else {
+        var afd = $("#afd_unit").val();
+      }
+
+      if (!thn_tanam) {
+        var thn_tanam = '';
+      } else {
+        var thn_tanam = $("#tahun_tanam").val();
+      }
 
       var tm_tbm = $("#kategori").val();
       if (tm_tbm == 'TM') {
         tm_tbm1 = '7005';
       } else if (tm_tbm == 'TBM') {
         tm_tbm1 = '2024';
-      } else if (tm_tbm == 'LANDCLEARING') {
+      } else if (tm_tbm == 'LAND_CLEARING') {
         tm_tbm1 = '2090';
-      } else {
+      } else if (tm_tbm == 'PEMBIBITAN') {
         tm_tbm1 = '2095';
+      } else {
+        tm_tbm1 = '';
       }
       var dt = tm_tbm1 + afd + thn_tanam;
 
-      src_noac = afd + '' + thn_tanam;
-      getpopup('gl/master_tabel_coa_popup_by_kategori', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', tm_tbm, src_noac);
+      src_noac = tm_tbm1 + afd + thn_tanam;
+      getpopup('gl/master_tabel_coa_popup_by_kategori', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', divisi, src_noac);
 
       $.ajax({
         url: base_url + 'gl/get_nama_acct',

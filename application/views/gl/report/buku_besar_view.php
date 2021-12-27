@@ -447,7 +447,7 @@
 
   <!--<button type="button" class="btn btn-info btn-min-width mr-1 mb-1" id="btn_tampilkan"><i class="fa fa-save"></i><i class="splashy-zoom"></i> Tampilkan </button>-->
   <button type="button" class="btn btn-info btn-min-width mr-1 mb-1" id="btn_tampilkan_popup"><i class="fa fa-save"></i><i class="splashy-zoom"></i> Tampilkan </button>
-  <button type="button" class="btn btn-warning btn-min-width mr-1 mb-1" id="btn_cetak" style="display:none"><i class="fa fa-print"></i><i class="splashy-printer"></i> Cetak </button>
+  <button type="button" class="btn btn-warning btn-min-width mr-1 mb-1" id="btn_cetak"><i class="fa fa-print"></i><i class="splashy-printer"></i> Cetak </button>
 
 </form>
 <input type="hidden" id="start_or_end">
