@@ -331,9 +331,9 @@
     document.getElementById("acct").addEventListener("keyup", function(event) {
       event.preventDefault();
       if (event.keyCode === 13) {
-
+        var divisi = $('#divisi_v').val();
         if ($("#acct").val() == '') {
-          getpopup('gl/master_tabel_coa_popup', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', '1');
+          getpopup('cash_bank/master_tabel_coa_popup', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', '1');
         } else {
 
           $.ajax({

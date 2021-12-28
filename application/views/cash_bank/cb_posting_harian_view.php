@@ -45,7 +45,7 @@
                         cache: false,
                         processData: false,
                         success: function(response) {
-                            // console.log(response);
+                            console.log(response);
                             // if (response == true) {
                             //     swal("Selesai", "Data Berhasil di Posting", "success");
                             // }

@@ -2,6 +2,7 @@
     $(document).ready(function() {
         var id_modal = '<?php echo $id_modal; ?>';
         var tokens = '<?php echo $tokens; ?>';
+        var divisi = $('#divisi_v').val();
 
 
         $('#tabel_gl_coa').hide();
@@ -20,10 +21,11 @@
             },
             // Load data for the table's content from an Ajax source
             "ajax": {
-                url: base_url + 'gl/gl_mastercode_popup',
+                url: base_url + 'cash_bank/gl_mastercode_popup',
                 type: 'POST',
                 data: {
-                    <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+                    <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
+                    divisi: divisi
                 },
                 dataType: "json",
                 beforeSend: function() {
@@ -45,7 +47,7 @@
         selected_account = function(acct_no, acct_id) {
 
             $.ajax({
-                url: base_url + 'gl/master_detail_account',
+                url: base_url + 'cash_bank/master_detail_account',
                 type: "post",
                 dataType: 'json',
                 data: {

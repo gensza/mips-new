@@ -22,14 +22,14 @@ class serv_side_cb_voucher_model extends CI_Model
     {
         $periode = $this->session->userdata('sess_periode');
         $this->mips_caba->from($this->table);
-        if ($this->session->userdata('sess_nama_lokasi') == 'HO') {
-            $this->mips_caba->where('LOKASI', 'HO');
-            $this->mips_caba->where('txtperiode', $periode);
-        } else {
-            $this->mips_caba->where('LOKASI', 'ESTATE');
-            $this->mips_caba->where('txtperiode', $periode);
-            # code...
-        }
+        $this->mips_caba->where('LOKASI', $this->session->userdata('sess_nama_lokasi'));
+        $this->mips_caba->where('txtperiode', $periode);
+        // if ($this->session->userdata('sess_nama_lokasi') == 'HO') {
+        //     $this->mips_caba->where('LOKASI', 'HO');
+        //     $this->mips_caba->where('txtperiode', $periode);
+        // } else {
+        //     # code...
+        // }
 
         $i = 0;
 

@@ -13,6 +13,7 @@ class Cash_bank extends CI_Controller
         $this->load->model('aktifitas_account');
         $this->load->model('serv_side_cb_voucher_model');
         $this->load->model('serv_side_po_logistik_model');
+        $this->load->model('serv_coa_gl');
         // $this->mips_caba = $this->load->database('mips_caba', TRUE);
         $db_pt = check_db_pt();
         $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
@@ -450,6 +451,72 @@ class Cash_bank extends CI_Controller
         $result = $this->cash_bank_model->transfer_ke_gl_submit();
         echo json_encode($result);
     }
+
+    public function master_tabel_coa_popup()
+    {
+        $tokens   = $this->input->post('tokens', TRUE);
+        $id_modal = $this->input->post('id_modal', TRUE);
+        $id_row = $this->input->post('id_row', TRUE);
+        // $divisi = $this->input->post('divisi', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens']     = $tokens;
+        $data['id_modal']   = $id_modal;
+        $data['id_row']     = $id_row;
+        $data['divisi']     = $divisi;
+
+        if ($result == '1') {
+            $this->load->view('cash_bank/coa_tabel_popup_view', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
+
+    /* untuk coa */
+    public function gl_mastercode_popup()
+    {
+
+        //onclick=\"getpopup('module/edit_sub','"+tokens+"','popupedit','"+result[i].id+"');\"
+        $tokensapp = $this->session->userdata('sess_token');
+        $divisi = $this->input->post('divisi');
+
+        $list = $this->serv_coa_gl->get_datatables($divisi);
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $customers) {
+
+            $name = str_replace(' ', '_', $customers->nama);
+
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $customers->noac;
+            $row[] = $customers->nama;
+            $row[] = $customers->sbu;
+            $row[] = $customers->group;
+            $row[] = $customers->type;
+
+            if ($customers->type == 'D') {
+                $row[] = "<button class='btn btn-success btn-sm' onclick=selected_account(" . $customers->noac . "," . $customers->NOID . ") title=' Pilih- " . $customers->noac . " - " . $customers->nama . "'>Pilih</button>";
+            } else {
+                $row[] = "<button class='btn btn-danger btn-sm'>x</button>";
+            }
+
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->serv_coa_gl->count_all($divisi),
+            "recordsFiltered" => $this->serv_coa_gl->count_filtered($divisi),
+            "data" => $data,
+        );
+        //output to json format
+        echo json_encode($output);
+    }
+
+    /* end coa */
 
 
 
@@ -1015,7 +1082,7 @@ class Cash_bank extends CI_Controller
             $row[] = $customers->FROM;
             $row[] = $customers->txtperiode;
             $row[] = $amount;
-            $row[] = "<a href='javascript:void(0)' onclick=edit_trans_voucher('" . $customers->VOUCNO . "'," . $customers->ID . ",'" . $customers->txtperiode . "') title=' Edit - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_letter_edit'></i></a>    <a href='javascript:void(0)' onclick=selected_hapus_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Hapus - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_a4_remove'></i></a>   <a href='javascript:void(0)' onclick=selected_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "','" . $customers->ID . "'," . $customers->ACCTNO . ") title=' Print - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-printer'></i></a>   ";
+            $row[] = "<a href='javascript:void(0)' onclick=edit_trans_voucher('" . $customers->VOUCNO . "'," . $customers->ID . ",'" . $customers->txtperiode . "') title=' Edit - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_letter_edit'></i></a>    <a href='javascript:void(0)' onclick=selected_hapus_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Hapus - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_a4_remove'></i></a> <a href='javascript:void(0)' onclick=pdf_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Pdf - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-download'></i></a>  <a href='javascript:void(0)' onclick=selected_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Print - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-printer'></i></a>   ";
 
             $data[] = $row;
         }

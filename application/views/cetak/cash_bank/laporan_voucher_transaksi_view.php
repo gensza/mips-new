@@ -11,8 +11,14 @@
   .ukuran_teks {
     font-size: 12px;
   }
+
+  @page {
+    margin-top: 1cm;
+    margin-left: 1cm;
+    margin-right: 1cm;
+  }
 </style>
-<table width="1012" class="one" style="background: gray;border-collapse:collapse;">
+<table width="100" class="one" style="background: gray;border-collapse:collapse;">
   <tbody>
     <tr>
       <td width="63" rowspan="2" style="border-right: 0px solid #FFF;"><img src="./assets/logo/<?= $this->session->userdata('sess_logo'); ?>" style="width: 70px"></td>

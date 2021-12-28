@@ -88,6 +88,8 @@ class Cash_bank_model extends CI_Model
         $sql1 = "SELECT * FROM voucher_tmp where voucno = '$data[kode_sementara]' order by id desc";
         $m = $this->mips_caba->query($sql1)->row_array();
 
+
+
         // ini select dulu ke table tmp , lalu insert ke table voucher dengan fungsi insert batch
         $sql2 = "SELECT * FROM voucher_tmp where voucno = '$data[kode_sementara]'";
         // $n = $this->mips_caba->query($sql2)->result_array();
@@ -138,65 +140,38 @@ class Cash_bank_model extends CI_Model
             $value_one_sumber_dana          = $exploded_value_sumber_dana[0]; // INI NAMA
             $value_two_sumber_dana          = $exploded_value_sumber_dana[1]; // NO URUT
 
-            $tglinput = date('Y-m-d H:i:s');
-            $sql = "INSERT INTO head_voucher (trans,
-                                    voucno,
-                                    DATE,
-                                    acctno,
-                                    descript,
-                                    general,
-                                    jenis,
-                                    cheqno,
-                                    nama_ref,
-                                    kode_ref,
-                                    `to`,
-                                    `from`,
-                                    pay,
-                                    amount,
-                                    bank,
-                                    lokasi,
-                                    project,
-                                    user,
-                                    tgltxt,
-                                    txtperiode,
-                                    remarks,
-                                    kode_pt,
-                                    nocekbg,
-                                    bankcek,
-                                    pdo,
-                                    sumber,
-                                    tglinput
-                                    ) 
-                            VALUES ('$data[kas_bank]',
-                                    '$data[kode_sementara]',
-                                    STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
-                                    '$value_one_bank',
-                                    '$value_two_bank',
-                                    '$namageneral',
-                                    '$data[pay_rec]',
-                                    '$ceknoref',
-                                    '$data[noref_select]',
-                                    '$data[no_ref]',
-                                    '-',
-                                    '$data[kepada]',
-                                    '$data[terbilang]',
-                                    '$jumlah_amount',
-                                    '$namabankvalue',
-                                    '$lokasi',
-                                    '-',
-                                    '$user_id',
-                                    $tgltxt,
-                                    $tgltxtperiode,
-                                    '$m[REMARKS]',
-                                    '$m[KODE_PT]',
-                                    '$data[bank_no]',
-                                    '$data[bank_nama]', 
-                                    '$value_one_sumber_dana',
-                                '$nomorsumber',
-                                    '$tglinput'
-                                    )";
+            $headvocher = $this->mips_caba->query("SELECT ACCTNO, DESCRIPT FROM voucher WHERE VOUCNO='$data[kode_sementara]' ORDER BY ID DESC LIMIT 1")->row();
 
-            $headrs = $this->mips_caba->query($sql);
+            $tglinput = date('Y-m-d H:i:s');
+
+            $sql['TRANS'] = $data['kas_bank'];
+            $sql['VOUCNO'] = $data['kode_sementara'];
+            // $sql['DATE'] = $data['tanggal'];
+            $sql['DATE'] = date('Y-m-d', strtotime($data['tanggal']));
+            $sql['ACCTNO'] = $headvocher->ACCTNO;
+            $sql['DESCRIPT'] = $headvocher->DESCRIPT;
+            $sql['GENERAL'] = $namageneral;
+            $sql['JENIS'] = $data['pay_rec'];
+            $sql['FROM'] = $data['kepada'];
+            $sql['PAY'] = $data['terbilang'];
+            $sql['AMOUNT'] = $jumlah_amount;
+            $sql['BANK'] = $namabankvalue;
+            $sql['LOKASI'] = $lokasi;
+            $sql['TGLTXT'] = $tgltxt;
+            $sql['KODE_PT'] = $m['KODE_PT'];
+            $sql['txtperiode'] = $tgltxtperiode;
+            $sql['NAMA_REF'] = $data['noref_select'];
+            $sql['KODE_REF'] = $data['KODE_REF'];
+            $sql['TGLCEK'] = date('Y-m-d H:i:s');
+            $sql['user'] = $user_id;
+            $sql['PDO'] = $value_one_sumber_dana;
+            $sql['sumber'] = $nomorsumber;
+            $sql['tglinput'] = date('Y-m-d H:i:s');
+
+
+
+
+            $headrs = $this->mips_caba->insert('head_voucher', $sql);
             // ini insert ke head voucher
             // $sql = "INSERT INTO head_voucher (trans,
             //                             voucno,
@@ -317,7 +292,8 @@ class Cash_bank_model extends CI_Model
 
 
         //parameter untuk pengkategorian payment dan receive untuk memanggil configuration.
-        $pt          = $this->get_sess_pt();
+        // $pt          = $this->get_sess_pt();
+        $pt = $this->session->userdata('sess_id_lokasi');
         //$lokasi      = $data['lokasi_users'];
         $kas_or_bank = $data['kas_bank'];
 
@@ -3843,7 +3819,6 @@ class Cash_bank_model extends CI_Model
                                     '0',
                                     '0'
                                 )";
-
         return $this->mips_caba->query($sql);
     }
 
@@ -4046,7 +4021,8 @@ class Cash_bank_model extends CI_Model
         //2 : ESTATE
         //3 : RO
 
-        $pt = $this->get_sess_pt();
+        // $pt = $this->get_sess_pt();
+        $pt = $this->session->userdata('sess_id_lokasi');
 
         $sql = "SELECT * FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
         return $this->mips_caba->query($sql);
@@ -4056,7 +4032,8 @@ class Cash_bank_model extends CI_Model
     function configurasi_update($data)
     {
 
-        $pt = $this->get_sess_pt();
+        // $pt = $this->get_sess_pt();
+        $pt = $this->session->userdata('sess_id_lokasi');
 
         if ($data['lokasi'] == 'HO') { //HO
 
@@ -4891,21 +4868,6 @@ class Cash_bank_model extends CI_Model
             $this->mips_caba->set($saldo_vou);
             $this->mips_caba->where(['ACCTNO' => $coa, 'thn' => $tahun]);
             $this->mips_caba->update('saldo_voucher');
-
-            // $saldos = 0;
-            // foreach ($result as $a) {
-            //     $coa = $a['ACCTNO'];
-            //     $sal = $saldoawal->saldone + $a['sum_debit'] - $a['sum_credit'];
-            //     $saldos = $sal - $a['sum_credit'];
-            //     return $a['sum_credit'];
-            //     // $saldo_vou["saldo"] = $saldos;
-            //     // $saldo_vou["saldo_$var_bulan"] = $saldos;
-            //     // $this->mips_caba->set($saldo_vou);
-            //     // $this->mips_caba->where(['ACCTNO' => $coa, 'thn' => $tahun]);
-            //     // $this->mips_caba->update('saldo_voucher');
-            //     // $sqlv = "UPDATE saldo_voucher SET saldo='$saldos' AND saldo_$var_bulan='$saldos' WHERE ACCTNO='$a[ACCTNO]' AND thn='$tahun'";
-            //     // $this->mips_caba->query($sqlv);
-            // }
         }
         //$h = "b'1'";
         $sqlc = "UPDATE voucher SET POSTED = 1 AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' WHERE POSTED = 0";
