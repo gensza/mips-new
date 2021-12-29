@@ -632,6 +632,10 @@
             },
             dataType: "json",
             async: 'false',
+            beforeSend: function() {
+              loadingPannel.show();
+              now = moment().format('DD/MM/YYYY HH:mm:ss');
+            },
             success: function(result) {
 
               if (result.refs == 0) {
@@ -650,19 +654,31 @@
                   success: function(response) {
                     console.log(response);
 
-                    if (response.result == true) {
-                      swal.close();
-                      Command: toastr["success"]("Data Transkasi disimpan", "Transaksi Selesai & Tersimpan");
-                      getcontents('gl/transaksi_input', '<?php echo $tokens; ?>');
-                    }
+                    then = moment().format('DD/MM/YYYY HH:mm:ss');
+                    var ms = moment(then, "DD/MM/YYYY HH:mm:ss").diff(moment(now, "DD/MM/YYYY HH:mm:ss"));
+                    var d = moment.duration(ms);
+                    var formats = d.hours() + ' Jam : ' + d.minutes() + ' Menit : ' + d.seconds() + ' Detik';
+                    // swal("Selesai", "Waktu Proses Posting " + formats + "", "success");
 
                     if (response.posting_harian == true) {
-                      Command: toastr["success"]("Data Berhasil di Posting!");
+                      swal.close();
+                      Command: toastr["success"](formats, "Waktu Proses Simpan & Posting");
                     }
 
-                    else {
+                    if (response.result == true) {
+                      loadingPannel.hide();
+                      Command: toastr["success"]("Data Transkasi disimpan", "Transaksi Selesai & Tersimpan");
+                      getcontents('gl/transaksi_input', '<?php echo $tokens; ?>');
+                    } else {
                       Command: toastr["error"]("Simpan error, data tidak berhasil disimpan", "Error");
                     }
+
+                  },
+                  beforeSend: function() {
+                    loadingPannel.show();
+                  },
+                  complete: function() {
+                    loadingPannel.hide();
                   },
                   error: function(jqXHR, textStatus, errorThrown) {
                     Command: toastr["error"]("Opps..Maaf terjadi kesahalan pada saat simpan data! Data Belum tersimpan.", "Proses Simpan Error !");
@@ -676,12 +692,6 @@
 
               }
 
-            },
-            beforeSend: function() {
-              loadingPannel.show();
-            },
-            complete: function() {
-              loadingPannel.hide();
             }
           });
         }

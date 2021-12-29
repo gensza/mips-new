@@ -2872,7 +2872,9 @@ class Gl_model extends CI_Model
                     SUM(dr) AS SumOfdr, 
                     SUM(cr) AS SumOfcr 
             FROM entry
-            WHERE ref = '$noref'";
+            WHERE ref = '$noref'
+            GROUP BY periodetxt,noac,`group`
+            ORDER BY noac DESC";
         $sql_entry = $this->mips_gl->query($sql)->result_array();
 
         // start ========= Menghitung Nilai Detail ========
@@ -3074,7 +3076,7 @@ class Gl_model extends CI_Model
 
         $noref = $data['no_ref'];
 
-        $sql = "SELECT noac, general
+        $sql = "SELECT noac, general, `group`
             FROM entry
             WHERE ref = '$noref'";
         $sql_entry = $this->mips_gl->query($sql)->result_array();
@@ -3086,7 +3088,7 @@ class Gl_model extends CI_Model
             // $sqla = "SELECT noac,general FROM noac WHERE noac = '$noac_nya'";
             // $cari_general = $this->mips_gl->query($sqla)->row();
 
-            $sqla_gen = "SELECT nama,noac,general,`type`,`group` FROM noac WHERE noac <= '$data[general]' AND `type` = 'G' ORDER BY noac DESC";
+            $sqla_gen = "SELECT nama,noac,general,`type`,`group` FROM noac WHERE noac <= '$data[general]' AND `type` = 'G' AND `group` = '$data[group]' ORDER BY noac DESC";
             $res_sql_general_master = $this->mips_gl->query($sqla_gen)->result_array();
 
             foreach ($res_sql_general_master as $a) {
