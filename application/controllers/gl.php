@@ -159,10 +159,16 @@ class Gl extends CI_Controller
         $data['totalcr']        = $this->input->post('totalcr_normal', TRUE);
         $data['totaldr']        = $this->input->post('totaldr_normal', TRUE);
 
-
-
         $result = $this->gl_model->transaksi_simpan_all($data);
-        echo json_encode($result);
+        $posting_harian = $this->gl_model->trx_to_posting_harian($data);
+        $posting_harian_general = $this->gl_model->trx_to_posting_harian_general($data);
+
+        $output = [
+            'result' => $result,
+            'posting_harian' => $posting_harian,
+            'posting_harian_general' => $posting_harian_general,
+        ];
+        echo json_encode($output);
     }
 
     public function get_nama_acct()

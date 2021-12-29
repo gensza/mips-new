@@ -2163,6 +2163,7 @@ class Gl_model extends CI_Model
 
             if ($a['group'] == 'Asset' || $a['group'] == 'Expenses' || $a['group'] == 'Other Expenses') {
 
+                // jika TTLCR tidak sama dengan 0 dan TTLDB tidak sama dengan 0
                 if ($y['TTLCR'] <> 0 && $y['TTLDB'] <> 0) {
                     $TOTALDR = $y['TTLDB'] - $y['TTLCR'];
                     if ($TOTALDR > 0) {
@@ -2852,5 +2853,321 @@ class Gl_model extends CI_Model
             $sql = "SELECT SUM(dr) DEBET,SUM(cr) CREDIT FROM entry WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') $dv_start $acc  ORDER BY `date`,noac ASC"; /*ORDER BY `DATE`,dr DESC*/
             return $this->mips_gl->query($sql);
         }
+    }
+
+    function trx_to_posting_harian($data)
+    {
+        //ini group dulu berdasarkan noac
+        $period = $this->periode();
+        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
+
+        $DEBIT  = 'saldo' . substr($period, 4, 6) . 'd';
+        $KREDIT = 'saldo' . substr($period, 4, 6) . 'c';
+
+        $noref = $data['no_ref'];
+
+        $sql = "SELECT noac,
+                    periodetxt,
+                    `group`, 
+                    SUM(dr) AS SumOfdr, 
+                    SUM(cr) AS SumOfcr 
+            FROM entry
+            WHERE ref = '$noref'";
+        $sql_entry = $this->mips_gl->query($sql)->result_array();
+
+        // start ========= Menghitung Nilai Detail ========
+        foreach ($sql_entry as $entry) {
+
+            $KODECOA = $entry['noac'];
+            $GROUPS  = $entry['group'];
+            //              //start : ========================== step 1 ===================
+
+            if ($GROUPS == 'Asset' || $GROUPS == 'Expenses' || $GROUPS == 'Other Expenses') {
+
+                //sum cr di entry dan sum dr di entry
+                if ($entry['SumOfcr'] <> 0 && $entry['SumOfdr'] <> 0) {
+
+                    $TOTALDR_TOT = $entry['SumOfdr'] - $entry['SumOfcr'];
+                    if ($TOTALDR_TOT > 0) {
+                        $TOTALDR1 = $TOTALDR_TOT;
+                        $TOTALCR1 = 0;
+                    } else {
+                        $TOTALCR1 = $TOTALDR_TOT * -1;
+                        $TOTALDR1 = 0;
+                    }
+                } else if ($entry['SumOfcr'] <> 0 && $entry['SumOfdr'] == 0) {
+
+                    if ($entry['SumOfcr'] > 0) {
+                        $TOTALCR1 = $entry['SumOfcr'];
+                        $TOTALDR1 = 0;
+                    } else {
+                        $TOTALDR1 = $entry['SumOfcr'] * -1;
+                        $TOTALCR1 = 0;
+                    }
+                } else if ($entry['SumOfdr'] <> 0 && $entry['SumOfcr'] == 0) {
+
+                    if ($entry['SumOfdr'] > 0) {
+                        $TOTALDR1 = $entry['SumOfdr'];
+                        $TOTALCR1 = 0;
+                    } else {
+                        $TOTALCR1 = $entry['SumOfdr'] * -1;
+                        $TOTALDR1 = 0;
+                    }
+                }
+            } else {
+
+                //sum cr di entry dan sum dr di entry
+                $TOTALCR_TOT = $entry['SumOfcr'] - $entry['SumOfdr'];
+
+                if ($entry['SumOfdr'] <> 0 && $entry['SumOfcr'] <> 0) {
+
+                    if ($TOTALCR_TOT > 0) {
+                        $TOTALCR1 = $TOTALCR_TOT;
+                        $TOTALDR1 = 0;
+                    } else {
+                        $TOTALDR1 = $TOTALCR_TOT * -1;
+                        $TOTALCR1 = 0;
+                    }
+                } else if ($entry['SumOfdr'] <> 0 && $entry['SumOfcr'] == 0) {
+
+                    if ($entry['SumOfdr'] > 0) {
+                        $TOTALDR1 = $entry['SumOfdr'];
+                        $TOTALCR1 = 0;
+                    } else {
+                        $TOTALCR1 = $entry['SumOfdr'] * -1;
+                        $TOTALDR1 = 0;
+                    }
+                } else if ($entry['SumOfdr'] == 0 && $entry['SumOfcr'] <> 0) {
+
+                    if ($entry['SumOfcr'] > 0) {
+                        $TOTALCR1 = $entry['SumOfcr'];
+                        $TOTALDR1 = 0;
+                    } else {
+                        $TOTALDR1 = $entry['SumOfcr'] * -1;
+                        $TOTALCR1 = 0;
+                    }
+                }
+            }
+
+
+            //echo 'DB :'.$TOTALDR1.' - '.$KODECOA.' - '.$TOTALCR1."<br><hr>";
+
+            //saldo yang ada ditambahkan
+            $sql_noac = "SELECT $DEBIT, $KREDIT
+            FROM noac
+            WHERE noac = '$KODECOA'";
+            $gege = $this->mips_gl->query($sql_noac)->row();
+
+            $data_d = $gege->$DEBIT;
+            $data_c = $gege->$KREDIT;
+
+            $sql3 = "UPDATE noac SET balancedr  = 0,
+                                         balancecr  = 0,
+                                         $DEBIT = '$data_d' + '$TOTALDR1',
+                                         $KREDIT= '$data_c' + '$TOTALCR1' 
+                                        WHERE noac  = '$KODECOA'";
+            $this->mips_gl->query($sql3);
+
+
+            //end : ========================== step 1 =====================
+
+            //start : ======================== step 2 ==== Filter Group Expenses
+            $sql_act_exp = "SELECT SUM($DEBIT) AS TTLDB,
+                                       SUM($KREDIT) AS TTLCR 
+                            FROM noac WHERE `type` = 'D' AND `group` LIKE '%Expenses%'";
+            $k_sql_exp   = $this->mips_gl->query($sql_act_exp)->row_array();
+
+            if ($k_sql_exp['TTLDB'] <> 0) {
+                $TTLB_DB = $k_sql_exp['TTLDB'];
+            } else {
+                $TTLB_DB = 0;
+            }
+
+            if ($k_sql_exp['TTLCR'] <> 0) {
+                $TTLB_CR = $k_sql_exp['TTLCR'];
+            } else {
+                $TTLB_CR = 0;
+            }
+            //end : ======================== step 2 ==== Filter Group Expenses
+
+
+            //start : ======================== step 3 ==== Filter Group Revenue
+            $sql_act_rev = "SELECT SUM($DEBIT) AS TTLDB,
+                                        SUM($KREDIT) AS TTLCR 
+                            FROM noac WHERE `type` = 'D' AND `group` LIKE '%Revenue%'";
+            $k_sql_rev   = $this->mips_gl->query($sql_act_rev)->row_array();
+
+            if ($k_sql_rev['TTLDB'] <> 0) {
+                $TTLR_DB = $k_sql_rev['TTLDB'];
+            } else {
+                $TTLR_CR = 0;
+            }
+
+            if ($k_sql_rev['TTLCR'] <> 0) {
+                $TTLR_CR = $k_sql_rev['TTLCR'];
+            } else {
+                $TTLR_DB = 0;
+            }
+            //end : ======================== step 3 ==== Filter Group Revenue
+
+
+            //start : ========= step 4 =========
+            if ($TTLB_DB <> 0 && $TTLB_CR <> 0) {
+                $TTLBIAYA = $TTLB_DB - $TTLB_CR;
+            } else if ($TTLB_DB <> 0 && $TTLB_CR == 0) {
+                $TTLBIAYA = $TTLB_DB;
+            } else if ($TTLB_DB == 0 && $TTLB_CR <> 0) { //disini
+                $TTLBIAYA = 0 - $TTLB_CR;
+            }
+
+            if ($TTLR_DB <> 0 && $TTLR_CR <> 0) {
+                $TTLDAPAT = $TTLR_CR - $TTLR_DB;
+            } else if ($TTLR_DB <> 0 && $TTLR_CR == 0) {
+                $TTLDAPAT = 0 - $TTLR_DB;
+            } else if ($TTLR_DB == 0 && $TTLR_CR <> 0) {
+                $TTLDAPAT = $TTLR_CR;
+            }
+
+
+            if ($TTLDAPAT <> 0 && $TTLBIAYA <> 0) {
+                $TTLRL = $TTLDAPAT - $TTLBIAYA;
+            } else if ($TTLDAPAT <> 0 && $TTLBIAYA == 0) {
+                $TTLRL = $TTLDAPAT;
+            } else if ($TTLDAPAT == 0 && $TTLBIAYA <> 0) {
+                if ($TTLBIAYA > 0) {
+                    $TTLRL = $TTLBIAYA * -1;
+                } else {
+                    $TTLRL = $TTLBIAYA;
+                }
+            } else if ($TTLDAPAT == 0 && $TTLBIAYA == 0) {
+                $TTLRL = 0;
+            }
+            //end   : ========= step 4 =========
+
+
+            //start : ========= step 5 =========
+            $LR2 = '504500000000000'; // LABA TAHUN BERJALAN
+            $sql_act_lr = "UPDATE noac SET $KREDIT = '$TTLRL',
+                                                $DEBIT = 0,
+                                                balancedr   = 0,
+                                                balancecr   = '$TTLRL'
+                                           WHERE noac = '$LR2'";
+            return $this->mips_gl->query($sql_act_lr);
+            //end   : ========= step 5 ========
+
+        }
+        // end ========= Menghitung Nilai Detail ========
+
+
+        // $sql_act_etr = "UPDATE entry SET POST = 1 WHERE periodetxt = '$period'";
+        // return $this->mips_gl->query($sql_act_etr);
+    }
+
+    function trx_to_posting_harian_general($data)
+    {
+
+        //ini group dulu berdasarkan noac
+        $period = $this->periode();
+
+        $DEBIT  = 'saldo' . substr($period, 4, 6) . 'd';
+        $KREDIT = 'saldo' . substr($period, 4, 6) . 'c';
+
+        $noref = $data['no_ref'];
+
+        $sql = "SELECT noac, general
+            FROM entry
+            WHERE ref = '$noref'";
+        $sql_entry = $this->mips_gl->query($sql)->result_array();
+
+        foreach ($sql_entry as $data) {
+
+            // Start : ========= Menghitung Nilai General ======== 
+            // $noac_nya = $a['noac'];
+            // $sqla = "SELECT noac,general FROM noac WHERE noac = '$noac_nya'";
+            // $cari_general = $this->mips_gl->query($sqla)->row();
+
+            $sqla_gen = "SELECT nama,noac,general,`type`,`group` FROM noac WHERE noac <= '$data[general]' AND `type` = 'G' ORDER BY noac DESC";
+            $res_sql_general_master = $this->mips_gl->query($sqla_gen)->result_array();
+
+            foreach ($res_sql_general_master as $a) {
+
+
+                $sql_sum_g = "SELECT SUM($DEBIT) AS TTLDB,
+                                            SUM($KREDIT) AS TTLCR,
+                                            SUM(YEARD) AS SALDOB,
+                                            SUM(YEARC) AS SALDOC,
+                                            SUM(BALANCEDR) AS AWALD,
+                                            SUM(BALANCECR) AS AWALC,
+                                            general,
+                                            `type`,
+                                            noac,
+                                            `group`
+                                FROM noac WHERE general <> '*' and general = '$a[noac]'";
+                $y = $this->mips_gl->query($sql_sum_g)->row_array();
+
+                if ($a['group'] == 'Asset' || $a['group'] == 'Expenses' || $a['group'] == 'Other Expenses') {
+
+                    // sum cr di noac dan sum dr di noac
+                    if ($y['TTLCR'] <> 0 && $y['TTLDB'] <> 0) {
+                        $TOTALDR = $y['TTLDB'] - $y['TTLCR'];
+                        if ($TOTALDR > 0) {
+                            $TOTALDR = $TOTALDR;
+                            $TOTALCR = 0;
+                        } else {
+                            $TOTALCR = $TOTALDR * -1;
+                            $TOTALDR = 0;
+                        }
+                    } else if ($y['TTLCR'] <> 0 && $y['TTLDB'] == 0) {
+                        $TOTALCR = $y['TTLCR'];
+                        $TOTALDR = 0;
+                    } else if ($y['TTLDB'] <> 0 && $y['TTLCR'] == 0) {
+                        $TOTALDR = $y['TTLDB'];
+                        $TOTALCR = 0;
+                    } else if ($y['TTLDB'] == 0 && $y['TTLCR'] == 0) {
+                        $TOTALDR = 0;
+                        $TOTALCR = 0;
+                    }
+
+                    //and `group` IN ('Asset','Expenses','Other Expenses')
+                    $sql_act_grs = "UPDATE noac SET $KREDIT = '$TOTALCR',
+                                                        $DEBIT  = '$TOTALDR',
+                                                        balancedr = 0,
+                                                        balancecr = 0 WHERE noac = '$a[noac]'";
+                    $this->mips_gl->query($sql_act_grs);
+                } else {
+
+                    //'UNTUK REVENUE LIABILITY
+                    if ($y['TTLDB'] <> 0 && $y['TTLCR'] <> 0) {
+                        $TOTALCR_R = $y['TTLCR'] - $y['TTLDB'];
+                        if ($TOTALCR_R > 0) {
+                            $TOTALCR_R = $TOTALCR_R;
+                            $TOTALDR_R = 0;
+                        } else {
+                            $TOTALDR_R = $TOTALCR_R * -1;
+                            $TOTALCR_R = 0;
+                        }
+                    } else if ($y['TTLDB'] <> 0 && $y['TTLCR'] == 0) {
+                        $TOTALDR_R = $y['TTLDB'];
+                        $TOTALCR_R = 0;
+                    } else if ($y['TTLDB'] == 0 && $y['TTLCR'] <> 0) {
+                        $TOTALCR_R = $y['TTLCR'];
+                        $TOTALDR_R = 0;
+                    } else if ($y['TTLDB'] == 0 && $y['TTLCR'] == 0) {
+                        $TOTALDR_R = 0;
+                        $TOTALCR_R = 0;
+                    }
+
+                    $sql_act_grd = "UPDATE noac SET $KREDIT = '$TOTALCR_R',
+                                                        $DEBIT = '$TOTALDR_R',
+                                                        balancedr = 0,
+                                                        balanceCr = 0 WHERE noac = '$a[noac]'";
+                    $this->mips_gl->query($sql_act_grd);
+                }
+            }
+        }
+
+        // End : ========= Menghitung Nilai General ======== 
+
+
     }
 }

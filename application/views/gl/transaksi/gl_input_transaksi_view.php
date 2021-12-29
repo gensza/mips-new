@@ -648,12 +648,19 @@
                   cache: false,
                   processData: false,
                   success: function(response) {
-                    if (response == true) {
+                    console.log(response);
+
+                    if (response.result == true) {
                       swal.close();
                       Command: toastr["success"]("Data Transkasi disimpan", "Transaksi Selesai & Tersimpan");
                       getcontents('gl/transaksi_input', '<?php echo $tokens; ?>');
+                    }
 
-                    } else {
+                    if (response.posting_harian == true) {
+                      Command: toastr["success"]("Data Berhasil di Posting!");
+                    }
+
+                    else {
                       Command: toastr["error"]("Simpan error, data tidak berhasil disimpan", "Error");
                     }
                   },
