@@ -14,9 +14,6 @@
         "serverSide": true, //Feature control DataTables' server-side processing mode.
         "scrollX": true,
         "order": [], //Initial no order.
-
-
-
         // Load data for the table's content from an Ajax source
         "ajax": {
           url: base_url + 'cash_bank/data_saldo_awal',
@@ -289,6 +286,7 @@
             <div>
 
               <div class="row-fluid">
+                <!-- <input type="text" name="" id="" value="<?= $this->session->userdata('sess_id_lokasi'); ?>"> -->
                 <div class="span2">
                   <div class="form-group" style="padding-right:20px">
                     <label for="demo-vs-definput" class="control-label">No. Account</label>

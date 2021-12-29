@@ -333,6 +333,42 @@ class Cetak extends CI_Controller
         //Disini dimulai proses convert UTF-8, kalau ingin ISO-8859-1 cukup dengan mengganti $mpdf->WriteHTML($html);
         $mpdf->WriteHTML(utf8_encode($html));
         $mpdf->Output($nama_dokumen . ".pdf", 'I');
+        $mpdf->Output($nama_dokumen . ".pdf", 'I');
+        exit;
+    }
+
+
+    public function print_voucher($no_vouc, $id_vouc, $txtperiode)
+    {
+
+        $data['pt']  = $this->main_model->get_pt()->row_array();
+
+        $nama_dokumen = 'Laporan_CB_Voucher_Register_' . $no_vouc . '';
+        $data['h_vouc'] = $this->cetak_model->get_data_vouc_header_detail($no_vouc, $id_vouc, $txtperiode)->row_array();
+        $data['d_vouc'] = $this->cetak_model->get_trans_cb_vou($no_vouc, $txtperiode)->result_array();
+
+        //$data['d_vouc_c'] = $this->cetak_model->get_data_vouc_list_detail_cr($no_vouc,$txtperiode)->result_array();
+
+        // Tentukan path yang tepat ke mPDF
+        $this->load->library('mpdf/mpdf');
+        //$result['datapiutang'] = $this->piutang_model->data()->result_array();
+
+        // Define a Landscape page size/format by name
+        $mpdf = new mPDF('utf-8', 'A4-P');
+
+        //Memulai proses untuk menyimpan variabel php dan html
+        ob_start();
+
+        $this->load->view('cetak/cash_bank/laporan_voucher_cetak.php', $data);
+
+        //$mpdf->setFooter('{PAGENO}');
+        //penulisan output selesai, sekarang menutup mpdf dan generate kedalam format pdf
+        $html = ob_get_contents(); //Proses untuk mengambil hasil dari OB..
+        ob_end_clean();
+        //Disini dimulai proses convert UTF-8, kalau ingin ISO-8859-1 cukup dengan mengganti $mpdf->WriteHTML($html);
+        $mpdf->WriteHTML(utf8_encode($html));
+        $mpdf->Output($nama_dokumen . ".pdf", 'I');
+        $mpdf->Output($nama_dokumen . ".pdf", 'I');
         exit;
     }
 
@@ -412,7 +448,7 @@ class Cetak extends CI_Controller
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $customers) {
-
+            $saldo = 0;
             $no++;
             $row = array();
             $row[] = $no;
@@ -436,6 +472,7 @@ class Cetak extends CI_Controller
 
     function sum_saldo_akhir()
     {
+        $lokasi = $this->session->userdata('sess_id_lokasi');
         $bln  = $this->input->post('bulan', TRUE);
         $tahun  = $this->input->post('tahun', TRUE);
 
@@ -467,7 +504,7 @@ class Cetak extends CI_Controller
             $var_bulan = '-';
         }
 
-        $dt = $this->mips_caba->query("SELECT SUM(saldo_$var_bulan) as saldo_f FROM saldo_voucher WHERE thn = '$tahun'")->row();
+        $dt = $this->mips_caba->query("SELECT SUM(saldo_$var_bulan) as saldo_f FROM saldo_voucher WHERE SITENO='$lokasi' AND thn = '$tahun'")->row();
         $saldo = number_format($dt->saldo_f, 2, ",", ".");
         echo json_encode($saldo);
     }

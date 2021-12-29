@@ -22,9 +22,10 @@ class saldo_akhir extends CI_Model
 
     private function _get_datatables_query($thun)
     {
-
-        $this->mips_caba->where('thn', $thun);
+        $lokasi = $this->session->userdata('sess_id_lokasi');
         $this->mips_caba->from($this->table);
+        $this->mips_caba->where('SITENO', $lokasi);
+        $this->mips_caba->where('thn', $thun);
 
 
         $i = 0;

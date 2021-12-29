@@ -84,7 +84,7 @@
         }
         selected_voucher = function(no_vouc, txtperiode, id_vouc) {
 
-            var url = '<?php echo base_url('cetak/cb_voucher/'); ?>';
+            var url = '<?php echo base_url('cetak/print_voucher/'); ?>';
 
             newwindow = window.open(url + '/' + no_vouc + '/' + id_vouc + '/' + txtperiode, 'Lembar Cetak Voucher Transaksi', '_blank');
             if (window.focus) {
@@ -104,7 +104,7 @@
 
         }
 
-        selected_hapus_voucher = function(no_vouc, id_vouc, txt_periode) {
+        selected_hapus_voucher = function(no_vouc, txt_periode, coa, id_vouc) {
 
             swal({
                     title: "Hapus Transaksi yang dipilih ?",
@@ -118,7 +118,7 @@
                     //confirmButtonColor: "#286090"
                 },
                 function() {
-
+                    saldo_akhir_hapus(coa);
                     $.ajax({
                         url: base_url + 'cash_bank/hapus_vouchers',
                         type: "post",
@@ -145,11 +145,39 @@
                             Command: toastr["error"]("Ajax Error !!", "Error");
                         }
 
+
                     });
 
                 });
+        }
+
+        /* untuk update saldo akhir */
+        saldo_akhir_hapus = function(coa) {
+
+            $.ajax({
+                url: base_url + 'cash_bank/update_saldo_akhir',
+                type: "post",
+                data: {
+                    coa: coa,
+                    <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+                },
+                dataType: "json",
+                async: 'false',
+                success: function(result) {
+
+                    console.log(result);
+
+                },
+                beforeSend: function() {
+                    //loadingPannel.show();
+                },
+                complete: function() {
+                    //loadingPannel.hide();
+                }
+            });
 
         }
+        /* end untuk update saldo akhir */
 
 
     });

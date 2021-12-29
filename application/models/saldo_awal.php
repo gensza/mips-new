@@ -23,10 +23,12 @@ class saldo_awal extends CI_Model
     private function _get_datatables_query()
     {
         $periode = $this->session->userdata('sess_periode');
+        $lokasi = $this->session->userdata('sess_id_lokasi');
         $tahun  = substr($periode, 0, 4);
 
-        $this->mips_caba->where('thn', $tahun);
         $this->mips_caba->from($this->table);
+        $this->mips_caba->where('SITENO', $lokasi);
+        $this->mips_caba->where('thn', $tahun);
 
 
         $i = 0;

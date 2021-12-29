@@ -78,6 +78,10 @@
                         "orderable": false, //set not orderable
                     }, ],
 
+                    "language": {
+                        "infoFiltered": ""
+                    }
+
 
                 });
 

@@ -30,6 +30,7 @@ class serv_coa_gl extends CI_Model
             $this->mips_gl->where('sbu', $divisi);
             # code...
         }
+        $this->mips_gl->where('type !=', 'G');
 
 
         $i = 0;

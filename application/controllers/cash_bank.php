@@ -462,7 +462,6 @@ class Cash_bank extends CI_Controller
         $data['tokens']     = $tokens;
         $data['id_modal']   = $id_modal;
         $data['id_row']     = $id_row;
-        $data['divisi']     = $divisi;
 
         if ($result == '1') {
             $this->load->view('cash_bank/coa_tabel_popup_view', $data);
@@ -516,6 +515,15 @@ class Cash_bank extends CI_Controller
         echo json_encode($output);
     }
 
+
+    public function master_detail_account()
+    {
+        $acct_no = $this->input->post('acct_no', TRUE);
+        $acct_id = $this->input->post('acct_id', TRUE);
+        $result = $this->cash_bank_model->master_detail_account($acct_no, $acct_id)->row_array();
+        echo json_encode($result);
+    }
+
     /* end coa */
 
 
@@ -545,6 +553,13 @@ class Cash_bank extends CI_Controller
 
 
         $result = $this->cash_bank_model->simpan_voucher_header($data);
+        echo json_encode($result);
+    }
+
+    public function update_saldo_akhir()
+    {
+        $coa = $this->input->post('coa');
+        $result = $this->cash_bank_model->update_saldo_akhir($coa);
         echo json_encode($result);
     }
 
@@ -1055,6 +1070,7 @@ class Cash_bank extends CI_Controller
         $data['no_vouc']        = $this->input->post('no_vouc', TRUE);
         $data['id_vouc']        = $this->input->post('id_vouc', TRUE);
         $data['txt_periode']    = $this->input->post('txt_periode', TRUE);
+        // $data['coa']    = $this->input->post('coa', TRUE);
 
         $result = $this->cash_bank_model->hapus_vouchers($data);
         echo json_encode($result);
@@ -1082,7 +1098,7 @@ class Cash_bank extends CI_Controller
             $row[] = $customers->FROM;
             $row[] = $customers->txtperiode;
             $row[] = $amount;
-            $row[] = "<a href='javascript:void(0)' onclick=edit_trans_voucher('" . $customers->VOUCNO . "'," . $customers->ID . ",'" . $customers->txtperiode . "') title=' Edit - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_letter_edit'></i></a>    <a href='javascript:void(0)' onclick=selected_hapus_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Hapus - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_a4_remove'></i></a> <a href='javascript:void(0)' onclick=pdf_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Pdf - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-download'></i></a>  <a href='javascript:void(0)' onclick=selected_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Print - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-printer'></i></a>   ";
+            $row[] = "<a href='javascript:void(0)' onclick=edit_trans_voucher('" . $customers->VOUCNO . "'," . $customers->ID . ",'" . $customers->txtperiode . "') title=' Edit - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_letter_edit'></i></a>    <a href='javascript:void(0)' onclick=selected_hapus_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "','" . $customers->ACCTNO . "'," . $customers->ID . ") title=' Hapus - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-document_a4_remove'></i></a> <a href='javascript:void(0)' onclick=pdf_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Pdf - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-download'></i></a>  <a href='javascript:void(0)' onclick=selected_voucher('" . $customers->VOUCNO . "','" . $customers->txtperiode . "'," . $customers->ID . ") title=' Print - " . $customers->VOUCNO . " - " . $customers->FROM . "'><i class='splashy-printer'></i></a>   ";
 
             $data[] = $row;
         }
@@ -1188,6 +1204,7 @@ class Cash_bank extends CI_Controller
         $data['bank_tanggal']    = $this->input->post('bank_tanggal', TRUE);
         $data['sumber_dana']     = $this->input->post('sumber_dana', TRUE);
         $data['sumber_dana_nominal'] = $this->input->post('sumber_dana_nominal', TRUE);
+        $data['coa_head'] = $this->input->post('coa_head', TRUE);
 
 
         $result = $this->cash_bank_model->simpan_voucher_header_update($data);

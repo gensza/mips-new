@@ -22,20 +22,7 @@ class Users_model extends CI_Model
 
     function data()
     {
-        $sql = "SELECT  a.nama,
-                        a.email,
-                        a.`id`,
-                        b.`nama` AS nama_role,
-                        a.username,
-                        c.nama_pt as nama_pt,
-                        d.nama as nama_lokasi,
-                        e.nama as groupmodul
-                    FROM users AS a
-                    INNER JOIN module_role AS b ON a.`id_module_role` = b.`id` AND b.`is_deleted` = 0
-                    INNER JOIN tb_pt AS c ON a.`id_pt` = c.`id_pt` 
-                    INNER JOIN codegroup AS d ON a.id_lokasi = d.value and d.group_n = 'LOKASI_USERS'
-                    LEFT JOIN codegroup AS e ON a.group_modul = e.value and e.group_n = 'GROUP_MODULE'
-                    WHERE a.`is_deleted` = 0 ORDER BY a.`id` ASC";
+        $sql = "SELECT  a.nama, a.email, a.id, b.nama AS nama_role, a.username, c.nama_pt as nama_pt, d.nama as nama_lokasi, e.nama as groupmodul FROM users AS a INNER JOIN module_role AS b ON a.id_module_role = b.id AND b.is_deleted = 0 INNER JOIN tb_pt AS c ON a.id_pt = c.kode_pt INNER JOIN codegroup AS d ON a.id_lokasi = d.value and d.group_n = 'LOKASI_USERS' LEFT JOIN codegroup AS e ON a.group_modul = e.value AND e.group_n = 'GROUP_MODULE' WHERE a.is_deleted = 0 ORDER BY a.id ASC";
         return $this->db->query($sql);
     }
 

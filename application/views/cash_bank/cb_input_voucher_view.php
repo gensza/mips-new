@@ -528,8 +528,6 @@
                 swal("Deleted!", "Data berhasil dihapus!", "success");
                 table_caba_detail();
                 get_balance();
-              } else {
-
               }
 
             },
@@ -621,15 +619,16 @@
           cache: false,
           processData: false,
           success: function(response) {
+            // console.log(response);
+            var coa = response.head;
 
-            console.log(response);
-
-            if (response == true) {
+            if (response.status == true) {
               swal.close();
               Command: toastr["success"]("Transaksi Voucher detail berhasil disimpan", "Berhasil");
               $('#divisi_v').val(0);
               $('.clears').val('');
               table_caba_detail();
+              saldo_akhir(coa);
               getcontents('cash_bank/input_voucher', '<?php echo $this->session->userdata('sess_token'); ?>');
 
             } else {
@@ -655,6 +654,34 @@
       //}).set('labels', {ok:'Simpan', cancel:'Batal'});;
 
     });
+
+    /* untuk update saldo akhir */
+    saldo_akhir = function(coa) {
+
+      $.ajax({
+        url: base_url + 'cash_bank/update_saldo_akhir',
+        type: "post",
+        data: {
+          coa: coa,
+          <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+        },
+        dataType: "json",
+        async: 'false',
+        success: function(result) {
+
+          console.log(result);
+
+        },
+        beforeSend: function() {
+          //loadingPannel.show();
+        },
+        complete: function() {
+          //loadingPannel.hide();
+        }
+      });
+
+    }
+    /* end untuk update saldo akhir */
 
 
     //ini fungsi angka contoh : 5000000 menjadi 5,000,000
@@ -744,10 +771,10 @@
         Command: toastr["warning"]("No. PDDO tidak boleh kosong !", "Opps !");
         $("#sumber_dana_nominal").focus();
       }
-      else if ($("#divisi_v").val() == 0) {
-        Command: toastr["warning"]("Silahkan pilih divisi !", "Opps !");
-        $("#divisi_v").focus();
-      }
+      // else if ($("#divisi_v").val() == 0) {
+      //   Command: toastr["warning"]("Silahkan pilih divisi !", "Opps !");
+      //   $("#divisi_v").focus();
+      // }
       else if ($("#transaksi_remark").val() == 0) {
         Command: toastr["warning"]("Silahkan isi pada kolom transaksi !", "Opps !");
         $("#transaksi_remark").focus();

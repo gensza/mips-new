@@ -181,7 +181,7 @@
                 ?>
             <tr>
                 <td width="100px" colspan="4"><b>Account : () <?= $v['ACCTNO']; ?> <?= $v['ACCTNAME']; ?> </b></td>
-                <td align="right" width="150px"><?= number_format($v["saldo_$var_bulan"], 2, ",", ".") ?>
+                <td align="right" width="150px"><b><?= number_format($v["saldo_$var_bulan"], 2, ",", ".") ?></b>
                 </td>
                 <td align="right" width="150px">0
                 </td>

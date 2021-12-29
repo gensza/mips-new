@@ -20,6 +20,16 @@ class Cash_bank_model extends CI_Model
         $this->mips_logistik = $this->load->database('mips_logistik', TRUE);
     }
 
+
+    function master_detail_account($acct_no, $acct_id)
+    {
+
+        $sql = "SELECT noid,noac,nama FROM noac where noid = '$acct_id' and noac = '$acct_no'";
+
+        return $this->mips_gl->query($sql);
+        //return $this->mstcode->query($sql);
+    }
+
     function username()
     {
         return $this->session->userdata('sess_id');
@@ -126,6 +136,8 @@ class Cash_bank_model extends CI_Model
         $namageneral = str_replace("_", " ", $kss['nama']);
 
 
+
+
         //selain ho maka ada PDO dan SUMBER
         if ($lokasi != 'HO') { // INI ESTATE
 
@@ -140,9 +152,9 @@ class Cash_bank_model extends CI_Model
             $value_one_sumber_dana          = $exploded_value_sumber_dana[0]; // INI NAMA
             $value_two_sumber_dana          = $exploded_value_sumber_dana[1]; // NO URUT
 
-            $headvocher = $this->mips_caba->query("SELECT ACCTNO, DESCRIPT FROM voucher WHERE VOUCNO='$data[kode_sementara]' ORDER BY ID DESC LIMIT 1")->row();
+            $headvocher = $this->mips_caba->query("SELECT ACCTNO, DESCRIPT, DEBIT, CREDIT FROM voucher WHERE VOUCNO='$data[kode_sementara]' ORDER BY ID DESC LIMIT 1")->row();
 
-            $tglinput = date('Y-m-d H:i:s');
+
 
             $sql['TRANS'] = $data['kas_bank'];
             $sql['VOUCNO'] = $data['kode_sementara'];
@@ -156,6 +168,7 @@ class Cash_bank_model extends CI_Model
             $sql['PAY'] = $data['terbilang'];
             $sql['AMOUNT'] = $jumlah_amount;
             $sql['BANK'] = $namabankvalue;
+            $sql['REMARKS'] = $m['REMARKS'];
             $sql['LOKASI'] = $lokasi;
             $sql['TGLTXT'] = $tgltxt;
             $sql['KODE_PT'] = $m['KODE_PT'];
@@ -168,125 +181,40 @@ class Cash_bank_model extends CI_Model
             $sql['sumber'] = $nomorsumber;
             $sql['tglinput'] = date('Y-m-d H:i:s');
 
-
-
-
             $headrs = $this->mips_caba->insert('head_voucher', $sql);
-            // ini insert ke head voucher
-            // $sql = "INSERT INTO head_voucher (trans,
-            //                             voucno,
-            //                             DATE,
-            //                             acctno,
-            //                             descript,
-            //                             general,
-            //                             jenis,
-            //                             cheqno,
-            //                             nama_ref,
-            //                             kode_ref,
-            //                             `to`,
-            //                             `from`,
-            //                             pay,
-            //                             amount,
-            //                             bank,
-            //                             lokasi,
-            //                             project,
-            //                             user,
-            //                             pdo,
-            //                             sumber,
-            //                             tgltxt,
-            //                             txtperiode,
-            //                             remarks,
-            //                             kode_pt,
-            //                             nocekbg,
-            //                             bankcek,
-            //                             tglcek,
-            //                             tglinput,
-            //                             posted,
-            //                             printed) 
-            //                     VALUES ('$data[kas_bank]',
-            //                             '$data[kode_sementara]',
-            //                             STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
-            //                             '$value_one_bank',
-            //                             '$value_two_bank',
-            //                             '$namageneral',
-            //                             '$data[pay_rec]',
-            //                             '$ceknoref',
-            //                             '$data[noref_select]',
-            //                             '$data[no_ref]',
-            //                             '-',
-            //                             '$data[kepada]',
-            //                             '$data[terbilang]',
-            //                             '$jumlah_amount',
-            //                             '$namabankvalue',
-            //                             '$lokasi',
-            //                             '-',
-            //                             '$user_id',
-            //                             '$value_one_sumber_dana',
-            //                             '$nomorsumber',
-            //                             $tgltxt,
-            //                             $tgltxtperiode,
-            //                             '$m[REMARKS]',
-            //                             '$m[KODE_PT]',
-            //                             '$data[bank_no]',
-            //                             '$data[bank_nama]',
-            //                             STR_TO_DATE('$data[bank_tanggal]', '%d-%m-%Y')";
 
-            // $headrs = $this->mips_caba->query($sql);
+            /* posting harian */
+
+
+            /* end posting harian */
         } else { // INI HO
 
             // ini insert ke head voucher
+            $headvocher = $this->mips_caba->query("SELECT ACCTNO, DESCRIPT FROM voucher WHERE VOUCNO='$data[kode_sementara]' ORDER BY ID DESC LIMIT 1")->row();
 
-            $tglinput = date('Y-m-d H:i:s');
-            $sql = "INSERT INTO head_voucher (trans,
-                                    voucno,
-                                    DATE,
-                                    acctno,
-                                    descript,
-                                    general,
-                                    jenis,
-                                    cheqno,
-                                    nama_ref,
-                                    kode_ref,
-                                    `to`,
-                                    `from`,
-                                    pay,
-                                    amount,
-                                    bank,
-                                    lokasi,
-                                    project,
-                                    user,
-                                    tgltxt,
-                                    txtperiode,
-                                    remarks,
-                                    kode_pt,
-                                    nocekbg,
-                                    bankcek,tglinput) 
-                            VALUES ('$data[kas_bank]',
-                                    '$data[kode_sementara]',
-                                    STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
-                                    '$value_one_bank',
-                                    '$value_two_bank',
-                                    '$namageneral',
-                                    '$data[pay_rec]',
-                                    '$ceknoref',
-                                    '$data[noref_select]',
-                                    '$data[no_ref]',
-                                    '-',
-                                    '$data[kepada]',
-                                    '$data[terbilang]',
-                                    '$jumlah_amount',
-                                    '$namabankvalue',
-                                    '$lokasi',
-                                    '-',
-                                    '$user_id',
-                                    $tgltxt,
-                                    $tgltxtperiode,
-                                    '$m[REMARKS]',
-                                    '$m[KODE_PT]',
-                                    '$data[bank_no]',
-                                    '$data[bank_nama]','$tglinput')";
-
-            $headrs = $this->mips_caba->query($sql);
+            $sql['TRANS'] = $data['kas_bank'];
+            $sql['VOUCNO'] = $data['kode_sementara'];
+            // $sql['DATE'] = $data['tanggal'];
+            $sql['DATE'] = date('Y-m-d', strtotime($data['tanggal']));
+            $sql['ACCTNO'] = $headvocher->ACCTNO;
+            $sql['DESCRIPT'] = $headvocher->DESCRIPT;
+            $sql['GENERAL'] = $namageneral;
+            $sql['JENIS'] = $data['pay_rec'];
+            $sql['FROM'] = $data['kepada'];
+            $sql['PAY'] = $data['terbilang'];
+            $sql['AMOUNT'] = $jumlah_amount;
+            $sql['BANK'] = $namabankvalue;
+            $sql['REMARKS'] = $m['REMARKS'];
+            $sql['LOKASI'] = $lokasi;
+            $sql['TGLTXT'] = $tgltxt;
+            $sql['KODE_PT'] = $m['KODE_PT'];
+            $sql['txtperiode'] = $tgltxtperiode;
+            $sql['NAMA_REF'] = $data['noref_select'];
+            $sql['KODE_REF'] = $data['KODE_REF'];
+            $sql['TGLCEK'] = date('Y-m-d H:i:s');
+            $sql['user'] = $user_id;
+            $sql['tglinput'] = date('Y-m-d H:i:s');
+            $headrs = $this->mips_caba->insert('head_voucher', $sql);
         }
 
 
@@ -3661,8 +3589,61 @@ class Cash_bank_model extends CI_Model
         } else {
         }
 
+        $status = [
+            'status' => $headrs,
+            'head' => $sql['ACCTNO']
+        ];
+        return $status;
+    }
 
-        return $headrs;
+    function update_saldo_akhir($coa)
+    {
+        $period = $this->periode();
+
+        $tahun  = substr($period, 0, 4);
+        $bulan  = substr($period, 4, 5);
+
+        if ($bulan == '01') {
+            $var_bulan = '1';
+        } else if ($bulan == '02') {
+            $var_bulan = '2';
+        } else if ($bulan == '03') {
+            $var_bulan = '3';
+        } else if ($bulan == '04') {
+            $var_bulan = '4';
+        } else if ($bulan == '05') {
+            $var_bulan = '5';
+        } else if ($bulan == '06') {
+            $var_bulan = '6';
+        } else if ($bulan == '07') {
+            $var_bulan = '7';
+        } else if ($bulan == '08') {
+            $var_bulan = '8';
+        } else if ($bulan == '09') {
+            $var_bulan = '9';
+        } else if ($bulan == '10') {
+            $var_bulan = '10';
+        } else if ($bulan == '11') {
+            $var_bulan = '11';
+        } else if ($bulan == '12') {
+            $var_bulan = '12';
+        }
+
+        $saldoawal = $this->mips_caba->query("SELECT saldo, saldo_$var_bulan as saldone FROM master_accountcb WHERE ACCTNO='$coa' AND thn='$tahun'")->row();
+
+        $sql = "SELECT ACCTNO, DESCRIPT, SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$coa' GROUP BY ACCTNO";
+        $sd = $this->mips_caba->query($sql)->row();
+
+        $coa = $sd->ACCTNO;
+        $sal = $saldoawal->saldo + $sd->sum_debit;
+        $saldos = $sal - $sd->sum_credit;
+        $saldo_vou["saldo"] = $saldos;
+        $saldo_vou["saldo_$var_bulan"] = $saldos;
+        $this->mips_caba->set($saldo_vou);
+        $this->mips_caba->where(['ACCTNO' => $coa, 'thn' => $tahun]);
+        $this->mips_caba->update('saldo_voucher');
+
+        return true;
     }
 
     function cobacoba()
@@ -4495,7 +4476,11 @@ class Cash_bank_model extends CI_Model
         }
 
 
-        return $headrs;
+        $status = [
+            'status' => $headrs,
+            'head' => $data['coa_head']
+        ];
+        return $status;
     }
 
     function get_vouc_tmp_detail_edit($data)
@@ -4631,8 +4616,6 @@ class Cash_bank_model extends CI_Model
 
     function simpan_saldo_awal($data)
     {
-
-
         $saldo = str_replace(",", "", $data['saldo']);
         $bln   = $data['bulan'];
 
@@ -4665,7 +4648,7 @@ class Cash_bank_model extends CI_Model
             $var_bulan = '-';
         }
 
-        // $saldoawal["SITENO"] = $this->session->userdata('sess_pt');
+        $saldoawal["SITENO"] = $this->session->userdata('sess_id_lokasi');
         $saldoawal["ACCTNO"] = $data['acctno'];
         $saldoawal["ACCTNAME"] = $data['acctname'];
         $saldoawal["saldo"] = $saldo;
@@ -4689,16 +4672,7 @@ class Cash_bank_model extends CI_Model
             $bool_saldo_akhir = FALSE;
         }
 
-        // $sql = "INSERT INTO master_accountcb (ACCTNO,
-        //                             ACCTNAME,
-        //                             saldo,
-        //                             saldo_" . $var_bulan . ",
-        //                             thn) 
-        //                     VALUES ('$data[acctno]',
-        //                             '$data[acctname]',
-        //                             '$saldo',
-        //                             '$saldo',
-        //                             '$data[tahun]')";
+
         if ($bool_saldo_awal === TRUE && $bool_saldo_akhir === TRUE) {
             return array('status' => TRUE);
         } else {
@@ -4794,11 +4768,11 @@ class Cash_bank_model extends CI_Model
     {
 
         //header
-        $sql = "DELETE FROM head_voucher WHERE ID = '$data[txt_periode]' AND voucno = '$data[no_vouc]' and txtperiode = '$data[id_vouc]' ";
+        $sql = "DELETE FROM head_voucher WHERE ID = '$data[id_vouc]' AND VOUCNO = '$data[no_vouc]' AND txtperiode = '$data[txt_periode]' ";
         $this->mips_caba->query($sql);
 
         //detail
-        $sql1 = "DELETE FROM voucher WHERE voucno = '$data[no_vouc]' and txtperiode = '$data[id_vouc]' ";
+        $sql1 = "DELETE FROM voucher WHERE VOUCNO = '$data[no_vouc]' AND txtperiode = '$data[txt_periode]' ";
         return $this->mips_caba->query($sql1);
     }
 

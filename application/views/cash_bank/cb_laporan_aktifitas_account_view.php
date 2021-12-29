@@ -82,46 +82,7 @@
             var tgl_start = $("#tgl_1").val();
             var tgl_end = $("#tgl_2").val();
 
-            // $('#tbl_lap_saldo_akhir').hide();
-            // $('#tbl_lap_saldo_akhir').DataTable().destroy();
-            // $('#tbl_lap_saldo_akhir').DataTable({
-            //     "processing": true, //Feature control the processing indicator.
-            //     "serverSide": true, //Feature control DataTables' server-side processing mode.
-            //     "order": [], //Initial no order.
 
-            //     "language": {
-            //         searchPlaceholder: 'Cari',
-            //         sSearch: '',
-            //         lengthMenu: '_MENU_',
-            //         "emptyTable": "Maaf, Saldo akhir tidak tersedia !"
-            //     },
-
-            //     // Load data for the table's content from an Ajax source
-            //     "ajax": {
-            //         url: base_url + 'cetak/cb_laporan_saldo_akhir',
-            //         type: 'POST',
-            //         data: {
-            //             <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
-            //             tgl_start: tgl_start,
-            //             tgl_end: tgl_end,
-            //         },
-            //         dataType: "json",
-            //         beforeSend: function() {
-            //             //loadingPannel.show();
-            //         },
-            //         complete: function() {
-            //             //loadingPannel.hide();
-            //             $('#tbl_lap_saldo_akhir').show();
-            //         },
-
-            //     },
-            //     "columnDefs": [{
-            //         "targets": [0], //first column / numbering column
-            //         "orderable": false, //set not orderable
-            //     }, ],
-
-
-            // });
 
             $.ajax({
                 url: base_url + 'cetak/cb_laporan_aktifitas_account_view',
@@ -135,13 +96,8 @@
                 async: 'false',
                 success: function(result) {
 
-                    // console.log(result);
-                    // var table = $('#tb_accn').DataTable();
-                    // var table_rows = result;
-                    // table.rows.add($(table_rows)).draw();
-                    // $("#tb_accn").DataTable().row.add(result).draw();
-                    // $('#tb_accn').dataTable();
-                    $("#tb_accn").append(result);
+                    $("#tabel_lap_accn").html("");
+                    $("#tabel_lap_accn").append(result);
                 },
                 beforeSend: function() {
                     loadingPannel.show();
@@ -266,7 +222,7 @@
                     <th style="font-size: 12px; padding:10px">Kredit</th>
                 </tr>
             </thead>
-            <tbody id="tabel_lap_vouc_jurnal_list"></tbody>
+            <tbody id="tabel_lap_accn"></tbody>
         </table>
 
 

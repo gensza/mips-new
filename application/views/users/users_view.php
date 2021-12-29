@@ -16,6 +16,7 @@
                 dataType: "json",
                 async: 'false',
                 success: function(result) {
+                    console.log(result);
                     var data = [];
                     for (var i = 0; i < result.length; i++) {
                         var no = i + 1;
@@ -133,57 +134,97 @@
 
 
         $("#btn_simpan").click(function() {
+            if ($("#nama").val() == '') {
+                Command: toastr["warning"]("Silahkan masukan nama !", "Opps !");
+                $("#nama").focus();
+            }
+            else if ($("#email").val() == '') {
+                Command: toastr["warning"]("Silahkan masukan email !", "Opps !");
+                $("#email").focus();
+            }
+            else if ($("#role").val() == 0) {
+                Command: toastr["warning"]("Silahkan pilih role !", "Opps !");
+                $("#role").focus();
+            }
+            else if ($("#pt").val() == 0) {
+                Command: toastr["warning"]("Silahkan pilih pt !", "Opps !");
+                $("#pt").focus();
+            }
+            else if ($("#group_modul").val() == 0) {
+                Command: toastr["warning"]("Silahkan pilih modul !", "Opps !");
+                $("#group_modul").focus();
+            }
+            else if ($("#lokasi").val() == 0) {
+                Command: toastr["warning"]("Silahkan pilih lokasi !", "Opps !");
+                $("#lokasi").focus();
+            }
+            else if ($("#username").val() == 0) {
+                Command: toastr["warning"]("Silahkan masukan username !", "Opps !");
+                $("#username").focus();
+            }
+            else if ($("#pass_word").val() == 0) {
+                Command: toastr["warning"]("Silahkan masukan password !", "Opps !");
+                $("#pass_word").focus();
+            }
+            else {
 
-            swal({
-                    title: "Simpan Data Pengguna ?",
-                    text: "Silahkan periksa kembali harga yang ingin disimpan.",
-                    type: "info",
-                    showCancelButton: true,
-                    closeOnConfirm: false,
-                    showLoaderOnConfirm: true,
-                    confirmButtonText: "Simpan",
-                    //confirmButtonColor: "#E73D4A"
-                    confirmButtonColor: "#286090"
-                },
-                function() {
+                swal({
+                        title: "Simpan Data Pengguna ?",
+                        text: "Silahkan periksa kembali harga yang ingin disimpan.",
+                        type: "info",
+                        showCancelButton: true,
+                        closeOnConfirm: false,
+                        showLoaderOnConfirm: true,
+                        confirmButtonText: "Simpan",
+                        //confirmButtonColor: "#E73D4A"
+                        confirmButtonColor: "#286090"
+                    },
+                    function() {
 
-                    $.ajax({
-                        url: base_url + 'users/simpan',
-                        type: "post",
-                        dataType: 'json',
-                        data: {
-                            lokasi: $("#lokasi").val(),
-                            pt: $("#pt").val(),
-                            nama: $("#nama").val(),
-                            username: $("#username").val(),
-                            email: $("#email").val(),
-                            role: $("#role").val(),
-                            password: $("#pass_word").val(),
-                            group_modul: $("#group_modul").val(),
-                            <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
-                        },
-                        success: function(response) {
-                            if (response == true) {
-                                swal.close();
-                                Command: toastr["success"]("Data Pengguna berhasil disimpan", "Berhasil");
-                                get_data_users();
-                                data_users();
-                                get_pt();
-                                $("#nama").val('');
-                                $("#email").val('');
-                                $("#role").val(0);
-                            } else {
-                                Command: toastr["error"]("Response Ajax Error !!", "Error");
+                        $.ajax({
+                            url: base_url + 'users/simpan',
+                            type: "post",
+                            dataType: 'json',
+                            data: {
+                                lokasi: $("#lokasi").val(),
+                                pt: $("#pt").val(),
+                                nama: $("#nama").val(),
+                                username: $("#username").val(),
+                                email: $("#email").val(),
+                                role: $("#role").val(),
+                                password: $("#pass_word").val(),
+                                group_modul: $("#group_modul").val(),
+                                <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+                            },
+                            success: function(response) {
+                                if (response == true) {
+                                    swal.close();
+                                    Command: toastr["success"]("Data Pengguna berhasil disimpan", "Berhasil");
+                                    get_data_users();
+                                    data_users();
+                                    get_pt();
+                                    $("#nama").val('');
+                                    $("#email").val('');
+                                    $("#role").val(0);
+                                    $("#pt").val(0);
+                                    $("#group_modul").val(0);
+                                    $("#lokasi").val(0);
+                                    $("#username").val('');
+                                    $("#pass_word").val('');
+                                } else {
+                                    Command: toastr["error"]("Response Ajax Error !!", "Error");
+                                }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                Command: toastr["error"]("Ajax Error !!", "Error");
                             }
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-                            Command: toastr["error"]("Ajax Error !!", "Error");
-                        }
-                    });
+                        });
 
-                });
+                    });
+            }
 
         });
+
 
         var get_pt = function() {
             /* select role */
@@ -276,9 +317,10 @@ for ($i = 0; $i < 5; $i++) {
         </div>
         <div class="form-group">
             <label for="demo-vs-definput" class="control-label">Password </label>
-            <input type="text" id="pass_word" name="pass_word" class="form-control" value="<?php echo $tokenx; ?>" style="border-color:blue" readonly="">
-            <br>
-            <span style="font-size: 12px;color:red">* Silahkan catat password ini.</span>
+            <!-- <input type="text" id="pass_word" name="pass_word" class="form-control" value="<?php echo $tokenx; ?>" style="border-color:blue" readonly=""> -->
+            <input type="password" id="pass_word" name="pass_word" class="form-control" style="border-color:blue" placeholder="Masukan Password Disini">
+            <!-- <br>
+            <span style="font-size: 12px;color:red">* Silahkan catat password ini.</span> -->
         </div>
         <hr>
         <button type="button" class="btn btn-info btn-min-width mr-1 mb-1" id="btn_simpan"><i class="fa fa-save"></i> Simpan </button>
