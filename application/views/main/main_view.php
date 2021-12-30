@@ -49,6 +49,7 @@ if ($sess_login == 0) {
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
       <title>MIPS - <?php echo $namamodul['nama']; ?></title>
 
       <?php include "main_css.php"; ?>

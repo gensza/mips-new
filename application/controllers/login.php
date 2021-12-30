@@ -105,6 +105,10 @@ class Login extends CI_Controller
             //fungsi login , filter username dan password ke model
             $result_data = $this->login_model->authlogin($where)->row_array();
 
+            $lok = $this->db->query("SELECT nama as nama_lokasi FROM codegroup WHERE value='$result_data[id_lokasi]' AND group_n='LOKASI_USERS'")->row_array();
+            $getpt = $this->db->query("SELECT nama_pt, logo, alias FROM tb_pt WHERE kode_pt='$pt'")->row_array();
+            $setup = $this->db->query("SELECT txtperiode FROM tb_setup WHERE id_modul='$result_data[id_module_role]' AND id_pt='$pt' AND lokasi='$result_data[id_lokasi]'")->row_array();
+            // var_dump($result_data) . die();
             //ini fungsi cek query, jika ada
             if ($result_data) {
 
@@ -115,11 +119,11 @@ class Login extends CI_Controller
                     $sf_aktif       = $result_data['aktif'];
                     $level          = $result_data['id_module_role'];
                     $lokasi         = $result_data['id_lokasi'];
-                    $namalokasi     = $result_data['nama_lokasi'];
-                    $namapt     = $result_data['nama_pt'];
-                    $logo     = $result_data['logo'];
-                    // $logo     = $result_data['logo'];
-                    $inis_db        = $result_data['alias'];
+                    $namalokasi     = $lok['nama_lokasi'];
+                    $namapt     = $getpt['nama_pt'];
+                    $logo     = $getpt['logo'];
+                    $inis_db        = $getpt['alias'];
+                    $txtperiode = $setup['txtperiode'];
                 }
 
                 if ($sf_id == null && $sf_token == null && $sf_aktif == '0') {
@@ -150,6 +154,7 @@ class Login extends CI_Controller
                     $namalokasi;
                     $namapt;
                     $logo;
+                    $txtperiode;
                     $inis_db;
 
                     // $data['get_tb_pt_central'] = $this->db->get_where('tb_pt', array('kode_pt' => $pt))->row_array();
@@ -173,14 +178,15 @@ class Login extends CI_Controller
                         'sess_token'        => $token,
                         'sess_aktif'        => $sf_aktif,
                         'sess_level'        => $level,
-                        'sess_periode'      => $periode,
+                        'sess_periode'      => $txtperiode,
                         'sess_pt'           => $pt,
                         'sess_nama_pt'      =>  $namapt,
                         'sess_logo'      =>  $logo,
                         'sess_id_lokasi'    => $lokasi,
                         'sess_nama_lokasi'  => $namalokasi,
                         'sess_db'           => $pt_login,
-                        'sess_login'        => "1"
+                        'sess_login'        => "1",
+                        'sess_pw_cb'        => "0"
                     );
 
                     $this->session->set_userdata($data_session);

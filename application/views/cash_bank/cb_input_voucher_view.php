@@ -1,13 +1,27 @@
 <script type="text/javascript">
-  window.onbeforeunload = function() {
-    // return "Apakah anda akan meninggalkan halaman ini ?";
-    alert("Apakah anda akan meninggalkan halaman ini ?");
-  };
+  // window.onbeforeunload = function() {
+  //   // return "Apakah anda akan meninggalkan halaman ini ?";
+  //   alert("Apakah anda akan meninggalkan halaman ini ?");
+  // };
 
   $(document).ready(function() {
 
     var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
     var lokasi_usr = '<?php echo $this->session->userdata('sess_nama_lokasi'); ?>';
+
+    var period = '<?php echo $period; ?>';
+    var period_tahun = '<?php echo $period_tahun; ?>';
+    var period_bulan = '<?php echo $period_bulan; ?>';
+
+    //periode berjalan bulan dan tahun
+    var tahun = moment().format('YYYY');
+    var bulan = moment().format('MM');
+
+    if (tahun == period_tahun && bulan == period_bulan) {
+      $('#input_vou').show();
+    } else {
+      $('#pw_periode').show();
+    }
 
     $('.maskmoney_money').maskMoney({
       thousands: ',',
@@ -984,13 +998,36 @@
 
     }
 
-    window.onbeforeunload = function() {
-      if (data_needs_saving()) {
-        return "Do you really want to leave our brilliant application?";
-      } else {
-        return;
+    // window.onbeforeunload = function() {
+    //   if (data_needs_saving()) {
+    //     return "Do you really want to leave our brilliant application?";
+    //   } else {
+    //     return;
+    //   }
+    // };
+
+    $('#btn_voucher').click(function() {
+      if ($("#pw").val() == '') {
+        Command: toastr["error"]("Silahkan masukan password terlebih dahulu !", "Opss..");
+        $("#pw").focus();
       }
-    };
+      else {
+        if ($("#pw").val() != '12345') {
+          Command: toastr["error"]("Password Salah, Silahkan ulangi dan coba ingat kembali !", "Opss..");
+          $("#pw").val('');
+          $("#pw").focus();
+        }
+        else {
+          $("#pw_periode").hide();
+          loadingPannel.show();
+          setInterval(function() {
+            loadingPannel.hide();
+            $("#input_vou").show();
+          }, 1000);
+        }
+      }
+
+    });
 
 
   });
@@ -1012,7 +1049,7 @@ for ($i = 0; $i < 6; $i++) {
 
 
 <form id="form_input_transaksi" method=POST enctype='multipart/form-data'>
-  <input type="hidden" name="kode_sementara" id="kode_sementara" value="<?php echo $token; ?>">
+  <!-- <input type="hidden" name="kode_sementara" id="kode_sementara" value="<?php echo $token; ?>"> -->
   <input type="hidden" name="kode_sementara" id="kode_sementara" value="<?php echo $token; ?>">
   <input type="hidden" name="lokasi_users" id="lokasi_users" value="<?php echo $lokasi['nama']; ?>">
   <input type='hidden' class='form-control' name='<?php echo $this->security->get_csrf_token_name(); ?>' value="<?php echo $this->security->get_csrf_hash(); ?>">
@@ -1053,7 +1090,30 @@ for ($i = 0; $i < 6; $i++) {
   </nav>
 
 
-  <div class="row-fluid">
+  <div class="row-fluid" id="pw_periode" style="display: none;">
+    <form id="form_input_vou" method=POST enctype='multipart/form-data'>
+      <input type='hidden' class='form-control' name='<?php echo $this->security->get_csrf_token_name(); ?>' value="<?php echo $this->security->get_csrf_hash(); ?>">
+      <div class="alert alert-danger">
+        <strong>Info !</strong> Periode Bulan & Tahun tidak sesuai dengan periode berjalan saat ini , silahkan masukan password untuk input voucher !
+      </div>
+      <div class="section-wrapper">
+        <h3 class="heading">Input Voucher Cash Bank</h3>
+        <div class="row-fluid">
+          <div class="span2" style="margin-right:10px;">
+            <div class="form-group">
+              <label for="demo-vs-definput" class="control-label">Password</label>
+              <input type="password" id="pw" name="pw" class="form-control maskmoney" placeholder="Password">
+            </div>
+          </div>
+        </div>
+        <br>
+        <button type="button" class="btn btn-danger btn-min-width mr-1 mb-1" id="btn_voucher">Submit <i class="splashy-arrow_large_right"></i></button>
+      </div>
+    </form>
+  </div>
+
+
+  <div class="row-fluid" id="input_vou" style="display: none;">
     <div class="span6">
 
       <div class="tabbable tabbable-bordered">

@@ -49,6 +49,7 @@ class Users_model extends CI_Model
         $d['group_modul'] = $data['group_modul'];
 
 
+
         return $this->db->insert('users', $d);
     }
 

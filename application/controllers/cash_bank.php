@@ -28,6 +28,10 @@ class Cash_bank extends CI_Controller
         $result = $this->main_model->check_token($tokens);
         $data['tokens'] = $tokens;
         $data['lokasi'] = $this->main_model->get_lokasi()->row_array();
+        $period = $this->session->userdata('sess_periode');
+        $data['period']        = $period;
+        $data['period_tahun']  = substr($period, 0, 4);
+        $data['period_bulan']  = substr($period, 4, 6);
         if ($result == '1') {
             $this->load->view('cash_bank/cb_input_voucher_view', $data);
         } else {

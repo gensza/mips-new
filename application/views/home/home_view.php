@@ -3,12 +3,9 @@ if ($this->session->userdata('sess_level') == 1) {
 ?>
 
   <div class="span2">
-    <span style="color:white"></span>
+    <span style="color:white">&nbsp;</span>
   </div>
   <div class="span8">
-
-
-
     <div class="section-wrapper">
       <h3 class="heading">Hi, Administrator<b></b></h3>
       <div class="row-fluid">

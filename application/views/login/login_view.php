@@ -79,9 +79,9 @@ $login_failed = $this->session->flashdata('usersnotfound');
                 <div class="form-group">
                     <input class="form-control" required="" type="password" id="c_pass" name="c_pass" placeholder="Password" style="padding: 10px" />
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <input class="form-control input-sm fc-datepicker2" required="" type="text" id="c_periode" name="c_periode" placeholder="Periode" style="padding: 10px" />
-                </div>
+                </div> -->
 
                 <div class="form-group">
                     <select class="form-control" name="c_pt" id="c_pt" required="" style="width:230px;height:40px;

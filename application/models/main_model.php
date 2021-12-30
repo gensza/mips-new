@@ -78,4 +78,12 @@ class Main_model extends CI_Model
                         WHERE a.group_n = 'GROUP_MODULE'";
         return $this->db->query($sql);
     }
+
+    function update_periode($periode)
+    {
+        $this->db->where(['id_modul' => $this->session->userdata('sess_level'), 'id_pt' => $this->session->userdata('sess_pt'), 'lokasi' => $this->session->userdata('sess_id_lokasi')]);
+        $this->db->set('txtperiode', $periode);
+        $this->db->update('tb_setup');
+        return TRUE;
+    }
 }
