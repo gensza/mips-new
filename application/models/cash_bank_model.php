@@ -3635,7 +3635,7 @@ class Cash_bank_model extends CI_Model
         $sd = $this->mips_caba->query($sql)->row();
 
         $coa = $sd->ACCTNO;
-        $sal = $saldoawal->saldo + $sd->sum_debit;
+        $sal = $saldoawal->saldone + $sd->sum_debit;
         $saldos = $sal - $sd->sum_credit;
         $saldo_vou["saldo"] = $saldos;
         $saldo_vou["saldo_$var_bulan"] = $saldos;
@@ -4791,6 +4791,8 @@ class Cash_bank_model extends CI_Model
     function posting_harian_submit()
     {
 
+        $lokasi = $this->get_id_lokasi();
+        $nama_lokasi = $this->get_nama_lokasi();
         $period = $this->periode();
 
         $tahun  = substr($period, 0, 4);
@@ -4823,28 +4825,29 @@ class Cash_bank_model extends CI_Model
         }
         // return $tahun . 'dan' . $bulan;
 
-        $dt = $this->mips_caba->query("SELECT DISTINCT(ACCTNO) FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun'")->result();
+        $dt = $this->mips_caba->query("SELECT DISTINCT(ACCTNO) FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND LOKASI='$nama_lokasi' GROUP BY ACCTNO")->result();
         // $arr = [];
         foreach ($dt as $d) {
             // $arr[] = array(
             //     'ACCTNO' => $d->ACCTNO
             // );
-            $saldoawal = $this->mips_caba->query("SELECT saldo, saldo_$var_bulan as saldone FROM master_accountcb WHERE ACCTNO='$d->ACCTNO' AND thn='$tahun'")->row();
+            $saldoawal = $this->mips_caba->query("SELECT saldo, saldo_$var_bulan as saldone FROM master_accountcb WHERE SITENO='$lokasi' AND ACCTNO='$d->ACCTNO' AND thn='$tahun'")->row();
 
-            $sql = "SELECT ACCTNO, DESCRIPT, SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$d->ACCTNO' GROUP BY ACCTNO";
+            $sql = "SELECT ACCTNO, DESCRIPT, SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$d->ACCTNO' AND LOKASI='$nama_lokasi' GROUP BY ACCTNO";
             $sd = $this->mips_caba->query($sql)->row();
 
-            $coa = $sd->ACCTNO;
-            $sal = $saldoawal->saldo + $sd->sum_debit;
+            $coa = $d->ACCTNO;
+            $sal = $saldoawal->saldone + $sd->sum_debit;
             $saldos = $sal - $sd->sum_credit;
             $saldo_vou["saldo"] = $saldos;
             $saldo_vou["saldo_$var_bulan"] = $saldos;
             $this->mips_caba->set($saldo_vou);
-            $this->mips_caba->where(['ACCTNO' => $coa, 'thn' => $tahun]);
+            $this->mips_caba->where(['SITENO' => $lokasi, 'ACCTNO' => $coa, 'thn' => $tahun]);
             $this->mips_caba->update('saldo_voucher');
         }
+        // return $saldo_vou;
         //$h = "b'1'";
-        $sqlc = "UPDATE voucher SET POSTED = 1 AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' WHERE POSTED = 0";
+        $sqlc = "UPDATE voucher SET POSTED = 1 AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' WHERE POSTED = 0 AND LOKASI='$nama_lokasi'";
         return $this->mips_caba->query($sqlc);
     }
 

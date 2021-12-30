@@ -9,7 +9,7 @@ class saldo_akhir extends CI_Model
     //field yang ada di table user
     var $column_order = array(null, 'id', 'ACCTNO', 'ACCTNAME');
     var $column_search = array('ACCTNO', 'ACCTNAME'); //field yang diizin untuk pencarian 
-    var $order = array('id' => 'DESC'); // default order
+    var $order = array('id' => 'ASC'); // default order
 
 
 

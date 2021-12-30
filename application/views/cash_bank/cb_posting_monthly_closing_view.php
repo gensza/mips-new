@@ -1,6 +1,12 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
+
+
+        var c_tokens = '<?php echo $this->session->userdata("sess_token"); ?>';
+        var c_usid = '<?php echo $this->session->userdata("sess_id"); ?>';
+        var c_active = '<?php echo $this->session->userdata("sess_aktif"); ?>';
+
         var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
 
         loading_posting();
@@ -47,13 +53,6 @@
                         success: function(response) {
                             console.log("closing bulanan", response);
 
-                            //Command: toastr["success"]("Proses posting selesai", "Ok Posting Tersimpan");
-                        },
-                        beforeSend: function() {
-                            now = moment().format('DD/MM/YYYY HH:mm:ss');
-                            loadingPannel.show();
-                        },
-                        complete: function() {
                             loadingPannel.hide();
                             then = moment().format('DD/MM/YYYY HH:mm:ss');
 
@@ -63,6 +62,16 @@
                             var formats = d.hours() + ' Jam : ' + d.minutes() + ' Menit : ' + d.seconds() + ' Detik';
 
                             swal("Selesai", "Terima Kasih, Data berhasil di Posting dan tersimpan, Waktu Proses Posting " + formats + "", "success");
+
+                            window.location.href = base_url + "index.aspx?TokEn=" + c_tokens + "&IdUs=" + c_usid + "&AkTif=" + c_active + "";
+                            //Command: toastr["success"]("Proses posting selesai", "Ok Posting Tersimpan");
+                        },
+                        beforeSend: function() {
+                            now = moment().format('DD/MM/YYYY HH:mm:ss');
+                            loadingPannel.show();
+                        },
+                        complete: function() {
+
 
                             //getcontents('cash_bank/posting_harian','<?php echo $tokens; ?>');
 
@@ -124,12 +133,6 @@
                                 processData: false,
                                 success: function(response) {
                                     //Command: toastr["success"]("Proses posting selesai", "Ok Posting Tersimpan");
-                                },
-                                beforeSend: function() {
-                                    now = moment().format('DD/MM/YYYY HH:mm:ss');
-                                    loadingPannel.show();
-                                },
-                                complete: function() {
                                     loadingPannel.hide();
                                     then = moment().format('DD/MM/YYYY HH:mm:ss');
 
@@ -140,7 +143,15 @@
 
                                     swal("Selesai", "Terima Kasih, Data berhasil di Posting dan tersimpan, Waktu Proses Posting " + formats + "", "success");
 
-                                    //getcontents('cash_bank/posting_harian','<?php echo $tokens; ?>');
+                                    window.location.href = base_url + "index.aspx?TokEn=" + c_tokens + "&IdUs=" + c_usid + "&AkTif=" + c_active + "";
+                                },
+                                beforeSend: function() {
+                                    now = moment().format('DD/MM/YYYY HH:mm:ss');
+                                    loadingPannel.show();
+                                },
+                                complete: function() {
+
+
 
                                 },
                                 error: function(jqXHR, textStatus, errorThrown) {

@@ -32,6 +32,38 @@ class Cash_bank extends CI_Controller
         $data['period']        = $period;
         $data['period_tahun']  = substr($period, 0, 4);
         $data['period_bulan']  = substr($period, 4, 6);
+
+        $tahun = date('Y');
+        $bulan = date('m');
+
+        if ($result == '1') {
+            if ($tahun == $data['period_tahun'] && $bulan == $data['period_bulan']) {
+                # code...
+                $this->load->view('cash_bank/cb_input_voucher_view', $data);
+            } else {
+                $this->load->view('cash_bank/cb_pw_vouc', $data);
+                # code...
+            }
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
+    public function input_voucher_new()
+    {
+
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        $data['lokasi'] = $this->main_model->get_lokasi()->row_array();
+        $period = $this->session->userdata('sess_periode');
+        $data['period']        = $period;
+        $data['period_tahun']  = substr($period, 0, 4);
+        $data['period_bulan']  = substr($period, 4, 6);
+
+        $tahun = date('Y');
+        $bulan = date('m');
+
         if ($result == '1') {
             $this->load->view('cash_bank/cb_input_voucher_view', $data);
         } else {
@@ -297,8 +329,57 @@ class Cash_bank extends CI_Controller
         echo json_encode($result);
     }
 
+    public function monthly_closing_submit_tes()
+    {
+        $periode = $this->session->userdata('sess_periode');
+        $tahun  = substr($periode, 0, 4);
+        $bulan  = substr($periode, 4, 5);
+
+        if ($bulan == '01') {
+            $var_bulan = '1';
+        } else if ($bulan == '02') {
+            $var_bulan = '2';
+        } else if ($bulan == '03') {
+            $var_bulan = '3';
+        } else if ($bulan == '04') {
+            $var_bulan = '4';
+        } else if ($bulan == '05') {
+            $var_bulan = '5';
+        } else if ($bulan == '06') {
+            $var_bulan = '6';
+        } else if ($bulan == '07') {
+            $var_bulan = '7';
+        } else if ($bulan == '08') {
+            $var_bulan = '8';
+        } else if ($bulan == '09') {
+            $var_bulan = '9';
+        } else if ($bulan == '10') {
+            $var_bulan = '10';
+        } else if ($bulan == '11') {
+            $var_bulan = '11';
+        } else if ($bulan == '12') {
+            $var_bulan = '12';
+        }
+
+        if ($var_bulan == '12') {
+            $bln = 01;
+            $thn = $tahun + 1;
+        } else {
+            $bln = $bulan + 1;
+            $thn = $tahun;
+            # code...
+        }
+
+        $period =  strtotime($periode);
+
+        $final = date("Ym", strtotime("+1 month", $period));
+
+        echo json_encode($final);
+    }
+
     public function monthly_closing_submit()
     {
+        $lokasi = $this->session->userdata('sess_id_lokasi');
         $periode = $this->session->userdata('sess_periode');
         $tahun  = substr($periode, 0, 4);
         $bulan  = substr($periode, 4, 5);
@@ -337,13 +418,12 @@ class Cash_bank extends CI_Controller
             # code...
         }
 
-
-
         if ($bulan == '12') {
 
-            $saldo_akhir = $this->mips_caba->query("SELECT acctno, acctname, thn,saldo ,saldo_$var_bulan as saldone FROM saldo_voucher WHERE thn='$tahun'")->result();
+            $saldo_akhir = $this->mips_caba->query("SELECT acctno, acctname, thn,saldo ,saldo_$var_bulan as saldone FROM saldo_voucher WHERE SITENO='$lokasi' AND thn='$tahun'")->result();
             foreach ($saldo_akhir as $d) {
                 // $saldo = $d->saldone;
+                $saldoawal["SITENO"] = $lokasi;
                 $saldoawal["ACCTNO"] = $d->acctno;
                 $saldoawal["ACCTNAME"] = $d->acctname;
                 $saldoawal["saldo"] = "0";
@@ -353,7 +433,8 @@ class Cash_bank extends CI_Controller
                 $thn = $tahun + 1;
 
                 /* untuk insert/update ke masteraccont_cb */
-                $dt = $this->mips_caba->query("SELECT ACCTNO, ACCTNAME FROM master_accountcb WHERE ACCTNO='$d->acctno' AND thn='$thn'")->num_rows();
+                $dt = $this->mips_caba->query("SELECT ACCTNO, ACCTNAME FROM master_accountcb WHERE SITENO='$lokasi' AND ACCTNO='$d->acctno' AND thn='$thn'")->num_rows();
+                $ms_cb["SITENO"] = $lokasi;
                 $ms_cb["ACCTNO"] = $d->acctno;
                 $ms_cb["ACCTNAME"] = $d->acctname;
                 $ms_cb["saldo"] = $d->saldo;
@@ -363,7 +444,7 @@ class Cash_bank extends CI_Controller
                 if ($dt > 0) {
                     # code...
                     $this->mips_caba->set($ms_cb);
-                    $this->mips_caba->where(['ACCTNO' => $d->acctno, 'thn' => $thn]);
+                    $this->mips_caba->where(['SITENO' => $lokasi, 'ACCTNO' => $d->acctno, 'thn' => $thn]);
                     $this->mips_caba->update('master_accountcb');
                     if ($this->mips_caba->affected_rows() > 0) {
                         $saldo_awal = TRUE;
@@ -382,11 +463,11 @@ class Cash_bank extends CI_Controller
                 /* end untuk insert/update ke masteraccont_cb */
 
                 /* untuk insert/update saldo_vocher */
-                $cek = $this->mips_caba->query("SELECT ACCTNO, ACCTNAME FROM saldo_voucher WHERE ACCTNO='$d->acctno' AND thn='$thn'")->num_rows();
+                $cek = $this->mips_caba->query("SELECT ACCTNO, ACCTNAME FROM saldo_voucher WHERE SITENO='$lokasi' AND ACCTNO='$d->acctno' AND thn='$thn'")->num_rows();
                 if ($cek > 0) {
                     # code...
                     $this->mips_caba->set($saldoawal);
-                    $this->mips_caba->where(['ACCTNO' => $d->acctno, 'thn' => $thn]);
+                    $this->mips_caba->where(['SITENO' => $lokasi, 'ACCTNO' => $d->acctno, 'thn' => $thn]);
                     $this->mips_caba->update('saldo_voucher');
                     if ($this->mips_caba->affected_rows() > 0) {
                         $saldo_akhir = TRUE;
@@ -408,8 +489,9 @@ class Cash_bank extends CI_Controller
             }
         } else {
             # code...
-            $saldo_akhir = $this->mips_caba->query("SELECT acctno, acctname, thn,saldo ,saldo_$var_bulan as saldone FROM saldo_voucher WHERE thn='$tahun'")->result();
+            $saldo_akhir = $this->mips_caba->query("SELECT acctno, acctname, thn,saldo ,saldo_$var_bulan as saldone FROM saldo_voucher WHERE SITENO='$lokasi' AND thn='$tahun'")->result();
             foreach ($saldo_akhir as $dd) {
+                $ms_cb["SITENO"] = $lokasi;
                 $ms_cb["ACCTNO"] = $dd->acctno;
                 $ms_cb["ACCTNAME"] = $dd->acctname;
                 $ms_cb["saldo"] = $dd->saldo;
@@ -417,7 +499,7 @@ class Cash_bank extends CI_Controller
                 $ms_cb["thn"] = $dd->thn;
 
                 $this->mips_caba->set($ms_cb);
-                $this->mips_caba->where(['ACCTNO' => $dd->acctno, 'thn' => $tahun]);
+                $this->mips_caba->where(['SITENO' => $lokasi, 'ACCTNO' => $dd->acctno, 'thn' => $tahun]);
                 $this->mips_caba->update('master_accountcb');
                 if ($this->mips_caba->affected_rows() > 0) {
                     $saldo_awal = TRUE;
@@ -425,13 +507,14 @@ class Cash_bank extends CI_Controller
                     $saldo_awal = FALSE;
                 }
 
+                $saldoawal["SITENO"] = $lokasi;
                 $saldoawal["ACCTNO"] = $dd->acctno;
                 $saldoawal["ACCTNAME"] = $dd->acctname;
                 $saldoawal["saldo"] = $dd->saldo;
                 $saldoawal["saldo_$bln"] = $dd->saldone;
                 $saldoawal["thn"] = $dd->thn;
                 $this->mips_caba->set($saldoawal);
-                $this->mips_caba->where(['ACCTNO' => $dd->acctno, 'thn' => $tahun]);
+                $this->mips_caba->where(['SITENO' => $lokasi, 'ACCTNO' => $dd->acctno, 'thn' => $tahun]);
                 $this->mips_caba->update('saldo_voucher');
                 if ($this->mips_caba->affected_rows() > 0) {
                     $saldo_akhir = TRUE;
@@ -441,9 +524,20 @@ class Cash_bank extends CI_Controller
             }
         }
 
+        /* ubah periode */
+        $p =  strtotime($periode);
+
+        $final = date("Ym", strtotime("+1 month", $p));
+        $session_data = array('sess_periode' => $final);
+        $up = $this->main_model->update_periode($final);
+        $this->session->set_userdata($session_data);
+
+        /* end ubah periode */
+
         $result = [
             'saldo_akhir' => $saldo_akhir,
-            'saldo_awal' => $saldo_awal
+            'saldo_awal' => $saldo_awal,
+            'update_periode' => $up
         ];
 
 
