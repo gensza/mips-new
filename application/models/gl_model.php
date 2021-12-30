@@ -3054,7 +3054,7 @@ class Gl_model extends CI_Model
                                                 balancedr   = 0,
                                                 balancecr   = '$TTLRL'
                                            WHERE noac = '$LR2'";
-            return $this->mips_gl->query($sql_act_lr);
+            $this->mips_gl->query($sql_act_lr);
             //end   : ========= step 5 ========
 
         }
