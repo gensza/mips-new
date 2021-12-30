@@ -108,6 +108,19 @@ class Cash_bank extends CI_Controller
         }
     }
 
+    public function lpj()
+    {
+
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        if ($result == '1') {
+            $this->load->view('cash_bank/cb_lpj_view', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
 
 
     public function rekap()

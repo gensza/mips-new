@@ -17,6 +17,11 @@ class Cetak_model extends CI_Model
         return $this->session->userdata('sess_periode');
     }
 
+    function get_id_lokasi()
+    {
+        return $this->session->userdata('sess_id_lokasi');
+    }
+
     function lokasi()
     {
         return $this->session->userdata('sess_nama_lokasi');
@@ -217,9 +222,10 @@ class Cetak_model extends CI_Model
     {
 
         $period   = $this->periode();
+        $lokasi   = $this->get_id_lokasi();
         $tahun    = substr($period, 0, 4);
 
-        $sql = "SELECT * FROM master_accountcb WHERE thn = '$tahun'";
+        $sql = "SELECT * FROM master_accountcb WHERE SITENO='$lokasi' AND thn = '$tahun'";
         return $this->mips_caba->query($sql);
     }
 
@@ -228,7 +234,14 @@ class Cetak_model extends CI_Model
     {
         $lokasi   = $this->lokasi();
         // $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') and lokasi = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
-        $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND lokasi = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
+        $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
+        return $this->mips_caba->query($sql);
+    }
+    function get_data_lpj($sumber, $tgl_start, $tgl_end)
+    {
+        $lokasi   = $this->lokasi();
+        // $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') and lokasi = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
+        $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND sumber='$sumber' ORDER BY `DATE`,DEBIT DESC";
         return $this->mips_caba->query($sql);
     }
 
@@ -242,17 +255,18 @@ class Cetak_model extends CI_Model
     }
     function get_dc($coa)
     {
+        $lokasi   = $this->lokasi();
         $period = $this->periode();
 
         $tahun  = substr($period, 0, 4);
         $bulan  = substr($period, 4, 5);
-        return $this->mips_caba->query("SELECT SUM(DEBIT) AS totaldr, SUM(CREDIT) AS totalcr FROM voucher WHERE ACCTNO='$coa' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' ")->row();
+        return $this->mips_caba->query("SELECT SUM(DEBIT) AS totaldr, SUM(CREDIT) AS totalcr FROM voucher WHERE ACCTNO='$coa' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND LOKASI = '$lokasi'")->row();
     }
     function saldo_awal($coa)
     {
         $period = $this->periode();
-
+        $lokasi   = $this->get_id_lokasi();
         $tahun  = substr($period, 0, 4);
-        return $this->mips_caba->query("SELECT saldo FROM master_accountcb WHERE ACCTNO='$coa' AND thn ='$tahun' ")->row();
+        return $this->mips_caba->query("SELECT saldo FROM master_accountcb WHERE SITENO='$lokasi' AND ACCTNO='$coa' AND thn ='$tahun'")->row();
     }
 }

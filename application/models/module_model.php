@@ -1,33 +1,62 @@
-<?php 
-class Module_model extends CI_Model{	
-    
-    function __construct() {
+<?php
+class Module_model extends CI_Model
+{
+
+    function __construct()
+    {
         parent::__construct();
     }
-    
-    function username(){
+
+    function username()
+    {
         return $this->session->userdata('sess_id');
     }
-    
-    function data(){
+
+    function data()
+    {
         $sql = "SELECT * FROM module WHERE is_deleted = 0 ORDER BY id ASC ";
-        
+
         return $this->db->query($sql);
     }
-    
-    function detail($data){
+
+    function detail($data)
+    {
         $sql = "SELECT * FROM module WHERE id = '$data[id]' and is_deleted = 0 ";
         return $this->db->query($sql);
     }
-    
-    function get_module(){
 
-        $username = $this->username();    
-        if(empty($username)){
+    function get_module()
+    {
+
+        $username = $this->username();
+        if (empty($username)) {
             redirect(base_url('main/logout'));
-        }else{
-            
-            $sql = "SELECT a.id,
+        } else {
+            $modul = $this->session->userdata('sess_level');
+            $lokasi = $this->session->userdata('sess_id_lokasi');
+
+            if ($modul == 3 && $lokasi == 1) {
+                # code...
+                $sql = "SELECT a.id,
+                        a.name,
+                        a.name,
+                        a.controller,
+                        a.position,
+                        a.have_child,
+                        a.parent,
+                        a.icon,
+                        b.cbx,
+                        a.id as id_module,
+                        a.parent as id_parent,
+                        a.position as id_posisi,
+                        a.line
+                    FROM module AS a
+                    INNER JOIN module_permission AS b ON a.id = b.id_module
+                    INNER JOIN users AS c ON b.`id_module_role` = c.`id_module_role` AND c.is_deleted = 0 AND c.`id` = '$username'
+                    WHERE a.is_deleted = 0 AND a.id <> 85 AND a.id <> 84 ";
+            } else {
+                # code...
+                $sql = "SELECT a.id,
                         a.name,
                         a.name,
                         a.controller,
@@ -44,20 +73,21 @@ class Module_model extends CI_Model{
                     INNER JOIN module_permission AS b ON a.id = b.id_module
                     INNER JOIN users AS c ON b.`id_module_role` = c.`id_module_role` AND c.is_deleted = 0 AND c.`id` = '$username'
                     WHERE a.is_deleted = 0";
-		// GROUP BY a.id";
-            return $this->db->query($sql);
+            }
 
+            // GROUP BY a.id";
+            return $this->db->query($sql);
         }
-        
     }
-    
-    
-    
-    function simpan($data){
+
+
+
+    function simpan($data)
+    {
         //$sql = "SELECT * FROM module WHERE is_deleted = 0 ORDER BY id ASC ";
-        $user_nik = $this->username();    
-        
-        $sql ="INSERT INTO module (icon,
+        $user_nik = $this->username();
+
+        $sql = "INSERT INTO module (icon,
                                             name,
                                             controller,
                                             position,
@@ -74,33 +104,35 @@ class Module_model extends CI_Model{
                                             '0',
                                             '0',
                                             '$user_nik',
-                                            NOW())";     
-           
+                                            NOW())";
+
         return $this->db->query($sql);
     }
-    
-    
-    function module_update($data){
-        
+
+
+    function module_update($data)
+    {
+
         $username = $this->username();
-        
+
         $sql = "UPDATE module SET name       = '$data[nama]',
                                 controller   = '$data[controller]',
                                 icon         = '$data[icon]',
                                 have_child   = '$data[punya_sub]',
                                 updated_by   = '$username',
                                 updated_at   = NOW() WHERE id = '$data[id_module]'";
-        
+
         return $this->db->query($sql);
     }
-    
+
 
     /* position 2 */
-    function module_sub_simpan($data){
-        
+    function module_sub_simpan($data)
+    {
+
         $user_nik = $this->username();
-        
-        $sql ="INSERT INTO module (name,
+
+        $sql = "INSERT INTO module (name,
                                     controller,
                                     position,
                                     have_child,
@@ -115,19 +147,19 @@ class Module_model extends CI_Model{
                                             '$data[id_module]',
                                             '0',
                                             '$user_nik',
-                                            NOW())";     
-           
+                                            NOW())";
+
         return $this->db->query($sql);
-        
     }
 
 
     /* position 3 */
-    function module_sub_simpan_sub($data){
-        
+    function module_sub_simpan_sub($data)
+    {
+
         $user_nik = $this->username();
-        
-        $sql ="INSERT INTO module (name,
+
+        $sql = "INSERT INTO module (name,
                                     controller,
                                     position,
                                     have_child,
@@ -142,54 +174,57 @@ class Module_model extends CI_Model{
                                             '$data[id_module]',
                                             '0',
                                             '$user_nik',
-                                            NOW())";     
-           
+                                            NOW())";
+
         return $this->db->query($sql);
-        
     }
-    
-    function data_module_sub($data){
+
+    function data_module_sub($data)
+    {
         $sql = "SELECT * FROM module WHERE parent = '$data[id_module]' AND  is_deleted = 0 ORDER BY id ASC ";
         return $this->db->query($sql);
     }
-    
-    function module_sub_update($data){
-        
+
+    function module_sub_update($data)
+    {
+
         $username = $this->username();
-        
+
         $sql = "UPDATE module SET name          = '$data[nama]',
                                         controller         = '$data[nama_controller]',
                                         updated_by          = '$username',
                                         updated_at          = NOW() WHERE id = '$data[id_module_sub]'";
-        
+
         return $this->db->query($sql);
     }
-    
-    
-    function module_sub_hapus($data){
-        
+
+
+    function module_sub_hapus($data)
+    {
+
         $username = $this->username();
-        
+
         $sql = "UPDATE module SET is_deleted          = '1',updated_by          = '$username',
                                         updated_at          = NOW() WHERE id = '$data[id_module_sub]'";
-        
+
         return $this->db->query($sql);
     }
-    
-    function get_module_all(){
+
+    function get_module_all()
+    {
 
         $sql = "SELECT * FROM module AS a WHERE a.is_deleted = 0  ";
 
- 
-        $return = $this->db->query($sql);
-       
-        return $return;
-        
-    }
-    
-    function get_module_permission_users($id_role){
 
-        
+        $return = $this->db->query($sql);
+
+        return $return;
+    }
+
+    function get_module_permission_users($id_role)
+    {
+
+
         $sql = "SELECT  a.name,
                         a.controller,
                         a.id as id_modules,
@@ -197,26 +232,18 @@ class Module_model extends CI_Model{
                         (SELECT b.cbx FROM module_permission AS b WHERE a.id = b.`id_module` AND b.id_module_role = $id_role) cbx
                 FROM module AS a 
                 WHERE a.`is_deleted` = 0";
-        
-        return $this->db->query($sql);
-       
-    }
-    
-    
-    function get_module_master(){
-        
-        $sql = "SELECT * FROM module WHERE is_deleted = '0' ORDER BY id";
-        
-        $return = $this->db->query($sql);
-       
-        return $return;
-        
-    }
-    
-    
-    
-    
-    
 
+        return $this->db->query($sql);
+    }
+
+
+    function get_module_master()
+    {
+
+        $sql = "SELECT * FROM module WHERE is_deleted = '0' ORDER BY id";
+
+        $return = $this->db->query($sql);
+
+        return $return;
+    }
 }
-?>

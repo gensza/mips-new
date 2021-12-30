@@ -9,7 +9,7 @@
 
 
   .ukuran_teks {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   @page {
@@ -25,15 +25,15 @@
       <td colspan="3" rowspan="2" style="border-left: 0px solid #FFF;" align="center"><b style="display: none;"><?= $this->session->userdata('sess_nama_pt'); ?></b></td>
       <td height="27" colspan="3" align="center" class="b">
 
-        <?php
-        if ($h_vouc['TRANS'] == 'Kas' && $h_vouc['JENIS'] == 'Payment') {
-          echo "<b><span style='font-size:16px; display: none;'>BUKTI KAS KELUAR</span></b>";
-        } else if ($h_vouc['TRANS'] == 'Bank' && $h_vouc['JENIS'] == 'Payment') {
-          echo "<b><span style='font-size:16px; display: none;'>BUKTI BANK KELUAR</span> <span style='font-size:15px'>(K)</span></b>";
-        } else if ($h_vouc['TRANS'] == 'Bank' && $h_vouc['JENIS'] == 'Receive') {
-          echo "<b><span style='font-size:16px; display: none;'>BUKTI BANK MASUK</span> <span style='font-size:15px'>(D)</span></b>";
-        }
-        ?>
+        <!-- <?php
+              if ($h_vouc['TRANS'] == 'Kas' && $h_vouc['JENIS'] == 'Payment') {
+                echo "<b><span style='font-size:16px; display: none;'>BUKTI KAS KELUAR</span></b>";
+              } else if ($h_vouc['TRANS'] == 'Bank' && $h_vouc['JENIS'] == 'Payment') {
+                echo "<b><span style='font-size:16px; display: none;'>BUKTI BANK KELUAR</span> <span style='font-size:15px'>(K)</span></b>";
+              } else if ($h_vouc['TRANS'] == 'Bank' && $h_vouc['JENIS'] == 'Receive') {
+                echo "<b><span style='font-size:16px; display: none;'>BUKTI BANK MASUK</span> <span style='font-size:15px'>(D)</span></b>";
+              }
+              ?> -->
 
       </td>
       <td width="100" rowspan="2" class="b" align="right">&nbsp; <?php echo $h_vouc['VOUCNO']; ?></td>
@@ -44,16 +44,24 @@
       <!-- <td>&nbsp;</td> -->
     </tr>
     <tr>
-      <td colspan="6" rowspan="2" class="ukuran_teks">&nbsp;<p style="bottom: 300%;"><?php echo $h_vouc['FROM']; ?></p>
+      <td width="118"></td>
+      <td colspan="3" rowspan="2" class="ukuran_teks" style="text-align: center;">&nbsp;
+        <br>
+        <br>
+        <br>
+        <p style="bottom: 300%; "><?php echo $h_vouc['FROM']; ?></p>
       </td>
-      <td width="93" height="32" colspan="2" class="ukuran_teks" align="right"><?php echo $h_vouc['TGL']; ?></td>
+      <td width="93" height="32" colspan="4" class="ukuran_teks" align="right">
+        <br>
+        <?php echo $h_vouc['TGL']; ?>
+      </td>
     </tr>
     <tr>
       <td height="29" class="ukuran_teks" style="border-right: 0px solid #FFF;"></td>
       <td align="center" class="ukuran_teks" style="border-left: 0px solid #FFF;"></td>
     </tr>
     <tr>
-      <td height="40" colspan="3" align="center" class="ukuran_teks">
+      <td height="73" colspan="3" align="center" class="ukuran_teks">
         <p style="display: none;">Perkiraan</p>
       </td>
       <td colspan="4" align="center" class="ukuran_teks">
@@ -97,8 +105,8 @@
     }
     ?>
     <tr>
-      <td height="100" colspan="7" align="left" class="ukuran_teks" valign="top">&nbsp;
-        <br>&nbsp;<i>
+      <td height="281" colspan="7" align="left" class="ukuran_teks" valign="top">&nbsp;<br>
+        <i>
           <?php
           if ($h_vouc['TRANS'] == 'Bank') {
             echo $h_vouc['ACCTNO'] . '-' . $h_vouc['GENERAL'] . ', ' . $h_vouc['DESCRIPT'];
@@ -107,7 +115,9 @@
           } ?>
         </i>
       </td>
-      <td align="right" class="ukuran_teks">&nbsp; <?php echo number_format($sum, 2); ?> &nbsp;</td>
+      <td align="right" class="ukuran_teks" valign="top">
+        &nbsp;<br> <?php echo number_format($sum, 2); ?> &nbsp;
+      </td>
     </tr>
     <!-- <tr>
       <td height="100" colspan="7">&nbsp;</td>
