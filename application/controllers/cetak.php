@@ -131,38 +131,39 @@ class Cetak extends CI_Controller
     {
         if ($sumber == 1) {
             $pdo = "PDO Gaji";
+            $coa = '100101030100000';
         } else if ($sumber == 2) {
             $pdo = "PDDO IM";
+            $coa = '100101030100000';
             # code...
         } else if ($sumber == 3) {
             $pdo = "PDDO GRTT";
+            $coa = '100101032000000';
             # code...
         } else if ($sumber == 4) {
             $pdo = "PDO Remise Kas";
+            $coa = '100101031000000';
             # code...
         } else if ($sumber == 5) {
             $pdo = "Dana Kontanan";
+            $coa = '100101031500000';
             # code...
         }
 
 
         $nama_dokumen = 'Laporan_pertanggung_jawaban_' . $tgl_start . '_' . $tgl_end . '';
-        $data['res_data'] = $this->cetak_model->get_data_lpj($pdo, $tgl_start, $tgl_end)->result_array();
-        $data['res_data_head'] = $this->cetak_model->get_list_saldo_akhir_aktifitas_account($tgl_start, $tgl_end)->result_array();
+        $data['res_data'] = $this->cetak_model->get_data_lpj($pdo, $coa, $tgl_start, $tgl_end)->result_array();
+        $p = $this->cetak_model->get_data_lpj_vou($pdo, $coa, $tgl_start, $tgl_end)->row();
+        $dt = $p->ACCTNO;
+        $saldo = $this->cetak_model->get_list_saldo_akhir_lpj($dt)->row();
+        $data['saldo'] = $saldo->saldonya;
+        // var_dump($data) . die();
 
 
-        // echo "<pre>";
-        // print_r($data);
-        // echo "</pre>";
 
-        // $data['vou'] = $this->cetak_model->get_vocer();
-        // Tentukan path yang tepat ke mPDF
         $this->load->library('mpdf/mpdf');
         $data['namapt']  = $this->main_model->get_pt()->row_array();
-        //$result['datapiutang'] = $this->piutang_model->data()->result_array();
 
-        // Define a Landscape page size/format by name
-        // $mpdf = new mPDF('utf-8', 'A4-P');
         $mpdf = new mPDF([
             'mode' => 'utf-8',
             'format' => 'A4',
@@ -175,7 +176,7 @@ class Cetak extends CI_Controller
 
         $this->load->view('cetak/cash_bank/lap_lpj', $data);
 
-        //$mpdf->setFooter('{PAGENO}');
+        // $mpdf->setFooter('{PAGENO}');
         //penulisan output selesai, sekarang menutup mpdf dan generate kedalam format pdf
         $html = ob_get_contents(); //Proses untuk mengambil hasil dari OB..
         ob_end_clean();
