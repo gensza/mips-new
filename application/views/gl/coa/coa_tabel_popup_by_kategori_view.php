@@ -35,7 +35,7 @@
                     //loadingPannel.show();
                 },
                 complete: function() {
-                    //loadingPannel.hide();
+                    loadingPannel.hide();
                     $('#tabel_gl_coa').show();
                 }
             },
