@@ -92,12 +92,12 @@ class Cetak extends CI_Controller
         echo $html;
     }
 
-    public function cb_laporan_aktifitas_account($tgl_start, $tgl_end, $cbx_periode)
+    public function cb_laporan_aktifitas_account($tgl_start, $tgl_end, $coa, $cbx_periode)
     {
-
+        // var_dump($coa) . die();
         $nama_dokumen = 'Laporan_CB_Account_' . $tgl_start . '_' . $tgl_end . '';
-        $data['res_data'] = $this->cetak_model->get_data_aktifitas_account($tgl_start, $tgl_end)->result_array();
-        $data['res_data_head'] = $this->cetak_model->get_list_saldo_akhir_aktifitas_account($tgl_start, $tgl_end)->result_array();
+        $data['res_data'] = $this->cetak_model->get_data_aktifitas_account($coa, $tgl_start, $tgl_end)->result_array();
+        $data['res_data_head'] = $this->cetak_model->get_list_saldo_akhir_aktifitas_account($coa, $tgl_start, $tgl_end)->result_array();
         // $data['vou'] = $this->cetak_model->get_vocer();
         // Tentukan path yang tepat ke mPDF
         $this->load->library('mpdf/mpdf');
@@ -157,12 +157,10 @@ class Cetak extends CI_Controller
         $dt = $p->ACCTNO;
         $saldo = $this->cetak_model->get_list_saldo_akhir_lpj($dt)->row();
         $data['saldo'] = $saldo->saldonya;
-        // var_dump($data) . die();
-
-
+        // var_dump($data) . die()
+        $data['namapt']  = $this->main_model->get_pt()->row_array();
 
         $this->load->library('mpdf/mpdf');
-        $data['namapt']  = $this->main_model->get_pt()->row_array();
 
         $mpdf = new mPDF([
             'mode' => 'utf-8',
@@ -186,12 +184,46 @@ class Cetak extends CI_Controller
         exit;
     }
 
+    public function cb_laporan_bukubank($bank, $tgl_start, $tgl_end)
+    {
+        $nama_dokumen = 'Laporan_buku_bank_' . $tgl_start . '_' . $tgl_end . '';
+        $data['res_data'] = $this->cetak_model->get_data_bank($bank, $tgl_start, $tgl_end)->result_array();
+        $p = $this->cetak_model->get_data_bank_vou($bank, $tgl_start, $tgl_end)->row();
+        $dt = $p->ACCTNO;
+        $saldo = $this->cetak_model->get_list_saldo_akhir_lpj($dt)->row();
+        $data['saldo'] = $saldo->saldonya;
+        $data['namapt']  = $this->main_model->get_pt()->row_array();
+
+        $this->load->library('mpdf/mpdf');
+
+        $mpdf = new mPDF([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            // 'format' => [190, 236],
+            'margin_top' => '3',
+            'orientation' => 'P'
+        ]);
+        //Memulai proses untuk menyimpan variabel php dan html
+        ob_start();
+
+        $this->load->view('cetak/cash_bank/lap_buku_bank', $data);
+
+        // $mpdf->setFooter('{PAGENO}');
+        //penulisan output selesai, sekarang menutup mpdf dan generate kedalam format pdf
+        $html = ob_get_contents(); //Proses untuk mengambil hasil dari OB..
+        ob_end_clean();
+        //Disini dimulai proses convert UTF-8, kalau ingin ISO-8859-1 cukup dengan mengganti $mpdf->WriteHTML($html);
+        $mpdf->WriteHTML(utf8_encode($html));
+        $mpdf->Output($nama_dokumen . ".pdf", 'I');
+        exit;
+    }
+
     public function cb_laporan_aktifitas_account_view()
     {
 
         $tgl_start      = $this->input->post('tgl_start', TRUE);
         $tgl_end        = $this->input->post('tgl_end', TRUE);
-        $chx_periode    = $this->input->post('chx_periode', TRUE);
+        $accn    = $this->input->post('accn', TRUE);
 
         $period = $this->session->userdata('sess_periode');
         $tahun  = substr($period, 0, 4);
@@ -224,8 +256,8 @@ class Cetak extends CI_Controller
         }
 
 
-        $res_data       = $this->cetak_model->get_data_aktifitas_account($tgl_start, $tgl_end)->result_array();
-        $res_data_head  = $this->cetak_model->get_list_saldo_akhir_aktifitas_account()->result_array();
+        $res_data       = $this->cetak_model->get_data_aktifitas_account($accn, $tgl_start, $tgl_end)->result_array();
+        $res_data_head  = $this->cetak_model->get_list_saldo_akhir_aktifitas_account($accn)->result_array();
         $html = 0;
 
         $nos = 0 + 1;

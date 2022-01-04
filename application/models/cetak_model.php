@@ -218,14 +218,22 @@ class Cetak_model extends CI_Model
         }
     }
 
-    function get_list_saldo_akhir_aktifitas_account()
+    function get_list_saldo_akhir_aktifitas_account($accn)
     {
 
         $period   = $this->periode();
         $lokasi   = $this->get_id_lokasi();
         $tahun    = substr($period, 0, 4);
 
-        $sql = "SELECT * FROM master_accountcb WHERE SITENO='$lokasi' AND thn = '$tahun'";
+        if ($accn != '0') {
+            # code...
+            $sql = "SELECT * FROM master_accountcb WHERE ACCTNO='$accn' AND SITENO='$lokasi' AND thn = '$tahun'";
+        } else {
+            # code...
+            $sql = "SELECT * FROM master_accountcb WHERE SITENO='$lokasi' AND thn = '$tahun'";
+        }
+
+
         return $this->mips_caba->query($sql);
     }
     function get_list_saldo_akhir_lpj($dt)
@@ -266,12 +274,20 @@ class Cetak_model extends CI_Model
     }
 
 
-    function get_data_aktifitas_account($tgl_start, $tgl_end)
+    function get_data_aktifitas_account($accn, $tgl_start, $tgl_end)
     {
         $lokasi   = $this->lokasi();
-        // $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') and lokasi = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
-        $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
+
+        if ($accn != '0') {
+            # code...
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND ACCTNO='$accn' ORDER BY `DATE`,DEBIT DESC";
+        } else {
+            # code...
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
+        }
         return $this->mips_caba->query($sql);
+
+        // $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') and lokasi = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
     }
 
     function get_data_lpj($sumber, $coa, $tgl_start, $tgl_end)
@@ -280,11 +296,39 @@ class Cetak_model extends CI_Model
         $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND sumber='$sumber' ORDER BY `DATE` ASC";
         return $this->mips_caba->query($sql);
     }
+    function get_data_bank($coa, $tgl_start, $tgl_end)
+    {
+        $mandiri = "100105030000000";
+        $bri = "100105110000000";
+        $lokasi   = $this->lokasi();
+        if ($coa == 0) {
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$mandiri','$bri') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC";
+        } else {
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO ='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC";
+        }
+
+        return $this->mips_caba->query($sql);
+    }
 
     function get_data_lpj_vou($sumber, $coa, $tgl_start, $tgl_end)
     {
         $lokasi   = $this->lokasi();
-        $sql = "SELECT * FROM voucher WHERE ACCTNO='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND sumber = '$sumber' ORDER BY `DATE`,DEBIT DESC";
+        $sql = "SELECT * FROM voucher WHERE ACCTNO='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND sumber = '$sumber' ORDER BY `DATE` DESC";
+        return $this->mips_caba->query($sql);
+    }
+    function get_data_bank_vou($coa, $tgl_start, $tgl_end)
+    {
+        $lokasi   = $this->lokasi();
+        $mandiri = "100105030000000";
+        $bri = "100105110000000";
+        if ($coa == 0) {
+            # code...
+            $sql = "SELECT * FROM voucher WHERE ACCTNO IN ('$mandiri','$bri') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE` DESC";
+        } else {
+            # code...
+            $sql = "SELECT * FROM voucher WHERE ACCTNO='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE` DESC";
+        }
+
         return $this->mips_caba->query($sql);
     }
 

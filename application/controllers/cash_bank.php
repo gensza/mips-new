@@ -14,6 +14,7 @@ class Cash_bank extends CI_Controller
         $this->load->model('serv_side_cb_voucher_model');
         $this->load->model('serv_side_po_logistik_model');
         $this->load->model('serv_coa_gl');
+        $this->load->model('serv_coa');
         // $this->mips_caba = $this->load->database('mips_caba', TRUE);
         $db_pt = check_db_pt();
         $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
@@ -120,8 +121,29 @@ class Cash_bank extends CI_Controller
             echo "<script> window.location = 'main/logout' </script>";
         }
     }
+    public function buku_bank()
+    {
 
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        if ($result == '1') {
+            $this->load->view('cash_bank/cb_buku_bank', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
 
+    function get_bank()
+    {
+        $period = $this->session->userdata('sess_periode');
+        $tahun  = substr($period, 0, 4);
+
+        $mandiri = "100105030000000";
+        $bri = "100105110000000";
+        $data = $this->mips_caba->query("SELECT ACCTNO, ACCTNAME FROM master_accountcb WHERE ACCTNO in ('$mandiri','$bri')  AND thn='$tahun'")->result();
+        echo json_encode($data);
+    }
 
     public function rekap()
     {
@@ -580,6 +602,23 @@ class Cash_bank extends CI_Controller
             echo "<script> window.location = 'main/logout' </script>";
         }
     }
+    public function tabel_coa_popup()
+    {
+        $tokens   = $this->input->post('tokens', TRUE);
+        $id_modal = $this->input->post('id_modal', TRUE);
+        $id_row = $this->input->post('id_row', TRUE);
+        // $divisi = $this->input->post('divisi', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens']     = $tokens;
+        $data['id_modal']   = $id_modal;
+        $data['id_row']     = $id_row;
+
+        if ($result == '1') {
+            $this->load->view('cash_bank/tabel_coa_popup', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
 
 
     /* untuk coa */
@@ -625,6 +664,42 @@ class Cash_bank extends CI_Controller
         //output to json format
         echo json_encode($output);
     }
+    public function mastercode_popup()
+    {
+
+        //onclick=\"getpopup('module/edit_sub','"+tokens+"','popupedit','"+result[i].id+"');\"
+        $tokensapp = $this->session->userdata('sess_token');
+        $divisi = $this->session->userdata('sess_id_lokasi');
+
+        $list = $this->serv_coa->get_datatables($divisi);
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $customers) {
+
+
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $customers->ACCTNO;
+            $row[] = $customers->ACCTNAME;
+            $row[] = $customers->SITENO;
+
+            $row[] = "<button class='btn btn-success btn-sm' onclick=pilih(" . $customers->ACCTNO . "," . $customers->id . ") title=' Pilih- " . $customers->ACCTNO . " - " . $customers->ACCTNAME . "'>Pilih</button>";
+
+
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->serv_coa->count_all($divisi),
+            "recordsFiltered" => $this->serv_coa->count_filtered($divisi),
+            "data" => $data,
+        );
+        //output to json format
+        echo json_encode($output);
+    }
 
 
     public function master_detail_account()
@@ -632,6 +707,14 @@ class Cash_bank extends CI_Controller
         $acct_no = $this->input->post('acct_no', TRUE);
         $acct_id = $this->input->post('acct_id', TRUE);
         $result = $this->cash_bank_model->master_detail_account($acct_no, $acct_id)->row_array();
+        echo json_encode($result);
+    }
+
+    public function detail_account()
+    {
+        $acct_no = $this->input->post('acct_no', TRUE);
+        $acct_id = $this->input->post('acct_id', TRUE);
+        $result = $this->serv_coa->master_detail_account($acct_no, $acct_id)->row_array();
         echo json_encode($result);
     }
 

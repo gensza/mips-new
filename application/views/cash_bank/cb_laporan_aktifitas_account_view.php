@@ -59,17 +59,24 @@
             var base_url = '<?php echo base_url(); ?>';
             var tgl_start = $("#tgl_1").val();
             var tgl_end = $("#tgl_2").val();
+            var coa = $('#accn').val();
+
+            if (coa == '') {
+                var dt = 0;
+            } else {
+                var dt = $('#accn').val();
+            }
             //window.open(base_url+'cetak/cash_bank_lap_register/'+tgl_start+'/'+tgl_end+'');
-
-
             var url = '<?php echo base_url('cetak/cb_laporan_aktifitas_account/'); ?>';
-            newwindow = window.open(url + '/' + tgl_start + '/' + tgl_end + '/0', 'Perincian Aktivitas', '_blank');
+            newwindow = window.open(url + '/' + tgl_start + '/' + tgl_end + '/' + dt + '/0', 'Perincian Aktivitas', '_blank');
 
+        });
 
-
-
-
-
+        document.getElementById("accn").addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                getpopup('cash_bank/tabel_coa_popup', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', '1');
+            }
         });
 
 
@@ -77,12 +84,16 @@
 
             $("#tbl_vouc_regis").show();
             $("#btn_cetak").show();
-            // $("#tabel_lap_vouc_jurnal_list").html('');
 
             var tgl_start = $("#tgl_1").val();
             var tgl_end = $("#tgl_2").val();
+            var accn = $("#accn").val();
 
-
+            if (accn == '') {
+                var dt = 0;
+            } else {
+                var dt = $("#accn").val();
+            }
 
             $.ajax({
                 url: base_url + 'cetak/cb_laporan_aktifitas_account_view',
@@ -90,6 +101,7 @@
                 data: {
                     tgl_start: tgl_start,
                     tgl_end: tgl_end,
+                    accn: dt,
                     <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
                 },
                 dataType: "html",
