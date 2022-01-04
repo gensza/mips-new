@@ -101,7 +101,7 @@ class Cash_bank_model extends CI_Model
 
 
         // ini select dulu ke table tmp , lalu insert ke table voucher dengan fungsi insert batch
-        $sql2 = "SELECT * FROM voucher_tmp where voucno = '$data[kode_sementara]'";
+        $sql2 = "SELECT  `TRANS`, `VOUCNO`, `DATE`, `ACCTNO`, `DEBIT`, `CREDIT`, `DESCRIPT`, `JENIS`, `CHEQNO`, `TO`, `FROM`, `PAY`, `AMOUNT`, `BANK`, `POSTED`, `REMARKS`, `LOKASI`, `PROJECT`, `PRINTED`, `TGLTXT`, `KODE_PT`, `txtperiode`, `MODULE`, `user`, `NO_PP`, `NO_PO`, `PDO`, `sumber` FROM `voucher_tmp` WHERE `VOUCNO` = '$data[kode_sementara]'";
         // $n = $this->mips_caba->query($sql2)->result_array();
         $n = $this->mips_caba->query($sql2)->result();
 
@@ -221,7 +221,7 @@ class Cash_bank_model extends CI_Model
 
         //parameter untuk pengkategorian payment dan receive untuk memanggil configuration.
         // $pt          = $this->get_sess_pt();
-        $pt = $this->session->userdata('sess_id_lokasi');
+        $pt = $this->session->userdata('sess_pt');
         //$lokasi      = $data['lokasi_users'];
         $kas_or_bank = $data['kas_bank'];
 
@@ -236,7 +236,7 @@ class Cash_bank_model extends CI_Model
                 //filter : kas
                 if ($kas_or_bank == 'Kas') {
 
-                    $sql4 = "SELECT pay_nokas,pay_inikas FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                    $sql4 = "SELECT pay_nokas, pay_inikas FROM konfigur WHERE lokasi = '$lokasi' and pt = '$pt'";
                     $res = $this->mips_caba->query($sql4)->row_array();
 
                     $no_urut_pay      = $res['pay_nokas'];
@@ -264,7 +264,7 @@ class Cash_bank_model extends CI_Model
 
                         //ini kalo noref_select ada isinya dan no ref tidak kosong, maka lakukan 
 
-                        $slq_logistik = "SELECT NO_PP,NO_PO,DEBIT FROM voucher WHERE voucno  = '$nofix'";
+                        $slq_logistik = "SELECT NO_PP, NO_PO, DEBIT FROM voucher WHERE voucno  = '$nofix'";
                         $k = $this->mips_caba->query($slq_logistik)->result_array();
 
                         foreach ($k as $c) {
@@ -2502,7 +2502,7 @@ class Cash_bank_model extends CI_Model
                             break;
                         case "5":
 
-                            $sql4 = "SELECT pay_nokas5 as no_bank,pay_inikas5 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
+                            $sql4 = "SELECT pay_nokas5 as no_bank, pay_inikas5 as ini_bank FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
                             $res = $this->mips_caba->query($sql4)->row_array();
 
                             $no_urut_rec      = $res['no_bank'];
@@ -4003,7 +4003,7 @@ class Cash_bank_model extends CI_Model
         //3 : RO
 
         // $pt = $this->get_sess_pt();
-        $pt = $this->session->userdata('sess_id_lokasi');
+        $pt = $this->session->userdata('sess_pt');
 
         $sql = "SELECT * FROM konfigur where lokasi = '$lokasi' and pt = '$pt'";
         return $this->mips_caba->query($sql);
@@ -4014,7 +4014,7 @@ class Cash_bank_model extends CI_Model
     {
 
         // $pt = $this->get_sess_pt();
-        $pt = $this->session->userdata('sess_id_lokasi');
+        $pt = $this->session->userdata('sess_pt');
 
         if ($data['lokasi'] == 'HO') { //HO
 
@@ -4864,12 +4864,12 @@ class Cash_bank_model extends CI_Model
 
 
         //head entry
-        $sql_head = "SELECT * FROM head_voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun'";
+        $sql_head = "SELECT VOUCNO,DATE,txtperiode,LOKASI,KODE_PT FROM head_voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND LOKASI='$lokasi'";
         $result_head = $this->mips_caba->query($sql_head)->result_array();
         $ses_nama = $this->session->userdata('sess_nama');
         foreach ($result_head as $a) {
 
-            $sql_cek_head = "SELECT  * FROM header_entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND modul = 'CABA' AND ref = '$a[VOUCNO]'";
+            $sql_cek_head = "SELECT ref FROM header_entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND modul = 'CABA' AND ref = '$a[VOUCNO]'";
             $kd = $this->mips_gl->query($sql_cek_head)->num_rows();
 
             if ($kd == 0) {
@@ -4915,18 +4915,18 @@ class Cash_bank_model extends CI_Model
 
         //entry
 
-        $sql = "SELECT  * FROM voucher WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' and lokasi = '$lokasi' and POSTED = 1";
+        $sql = "SELECT DATE, VOUCNO, ACCTNO, DEBIT, CREDIT, KODE_PT, DESCRIPT, REMARKS, txtperiode, LOKASI FROM voucher WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND LOKASI = '$lokasi' AND POSTED = 1";
         $result = $this->mips_caba->query($sql)->result_array();
         $nama = $this->session->userdata('sess_nama');
         foreach ($result as $a) {
 
             //cek dulu di entry GL sudah tersedia atau belum disini untuk voucher ini
-            $sql_cek = "SELECT  * FROM entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND module = 'CABA' AND ref = '$a[VOUCNO]' AND noac = '$a[ACCTNO]'";
+            $sql_cek = "SELECT VOUCNO FROM entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND module = 'CABA' AND ref = '$a[VOUCNO]' AND noac = '$a[ACCTNO]' AND lokasi='$lokasi'";
             $k = $this->mips_gl->query($sql_cek)->num_rows();
 
             if ($a['DEBIT'] == 0) {
                 $types = 'C';
-            } else if ($a['KREDIT'] == 0) {
+            } else if ($a['CREDIT'] == 0) {
                 $types = 'D';
             }
 
@@ -4940,48 +4940,75 @@ class Cash_bank_model extends CI_Model
 
 
             if ($k == 0) {
-                $sql_ins = "INSERT INTO entry (`date`,
-                                    sbu,
-                                    noac,
-                                    `type`,
-                                    `level`,
-                                    `group`,
-                                    general,
-                                    dr,
-                                    cr,
-                                    periode,
-                                    descac,
-                                    ket,
-                                    periodetxt,
-                                    module,
-                                    dc,
-                                    lokasi,
-                                    tglinput,
-                                    user,
-                                    ref,
-                                    begindr,
-                                    begincr,
-                                    `POST`,
-                                    noref,
-                                    converse) 
-                            VALUES ('$a[DATE]',
-                                    '$a[KODE_PT]',
-                                    '$a[ACCTNO]',
-                                    '$noac_type',
-                                    '$noac_level',
-                                    '$noac_group',
-                                    '$noac_general',
-                                    '$a[DEBIT]',
-                                    '$a[CREDIT]',
-                                    '$a[DATE]',
-                                    '$a[DESCRIPT]',
-                                    '$a[REMARKS]',
-                                    '$a[txtperiode]',
-                                    'CABA',
-                                    '$types',
-                                    '$a[LOKASI]',NOW(),'$nama','$a[VOUCNO]',0,0,0,0,0)";
+                $sql_ins['date'] = $a['DATE'];
+                $sql_ins['sbu'] = $a['KODE_PT'];
+                $sql_ins['noac'] = $a['ACCTNO'];
+                $sql_ins['type'] = $noac_type;
+                $sql_ins['level'] = $noac_level;
+                $sql_ins['group'] = $noac_group;
+                $sql_ins['general'] = $noac_general;
+                $sql_ins['dr'] = $a['DEBIT'];
+                $sql_ins['cr'] = $a['CREDIT'];
+                $sql_ins['periode'] = $a['DATE'];
+                $sql_ins['descac'] = $a['DESCRIPT'];
+                $sql_ins['ket'] = $a['REMARKS'];
+                $sql_ins['periodetxt'] = $a['txtperiode'];
+                $sql_ins['module'] = 'CABA';
+                $sql_ins['dc'] = $types;
+                $sql_ins['lokasi'] = $lokasi;
+                $sql_ins['tglinput'] = date('Y-m-d H:i:s');
+                $sql_ins['user'] = $nama;
+                $sql_ins['ref'] = $a['VOUCNO'];
+                $sql_ins['POST'] = 0;
+                $sql_ins['begindr'] = 0;
+                $sql_ins['begincr'] = 0;
+                $sql_ins['converse'] = 0;
+                $sql_ins['noref'] = 0;
 
-                $this->mips_gl->query($sql_ins);
+                $this->mips_gl->insert('entry', $sql_ins);
+
+                // $sql_ins = "INSERT INTO entry (`date`,
+                //                     sbu,
+                //                     noac,
+                //                     `type`,
+                //                     `level`,
+                //                     `group`,
+                //                     general,
+                //                     dr,
+                //                     cr,
+                //                     periode,
+                //                     descac,
+                //                     ket,
+                //                     periodetxt,
+                //                     module,
+                //                     dc,
+                //                     lokasi,
+                //                     tglinput,
+                //                     user,
+                //                     ref,
+                //                     begindr,
+                //                     begincr,
+                //                     `POST`,
+                //                     noref,
+                //                     converse) 
+                //             VALUES ('$a[DATE]',
+                //                     '$a[KODE_PT]',
+                //                     '$a[ACCTNO]',
+                //                     '$noac_type',
+                //                     '$noac_level',
+                //                     '$noac_group',
+                //                     '$noac_general',
+                //                     '$a[DEBIT]',
+                //                     '$a[CREDIT]',
+                //                     '$a[DATE]',
+                //                     '$a[DESCRIPT]',
+                //                     '$a[REMARKS]',
+                //                     '$a[txtperiode]',
+                //                     'CABA',
+                //                     '$types',
+                //                     '$a[LOKASI]',NOW(),'$nama','$a[VOUCNO]',0,0,0,0,0)";
+
+                // $this->mips_gl->query($sql_ins);
             } else {
             }
         }

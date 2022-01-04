@@ -3,6 +3,27 @@
   //   // return "Apakah anda akan meninggalkan halaman ini ?";
   //   alert("Apakah anda akan meninggalkan halaman ini ?");
   // };
+  function firstDateOfYearMonth(y, m) {
+    var firstDay = new Date(y, m - 1, 1);
+    return firstDay;
+  }
+
+  function lastDateOfYearMonth(y, m) {
+    var lastDay = new Date(y, m, 0);
+    return lastDay;
+
+  }
+
+  function format_date(d) {
+    month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [day, month, year].join('-');
+  }
 
   $(document).ready(function() {
 
@@ -263,7 +284,11 @@
     }
     //select_bank();
     /* select grup */
+    var periodenya = '<?= $this->session->userdata('sess_periode') ?>';
+    var thn = periodenya.substring(0, 4);
+    var bln = periodenya.substring(4, 6);
 
+    $('#tanggal').val(format_date(firstDateOfYearMonth(thn, bln)));
     // Datepicker
     $('.fc-datepicker1').datepicker({
       showOtherMonths: true,
