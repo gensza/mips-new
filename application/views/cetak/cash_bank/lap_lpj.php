@@ -153,7 +153,7 @@
             <tr>
                 <td></td>
                 <td></td>
-                <td width="100px" colspan="1"><b>Saldo Awal&nbsp;&nbsp;<?php echo $this->uri->segment(4) ?></b></td>
+                <td width="100px" colspan="1"><b>Saldo Awal&nbsp;&nbsp;<?php echo date_format(date_create($this->uri->segment(4)), 'd-M-Y') ?></b></td>
                 <td align="right" width="150px"><b></b>
                 </td>
                 <td align="right" width="150px"><b></b>
@@ -164,13 +164,13 @@
             <?php
             $saldoakhir = $saldo;
             foreach ($res_data as $a) {
-                $saldoakhir =  $saldoakhir + $a['DEBET'] - $a['CREDIT'];
+                $saldoakhir =  $saldoakhir + $a['DEBIT'] - $a['CREDIT'];
             ?>
                 <tr>
-                    <td width="100px" align="center"><?= $a['TGL'] ?></td>
+                    <td width="100px" align="center"><?= date_format(date_create($a['DATE']), 'd-m-Y') ?></td>
                     <td width="100px" align="center"><?= $a['VOUCNO'] ?></td>
                     <td align="left" width="250px"><?= $a['REMARKS'] ?></td>
-                    <td align="right" width="150px"><?= number_format($a['DEBET'], 2, ",", ".") ?></td>
+                    <td align="right" width="150px"><?= number_format($a['DEBIT'], 2, ",", ".") ?></td>
                     <td align="right" width="150px"><?= number_format($a['CREDIT'], 2, ",", ".") ?></td>
                     <td align="right" width="150px"><?= number_format($saldoakhir, 2, ",", ".") ?></td>
                 </tr>
