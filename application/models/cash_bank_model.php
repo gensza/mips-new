@@ -4863,6 +4863,7 @@ class Cash_bank_model extends CI_Model
         $lokasi = $this->get_nama_lokasi();
 
 
+        $periodes = $tahun . '-' . $bulan . '-' . '-01';
         //head entry
         $sql_head = "SELECT VOUCNO,DATE,txtperiode,LOKASI,KODE_PT FROM head_voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND LOKASI='$lokasi'";
         $result_head = $this->mips_caba->query($sql_head)->result_array();
@@ -4879,7 +4880,7 @@ class Cash_bank_model extends CI_Model
 
 
                 $head['date'] =  $a['DATE'];
-                $head['periode'] =  $a['DATE'];
+                $head['periode'] =  $periodes;
                 $head['ref'] =  $a['VOUCNO'];
                 $head['totaldr'] =  $bb->totaldr;
                 $head['totalcr'] =  $bb->totalcr;
@@ -4890,28 +4891,8 @@ class Cash_bank_model extends CI_Model
                 $head['SBU'] =  $a['KODE_PT'];
 
                 $this->mips_gl->insert('header_entry', $head);
-                // $sql_ins = "INSERT INTO header_entry (`date`,
-                //                     periode,
-                //                     ref,
-                //                     totaldr,
-                //                     totalcr,
-                //                     periodetxt,
-                //                     modul,
-                //                     lokasi,
-                //                     user) 
-                //             VALUES ('$a[DATE]',
-                //                     '$a[DATE]',
-                //                     '$a[VOUCNO]',
-                //                     '$bb[totaldr]',
-                //                     '$bb[totalcr]',
-                //                     '$a[txtperiode]',
-                //                     'CABA','$a[LOKASI]','$ses_nama')";
-
-                // $this->mips_gl->query($sql_ins);
             }
         }
-
-
 
         //entry
 
@@ -4949,7 +4930,7 @@ class Cash_bank_model extends CI_Model
                 $sql_ins['general'] = $noac_general;
                 $sql_ins['dr'] = $a['DEBIT'];
                 $sql_ins['cr'] = $a['CREDIT'];
-                $sql_ins['periode'] = $a['DATE'];
+                $sql_ins['periode'] = $periodes;
                 $sql_ins['descac'] = $a['DESCRIPT'];
                 $sql_ins['ket'] = $a['REMARKS'];
                 $sql_ins['periodetxt'] = $a['txtperiode'];
@@ -4966,49 +4947,6 @@ class Cash_bank_model extends CI_Model
                 $sql_ins['noref'] = 0;
 
                 $this->mips_gl->insert('entry', $sql_ins);
-
-                // $sql_ins = "INSERT INTO entry (`date`,
-                //                     sbu,
-                //                     noac,
-                //                     `type`,
-                //                     `level`,
-                //                     `group`,
-                //                     general,
-                //                     dr,
-                //                     cr,
-                //                     periode,
-                //                     descac,
-                //                     ket,
-                //                     periodetxt,
-                //                     module,
-                //                     dc,
-                //                     lokasi,
-                //                     tglinput,
-                //                     user,
-                //                     ref,
-                //                     begindr,
-                //                     begincr,
-                //                     `POST`,
-                //                     noref,
-                //                     converse) 
-                //             VALUES ('$a[DATE]',
-                //                     '$a[KODE_PT]',
-                //                     '$a[ACCTNO]',
-                //                     '$noac_type',
-                //                     '$noac_level',
-                //                     '$noac_group',
-                //                     '$noac_general',
-                //                     '$a[DEBIT]',
-                //                     '$a[CREDIT]',
-                //                     '$a[DATE]',
-                //                     '$a[DESCRIPT]',
-                //                     '$a[REMARKS]',
-                //                     '$a[txtperiode]',
-                //                     'CABA',
-                //                     '$types',
-                //                     '$a[LOKASI]',NOW(),'$nama','$a[VOUCNO]',0,0,0,0,0)";
-
-                // $this->mips_gl->query($sql_ins);
             } else {
             }
         }
