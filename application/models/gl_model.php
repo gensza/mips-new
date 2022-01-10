@@ -1634,7 +1634,7 @@ class Gl_model extends CI_Model
     {
         //ini group dulu berdasarkan noac
         $period = $this->periode();
-        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
+        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6) . '-01';
 
         $DEBIT  = 'saldo' . substr($period, 4, 6) . 'd';
         $KREDIT = 'saldo' . substr($period, 4, 6) . 'c';
@@ -1653,8 +1653,8 @@ class Gl_model extends CI_Model
                     SUM(dr) AS SumOfdr, 
                     SUM(cr) AS SumOfcr 
             FROM entry
-            WHERE periodetxt LIKE '%$period%'
-            GROUP BY periodetxt,noac,`group`
+            WHERE periode = '$periodes'
+            GROUP BY periode,noac,`group`
             ORDER BY noac DESC";
         $sql_entry = $this->mips_gl->query($sql)->result_array();
 

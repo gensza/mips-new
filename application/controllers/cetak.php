@@ -644,13 +644,13 @@ class Cetak extends CI_Controller
         $data['data_entry_head']   = $this->gl_model->get_data_entry_head($periode_terkini, $tgl_start, $tgl_end, $divisi_start, $divisi_end, $noacc_start, $noacc_end)->result_array();
 
         if ($cetak == 'pdf') {
-            ini_set('memory_limit', '200M');
-            ini_set('upload_max_filesize', '200M');
-            ini_set('post_max_size', '200M');
-            ini_set('max_input_time', 3600);
-            ini_set('max_execution_time', 3600);
+            // ini_set('memory_limit', '200M');
+            // ini_set('upload_max_filesize', '200M');
+            // ini_set('post_max_size', '200M');
+            // ini_set('max_input_time', 3600);
+            // ini_set('max_execution_time', 3600);
 
-            ini_set("memory_limit", "512M");
+            // ini_set("memory_limit", "512M");
 
             // Tentukan path yang tepat ke mPDF
             $this->load->library('mpdf/mpdf');
