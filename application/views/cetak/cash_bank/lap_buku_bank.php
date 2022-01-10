@@ -90,17 +90,7 @@
     <tr>
 
         <td colspan="2">
-            <?php if ($this->uri->segment(3) == 1) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDO Upah</span>
-            <?php } else if ($this->uri->segment(3) == 2) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDO Remise</span>
-            <?php } else if ($this->uri->segment(3) == 3) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDDO & IM</span>
-            <?php } else if ($this->uri->segment(3) == 4) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban Dana GRTT</span>
-            <?php } else { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban Dana Kontanan</span>
-            <?php } ?>
+            <span style="font-size: 18px;font-weight: normal;">Laporan Buku Bank</span>
 
         </td>
         <td style="text-align: right;font-size: 10px" rowspan="2">Tanggal : <?php echo date("m/d/Y"); ?>
@@ -153,7 +143,7 @@
             <tr>
                 <td></td>
                 <td></td>
-                <td width="100px" colspan="1"><b>Saldo Awal&nbsp;&nbsp;<?php echo $this->uri->segment(4) ?></b></td>
+                <td width="100px" colspan="1"><b>Saldo Awal&nbsp;&nbsp;<?php echo date_format(date_create($this->uri->segment(4)), 'd-M-Y') ?></b></td>
                 <td align="right" width="150px"><b></b>
                 </td>
                 <td align="right" width="150px"><b></b>
@@ -164,13 +154,13 @@
             <?php
             $saldoakhir = $saldo;
             foreach ($res_data as $a) {
-                $saldoakhir =  $saldoakhir + $a['DEBET'] - $a['CREDIT'];
+                $saldoakhir =  $saldoakhir + $a['DEBIT'] - $a['CREDIT'];
             ?>
                 <tr>
                     <td width="100px" align="center"><?= $a['TGL'] ?></td>
                     <td width="100px" align="center"><?= $a['VOUCNO'] ?></td>
                     <td align="left" width="250px"><?= $a['REMARKS'] ?></td>
-                    <td align="right" width="150px"><?= number_format($a['DEBET'], 2, ",", ".") ?></td>
+                    <td align="right" width="150px"><?= number_format($a['DEBIT'], 2, ",", ".") ?></td>
                     <td align="right" width="150px"><?= number_format($a['CREDIT'], 2, ",", ".") ?></td>
                     <td align="right" width="150px"><?= number_format($saldoakhir, 2, ",", ".") ?></td>
                 </tr>

@@ -4921,7 +4921,7 @@ class Cash_bank_model extends CI_Model
         foreach ($result as $a) {
 
             //cek dulu di entry GL sudah tersedia atau belum disini untuk voucher ini
-            $sql_cek = "SELECT VOUCNO FROM entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND module = 'CABA' AND ref = '$a[VOUCNO]' AND noac = '$a[ACCTNO]' AND lokasi='$lokasi'";
+            $sql_cek = "SELECT ref FROM entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND module = 'CABA' AND ref = '$a[VOUCNO]' AND noac = '$a[ACCTNO]' AND lokasi='$lokasi'";
             $k = $this->mips_gl->query($sql_cek)->num_rows();
 
             if ($a['DEBIT'] == 0) {

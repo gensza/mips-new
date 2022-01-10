@@ -132,13 +132,19 @@ class Cetak_model extends CI_Model
 
 
         return $this->mips_caba->query($sql);
-        // return $this->mips_caba->query("SELECT  DATE_FORMAT(a.`DATE`, '%d-%m-%Y') TGL,
-        // a.DEBIT DEBET_F2,
-        // FORMAT(a.DEBIT, 2) DEBET_F,
-        // FORMAT(a.CREDIT, 2) CREDIT_F, 
-        // a.DEBIT AS DEBET_NO_F,
-        // a.CREDIT AS CREDIT_NO_F,
-        // a.ACCTNO AS DT_ACCTNO, a.REMARKS FROM voucher a WHERE VOUCNO='$no_vouc' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' ORDER BY ID ASC");
+    }
+    function isi_trans_cb_vou($no_vouc, $txtperiode)
+    {
+
+        $period = $this->periode();
+
+        $tahun  = substr($txtperiode, 0, 4);
+        $bulan  = substr($txtperiode, 4, 6);
+        //OLD
+        $sql = "SELECT * FROM voucher WHERE VOUCNO = '$no_vouc' AND MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun'  ORDER BY ID ASC";
+
+        /* NEW BY ALI */
+        return $this->mips_caba->query($sql);
     }
 
     function get_data_vouc_list_detail_dr($no_vouc, $txtperiode)
@@ -293,7 +299,7 @@ class Cetak_model extends CI_Model
     function get_data_lpj($sumber, $coa, $tgl_start, $tgl_end)
     {
         $lokasi   = $this->lokasi();
-        $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND sumber='$sumber' ORDER BY `DATE` ASC";
+        $sql = "SELECT * FROM voucher WHERE ACCTNO='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND sumber='$sumber' ORDER BY `DATE` ASC";
         return $this->mips_caba->query($sql);
     }
     function get_data_bank($coa, $tgl_start, $tgl_end)
