@@ -116,11 +116,19 @@ if ($sess_login == 0) {
 
           <div class="main_contentx" style="padding:10px;padding-top:50px">
 
-            <div id="content-containers"></div>
+            <div id="content-containers">
+              <!-- <div class="span2"> -->
+              <!-- <span style="color:white">
+                  </span> -->
+              <!-- </div> -->
+            </div>
             <div id="content-modals"></div>
-
           </div>
         </div>
+        <!-- <div class="sidebar">
+          <?php include "main_menu_sidebar_view.php"; ?>
+
+        </div> -->
 
 
       <?php
