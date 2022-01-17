@@ -38,17 +38,17 @@ class Gl_lap_model extends CI_Model
     {
 
         $field = "AND (saldo01c <> 0 OR saldo01d <> 0  
-                    OR saldo02c <> 0 AND saldo02d <> 0 
-                    OR saldo03c <> 0 AND saldo03d <> 0
-                    OR saldo04c <> 0 AND saldo04d <> 0
-                    OR saldo05c <> 0 AND saldo05d <> 0
-                    OR saldo06c <> 0 AND saldo06d <> 0
-                    OR saldo07c <> 0 AND saldo07d <> 0
-                    OR saldo08c <> 0 AND saldo08d <> 0
-                    OR saldo09c <> 0 AND saldo09d <> 0
-                    OR saldo10c <> 0 AND saldo10d <> 0
-                    OR saldo11c <> 0 AND saldo11d <> 0
-                    OR saldo12c <> 0 AND saldo12d <> 0
+                    OR saldo02c <> 0 OR saldo02d <> 0 
+                    OR saldo03c <> 0 OR saldo03d <> 0
+                    OR saldo04c <> 0 OR saldo04d <> 0
+                    OR saldo05c <> 0 OR saldo05d <> 0
+                    OR saldo06c <> 0 OR saldo06d <> 0
+                    OR saldo07c <> 0 OR saldo07d <> 0
+                    OR saldo08c <> 0 OR saldo08d <> 0
+                    OR saldo09c <> 0 OR saldo09d <> 0
+                    OR saldo10c <> 0 OR saldo10d <> 0
+                    OR saldo11c <> 0 OR saldo11d <> 0
+                    OR saldo12c <> 0 OR saldo12d <> 0
                     OR yearc <> 0
                     OR yeard <> 0)";
         return $field;
