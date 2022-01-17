@@ -581,7 +581,20 @@ class Cash_bank extends CI_Controller
 
     public function transfer_ke_gl_submit()
     {
-        $result = $this->cash_bank_model->transfer_ke_gl_submit();
+        $pt = $this->session->userdata('sess_pt');
+        $lokasi = $this->session->userdata('sess_id_lokasi');
+        $periode = $this->session->userdata('sess_periode');
+
+        $setup = $this->db->query("SELECT txtperiode FROM tb_setup WHERE id_modul='2' AND id_pt='$pt' AND lokasi='$lokasi'")->row();
+        if ($setup->txtperiode == $periode) {
+            # code...
+            $result = $this->cash_bank_model->transfer_ke_gl_submit();
+            // $result = true;
+        } else {
+            $result = false;
+            # code...
+        }
+
         echo json_encode($result);
     }
 

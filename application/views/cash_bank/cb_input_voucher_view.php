@@ -480,6 +480,7 @@
         dataType: "json",
         async: 'false',
         success: function(result) {
+          // console.log('ini datanya', result);
           var data = [];
           for (var i = 0; i < result.length; i++) {
 
@@ -738,9 +739,11 @@
 
           if (result == '') {
             $("#balance").text('Rp. ' + myStr);
+            // console.log('masuk sini');
           } else {
 
             var pengurangan = parseInt(newStr) - parseInt(result.tot_credit); //parseInt(result.tot_debit) - 
+            console.log('balance', pengurangan);
 
             $("#tot_cred").val(result.tot_credit);
             $("#tot_debt").val(result.tot_debit);
@@ -1023,6 +1026,10 @@
 
 
   });
+
+  // function set_jumlah_tot(params) {
+
+  // }
 </script>
 
 <?php

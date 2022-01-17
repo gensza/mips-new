@@ -60,7 +60,7 @@ if ($this->session->userdata('sess_level') == 1) {
         <br>
         <?php if ($this->session->userdata('sess_level') == 3) { ?>
 
-          <div class="span12">
+          <!-- <div class="span12">
             <ul class="dshb_icoNav tac">
               <li><a href="javascript:void(0)" style="background-image: url(img/gCons/multi-agents.png)"><span class="label label-info">+10</span> Users</a></li>
               <li><a href="javascript:void(0)" style="background-image: url(img/gCons/world.png)">Map</a></li>
@@ -73,7 +73,7 @@ if ($this->session->userdata('sess_level') == 1) {
               <li><a href="javascript:void(0)" style="background-image: url(img/gCons/add-item.png)"> Add New Page</a></li>
               <li><a href="javascript:void(0)" style="background-image: url(img/gCons/chat-.png)"><span class="label label-important">26</span> Comments</a></li>
             </ul>
-          </div>
+          </div> -->
         <?php } ?>
         <!--<br>
             <br>

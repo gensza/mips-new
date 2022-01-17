@@ -103,9 +103,10 @@
                             else {
                                 get_acct_supplier(response.kode_supplytxt);
                                 $('#' + id_modal).modal('hide');
-                                setInterval(function() {
+                                var dt = setInterval(function() {
                                     set_jumlah_tot();
                                 }, 1000);
+                                clearInterval(dt);
 
 
                                 // selesai();
