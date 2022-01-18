@@ -81,7 +81,7 @@
 
 <table width="100%" border="0" class="font-styles">
     <tr>
-        <td align="left" style="font-size:20px;"><?= $this->session->userdata('sess_nama_pt'); ?></td>
+        <td align="left" style="font-size:20px;"><?= $this->session->userdata('sess_nama_pt'); ?>(<?= $namapt['nama'] ?>)</td>
     </tr>
     <!--    <tr>
         <td align="center">Jl. Radio Dalam Raya No.87A, RT.005/RW.014, Gandaria Utara, Kebayoran Baru,  JakartaSelatan, DKI Jakarta Raya-12140 <br /> Telp : 021-7231999, 7202418 (Hunting) <br /> Fax : 021-7231819

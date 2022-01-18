@@ -66,6 +66,8 @@
 
         selected_pp_logistik = function(pppo_id, pppo_no) {
 
+            // console.log('ini log idnya' + pppo_id + 'dan ini no pp nya' + pppo_no);
+
             $.ajax({
                 url: base_url + 'cash_bank/detail_pp_logistik',
                 type: "post",
@@ -76,9 +78,12 @@
                     <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
                 },
                 success: function(response) {
+
+                    // console.log('ini respon nya', response);
                     //noid,noac,nama
                     $("#no_ref").val(response.nopp);
                     $("#ref_po").val(response.ref_po);
+                    // console.log('ini loh ref po nya', response.ref_po);
                     //$('#'+id_modal).modal('hide');
 
                     $("#kepada").val(response.nama_supply);
@@ -103,10 +108,14 @@
                             else {
                                 get_acct_supplier(response.kode_supplytxt);
                                 $('#' + id_modal).modal('hide');
-                                var dt = setInterval(function() {
+
+                                setTimeout(function() {
                                     set_jumlah_tot();
                                 }, 1000);
-                                clearInterval(dt);
+                                // setTimeout(function() {
+                                //     set_jumlah_tot();
+                                // }, 1000);
+
 
 
                                 // selesai();
