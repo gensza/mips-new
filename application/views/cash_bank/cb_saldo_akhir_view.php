@@ -62,9 +62,11 @@
                 $("#btn_cetak").show();
 
                 var tglperiode = $("#tgl_periode").val();
-                console.log('ini periode nya', tglperiode);
+                // console.log('ini periode nya', tglperiode);
                 var bulan_periode = tglperiode.substr(0, 2);
                 var tahun_periode = tglperiode.substr(2, 4);
+
+                console.log('bulan periode' + bulan_periode + 'tahun periode' + tahun_periode);
 
                 $('#tbl_lap_saldo_akhir').hide();
                 $('#tbl_lap_saldo_akhir').DataTable().destroy();

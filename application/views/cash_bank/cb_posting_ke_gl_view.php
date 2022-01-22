@@ -54,7 +54,7 @@
                         cache: false,
                         processData: false,
                         success: function(response) {
-
+                            // console.log('ini success', response);
                             //Command: toastr["success"]("Proses posting selesai", "Ok Posting Tersimpan");
                             if (response == true) {
                                 swal("Selesai", "Data Berhasil di Posting", "success");
@@ -76,8 +76,10 @@
 
                             var formats = d.hours() + ' Jam : ' + d.minutes() + ' Menit : ' + d.seconds() + ' Detik';
 
+                            // console.log('ini complite', response.responseText);
+
                             // swal("Selesai", "Terima Kasih, Data berhasil di Posting dan tersimpan, Waktu Proses Posting " + formats + "", "success");
-                            if (response.responseText == true) {
+                            if (response.responseText == "true") {
                                 // swal("Selesai", "Data Berhasil di Posting", "success");
                                 swal("Selesai", "Terima Kasih, Data berhasil di Posting dan tersimpan, Waktu Proses Posting " + formats + "", "success");
                             } else {

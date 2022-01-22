@@ -290,7 +290,7 @@
                 <div class="span2">
                   <div class="form-group" style="padding-right:20px">
                     <label for="demo-vs-definput" class="control-label">No. Account</label>
-                    <input type="text" id="acctno" name="acctno" class="form-control" style="width:118%">
+                    <input type="text" id="acctno" name="acctno" class="form-control" placeholder="Enter disini..." style="width:118%">
                   </div>
                 </div>
                 <div class="span2">

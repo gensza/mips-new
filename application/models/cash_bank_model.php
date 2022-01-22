@@ -4826,7 +4826,7 @@ class Cash_bank_model extends CI_Model
         }
         // return $tahun . 'dan' . $bulan;
 
-        $dt = $this->mips_caba->query("SELECT DISTINCT(ACCTNO) FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND LOKASI='$nama_lokasi' GROUP BY ACCTNO")->result();
+        $dt = $this->mips_caba->query("SELECT DISTINCT(ACCTNO) FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND  POSTED = 0 AND LOKASI='$nama_lokasi' GROUP BY ACCTNO")->result();
         // $arr = [];
         foreach ($dt as $d) {
             // $arr[] = array(
