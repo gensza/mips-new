@@ -36,11 +36,53 @@ class Cash_bank extends CI_Controller
 
         $tahun = date('Y');
         $bulan = date('m');
+        $d = $this->cash_bank_model->cek_voucher();
+
 
         if ($result == '1') {
             if ($tahun == $data['period_tahun'] && $bulan == $data['period_bulan']) {
                 # code...
-                $this->load->view('cash_bank/cb_input_voucher_view', $data);
+                if ($d > 0) {
+                    # code...
+                    $this->load->view('cash_bank/cb_adavoucher', $data);
+                } else {
+
+                    $this->load->view('cash_bank/cb_input_voucher_view', $data);
+                }
+            } else {
+                $this->load->view('cash_bank/cb_pw_vouc', $data);
+                # code...
+            }
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
+    function postVoucher()
+    {
+        $period = $this->session->userdata('sess_periode');
+        $data['period']        = $period;
+        $data['period_tahun']  = substr($period, 0, 4);
+        $data['period_bulan']  = substr($period, 4, 6);
+
+        $tahun = date('Y');
+        $bulan = date('m');
+
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        $data['lokasi'] = $this->main_model->get_lokasi()->row_array();
+
+        $cekvoucher = $this->cash_bank_model->getvoucher();
+        $data['id_rows']     = $cekvoucher->ID;
+        $data['id_rows2']     = $cekvoucher->VOUCNO;
+        $data['id_rows3']     = $cekvoucher->txtperiode;
+
+        if ($result == '1') {
+            if ($tahun == $data['period_tahun'] && $bulan == $data['period_bulan']) {
+                # code...
+
+                $this->load->view('cash_bank/cb_lanjut_input_vou', $data);
             } else {
                 $this->load->view('cash_bank/cb_pw_vouc', $data);
                 # code...
@@ -882,10 +924,15 @@ class Cash_bank extends CI_Controller
 
     function data_list_voucher_detail()
     {
-
         $data['kode_sementara'] = $this->input->post('kode_sementara', TRUE);
+        // $d = $this->cash_bank_model->cek_voucher();
+        // if ($d > 0) {
+        // } else {
+        //     $result = false;
+        // }
 
         $result = $this->cash_bank_model->data_list_voucher_detail($data)->result_array();
+
         echo json_encode($result);
     }
 
@@ -1328,6 +1375,13 @@ class Cash_bank extends CI_Controller
         $result = $this->cash_bank_model->get_data_head_vouch($data)->row_array();
         echo json_encode($result);
     }
+    function get_data_head_vouch2()
+    {
+
+        $data['id_vouc'] = $this->input->post('id_vouc', TRUE);
+        $result = $this->cash_bank_model->get_data_head_vouch2($data)->row_array();
+        echo json_encode($result);
+    }
 
     function get_list_voucher_detail()
     {
@@ -1600,5 +1654,19 @@ class Cash_bank extends CI_Controller
         $data['ref_po'] = $this->input->post('ref_po', TRUE);
         $result = $this->cash_bank_model->cek_pp_logistik($data)->num_rows();
         echo json_encode($result);
+    }
+
+    function cekvoucher()
+    {
+        $d = $this->cash_bank_model->cek_voucher();
+        if ($d > 0) {
+            # code...
+            $data = true;
+        } else {
+            $data = false;
+            # code...
+        }
+
+        echo json_encode($data);
     }
 }

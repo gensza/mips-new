@@ -26,7 +26,7 @@
   }
 
   $(document).ready(function() {
-
+    // cekVoucher()
     var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
     var lokasi_usr = '<?php echo $this->session->userdata('sess_nama_lokasi'); ?>';
 
@@ -468,6 +468,7 @@
 
     loading();
 
+
     table_caba_detail = function() {
 
       $.ajax({
@@ -480,12 +481,10 @@
         dataType: "json",
         async: 'false',
         success: function(result) {
-          // console.log('ini datanya', result);
           var data = [];
+
           for (var i = 0; i < result.length; i++) {
 
-            //var edit = '<a href="javascript:void(0)" onclick=edit_vouc_tmp('+result[i].id_vouc_tmp+')><i class="splashy-pencil"></i></a> <a href="javascript:void(0)" onclick=hapus_vouc_tmp('+result[i].id_vouc_tmp+')><i class="splashy-gem_remove"></i></a>';
-            //var hapus = '<a href="javascript:void(0)" onclick=hapus_vouc_tmp('+result[i].id_vouc_tmp+')><i class="splashy-gem_remove"></i></a>';
 
             var link = "<a href='javascript:void(0)' onclick=\"edit_vouc_tmp(" + result[i].id_vouc_tmp + ",'" + result[i].VOUCNO + "');\" title='Edit'><i class='splashy-document_letter_edit'></i></a> <a href='javascript:void(0)' onclick=\"hapus_vouc_tmp(" + result[i].id_vouc_tmp + ",'" + result[i].VOUCNO + "');\" title='Hapus'><i class='splashy-document_a4_remove'></i></div></a>";
 
@@ -1027,9 +1026,20 @@
 
   });
 
-  // function set_jumlah_tot(params) {
+  function cekVoucher() {
+    $.ajax({
+      url: "<?= site_url('cash_bank/cekvoucher'); ?>",
+      type: "POST",
+      dataType: "JSON",
+      beforeSend: function() {},
+      success: function(response) {
 
-  // }
+      },
+      error: function(request) {
+        console.log(request.responseText);
+      }
+    });
+  }
 </script>
 
 <?php
@@ -1048,6 +1058,7 @@ for ($i = 0; $i < 6; $i++) {
 
 
 <form id="form_input_transaksi" method=POST enctype='multipart/form-data'>
+  <!-- <input type="text" name="" id="" value="<?= $this->session->userdata('sess_id') ?>"> -->
   <!-- <input type="hidden" name="kode_sementara" id="kode_sementara" value="<?php echo $token; ?>"> -->
   <input type="hidden" name="kode_sementara" id="kode_sementara" value="<?php echo $token; ?>">
   <input type="hidden" name="lokasi_users" id="lokasi_users" value="<?php echo $lokasi['nama']; ?>">
