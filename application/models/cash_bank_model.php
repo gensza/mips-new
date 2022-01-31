@@ -3631,7 +3631,7 @@ class Cash_bank_model extends CI_Model
 
         $saldoawal = $this->mips_caba->query("SELECT saldo, saldo_$var_bulan as saldone FROM master_accountcb WHERE ACCTNO='$coa' AND thn='$tahun'")->row();
 
-        $sql = "SELECT ACCTNO, DESCRIPT, SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$coa' GROUP BY ACCTNO";
+        $sql = "SELECT SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$coa' GROUP BY ACCTNO";
         $sd = $this->mips_caba->query($sql)->row();
 
         $coa = $sd->ACCTNO;
@@ -3977,6 +3977,7 @@ class Cash_bank_model extends CI_Model
 
     function data_list_voucher_detail($data)
     {
+        $nama = $this->session->userdata('sess_nama');
 
         $sql = "SELECT *,FORMAT(debit, 2) debit_f
                             ,FORMAT(credit, 2) credit_f,
@@ -4825,7 +4826,7 @@ class Cash_bank_model extends CI_Model
         }
         // return $tahun . 'dan' . $bulan;
 
-        $dt = $this->mips_caba->query("SELECT DISTINCT(ACCTNO) FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND LOKASI='$nama_lokasi' GROUP BY ACCTNO")->result();
+        $dt = $this->mips_caba->query("SELECT DISTINCT(ACCTNO) FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND  POSTED = 0 AND LOKASI='$nama_lokasi' GROUP BY ACCTNO")->result();
         // $arr = [];
         foreach ($dt as $d) {
             // $arr[] = array(
@@ -4833,7 +4834,7 @@ class Cash_bank_model extends CI_Model
             // );
             $saldoawal = $this->mips_caba->query("SELECT saldo, saldo_$var_bulan as saldone FROM master_accountcb WHERE SITENO='$lokasi' AND ACCTNO='$d->ACCTNO' AND thn='$tahun'")->row();
 
-            $sql = "SELECT ACCTNO, DESCRIPT, SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$d->ACCTNO' AND LOKASI='$nama_lokasi' GROUP BY ACCTNO";
+            $sql = "SELECT SUM(DEBIT) AS sum_debit, SUM(CREDIT) AS sum_credit FROM voucher WHERE MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' AND ACCTNO='$d->ACCTNO' AND LOKASI='$nama_lokasi' GROUP BY ACCTNO";
             $sd = $this->mips_caba->query($sql)->row();
 
             $coa = $d->ACCTNO;
@@ -4870,7 +4871,7 @@ class Cash_bank_model extends CI_Model
         $ses_nama = $this->session->userdata('sess_nama');
         foreach ($result_head as $a) {
 
-            $sql_cek_head = "SELECT ref FROM header_entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND modul = 'CABA' AND ref = '$a[VOUCNO]'";
+            $sql_cek_head = "SELECT ref FROM header_entry WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' AND modul = 'CABA' AND ref = '$a[VOUCNO]' AND lokasi='$lokasi'";
             $kd = $this->mips_gl->query($sql_cek_head)->num_rows();
 
             if ($kd == 0) {
@@ -4950,6 +4951,7 @@ class Cash_bank_model extends CI_Model
             } else {
             }
         }
+        return true;
     }
 
     function monthly_closing_submit()

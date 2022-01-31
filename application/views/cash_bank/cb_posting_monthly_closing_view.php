@@ -112,7 +112,7 @@
                             showCancelButton: true,
                             closeOnConfirm: false,
                             showLoaderOnConfirm: true,
-                            confirmButtonText: "Ya Transfer",
+                            confirmButtonText: "Ya Posting",
                             //confirmButtonColor: "#E73D4A"
                             confirmButtonColor: "#286090"
                         },

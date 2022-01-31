@@ -157,7 +157,7 @@ class Cetak extends CI_Controller
         $dt = $p->ACCTNO;
         $saldo = $this->cetak_model->get_list_saldo_akhir_lpj($dt)->row();
         $data['saldo'] = $saldo->saldonya;
-        // var_dump($data['res_data']) . die();
+        var_dump($data['res_data']) . die();
         $data['namapt']  = $this->main_model->get_pt()->row_array();
 
         $this->load->library('mpdf/mpdf');

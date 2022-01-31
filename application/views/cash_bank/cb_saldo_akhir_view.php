@@ -1,4 +1,27 @@
 <script type="text/javascript">
+    function firstDateOfYearMonth(y, m) {
+        var firstDay = new Date(y, m - 1, 1);
+        return firstDay;
+    }
+
+    function lastDateOfYearMonth(y, m) {
+        var lastDay = new Date(y, m, 0);
+        return lastDay;
+
+    }
+
+    function format_date(d) {
+        month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [month, year].join('');
+    }
+
+
     $(document).ready(function() {
 
         var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
@@ -9,10 +32,12 @@
         var thn = periodetxt.substring(0, 4);
         var bln = periodetxt.substring(4, 6);
 
+        $('#tgl_periode').val(format_date(lastDateOfYearMonth(thn, bln)));
+
         // var periodenya = bln + thn;
         // $('#tgl_periode').val(periodenya);
 
-        $('.fc-datepicker2').datepicker({
+        $('#tgl_periode').datepicker({
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
@@ -20,6 +45,7 @@
             onClose: function(dateText, inst) {
                 $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
             }
+
         });
 
 
@@ -36,8 +62,11 @@
                 $("#btn_cetak").show();
 
                 var tglperiode = $("#tgl_periode").val();
+                // console.log('ini periode nya', tglperiode);
                 var bulan_periode = tglperiode.substr(0, 2);
                 var tahun_periode = tglperiode.substr(2, 4);
+
+                console.log('bulan periode' + bulan_periode + 'tahun periode' + tahun_periode);
 
                 $('#tbl_lap_saldo_akhir').hide();
                 $('#tbl_lap_saldo_akhir').DataTable().destroy();
@@ -84,29 +113,6 @@
 
 
                 });
-
-                // $.ajax({
-                //     url: base_url + 'cetak/cb_laporan_saldo_akhir',
-                //     type: "post",
-                //     data: {
-                //         bulan: bulan_periode,
-                //         tahun: tahun_periode,
-                //         <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
-                //     },
-                //     dataType: "html",
-                //     async: 'false',
-                //     success: function(result) {
-
-                //         $("#list_lap_saldo_akhir").append(result);
-
-                //     },
-                //     beforeSend: function() {
-                //         loadingPannel.show();
-                //     },
-                //     complete: function() {
-                //         loadingPannel.hide();
-                //     }
-                // });
             }
         });
 

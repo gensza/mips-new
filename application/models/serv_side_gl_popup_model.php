@@ -24,6 +24,7 @@ class Serv_side_gl_popup_model extends CI_Model
     {
 
         $this->mips_gl->from($this->table);
+        $this->mips_gl->where('type !=', 'G');
 
         $i = 0;
 

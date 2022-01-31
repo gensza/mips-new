@@ -480,6 +480,7 @@
         dataType: "json",
         async: 'false',
         success: function(result) {
+          // console.log('ini datanya', result);
           var data = [];
           for (var i = 0; i < result.length; i++) {
 
@@ -696,7 +697,7 @@
         async: 'false',
         success: function(result) {
 
-          console.log(result);
+          // console.log(result);
 
         },
         beforeSend: function() {
@@ -738,9 +739,11 @@
 
           if (result == '') {
             $("#balance").text('Rp. ' + myStr);
+            // console.log('masuk sini');
           } else {
 
             var pengurangan = parseInt(newStr) - parseInt(result.tot_credit); //parseInt(result.tot_debit) - 
+            console.log('balance', pengurangan);
 
             $("#tot_cred").val(result.tot_credit);
             $("#tot_debt").val(result.tot_debit);
@@ -1023,6 +1026,10 @@
 
 
   });
+
+  // function set_jumlah_tot(params) {
+
+  // }
 </script>
 
 <?php
@@ -1172,7 +1179,7 @@ for ($i = 0; $i < 6; $i++) {
                 <div class="span3">
                   <div class="form-group">
                     <label for="demo-vs-definput" class="control-label">Nomor Ref</label>
-                    <input type="text" class="form-control span17" name="no_ref" id="no_ref">
+                    <input type="text" class="form-control span17" name="no_ref" id="no_ref" placeholder="Enter jika pilih PP">
                     <input type="hidden" class="form-control span17 clears2" name="ref_po" id="ref_po">
                   </div>
                 </div>
@@ -1316,7 +1323,7 @@ for ($i = 0; $i < 6; $i++) {
               <div class="span4">
                 <div class="form-group">
                   <label for="demo-vs-definput" class="control-label">Acct</label>
-                  <input type="text" class="form-control clears span17" id="acct" name="acct">
+                  <input type="text" class="form-control clears span17" placeholder="Enter disini..." id="acct" name="acct">
                   <input type="hidden" class="form-control clears span17 clears2" id="idvouc_details" name="idvouc_details">
                 </div>
               </div>
