@@ -95,24 +95,68 @@ $db['mips_center']['stricton'] = FALSE;
 
 
 /* START-DB-GL */
-$db['mips_gl']['hostname'] = '192.168.1.237';
-$db['mips_gl']['username'] = 'mis';
-$db['mips_gl']['password'] = 'msaljkt@88';
-$db['mips_gl']['database'] = 'db_mips_gl_' . $inis_db . '';
-// $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db;
-// $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db.'_sblmcoba10digit';
-$db['mips_gl']['dbdriver'] = 'mysqli';
-$db['mips_gl']['dbprefix'] = '';
-$db['mips_gl']['pconnect'] = TRUE;
-$db['mips_gl']['db_debug'] = TRUE;
-$db['mips_gl']['cache_on'] = FALSE;
-$db['mips_gl']['cachedir'] = '';
-$db['mips_gl']['char_set'] = 'utf8';
-$db['mips_gl']['dbcollat'] = 'utf8_general_ci';
-$db['mips_gl']['swap_pre'] = '{PRE}';
-$db['mips_gl']['autoinit'] = TRUE;
-$db['mips_gl']['stricton'] = FALSE;
+// $db['mips_gl']['hostname'] = '192.168.1.237';
+// $db['mips_gl']['username'] = 'mis';
+// $db['mips_gl']['password'] = 'msaljkt@88';
+// $db['mips_gl']['database'] = 'db_mips_gl_' . $inis_db . '';
+// // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db;
+// // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db.'_sblmcoba10digit';
+// $db['mips_gl']['dbdriver'] = 'mysqli';
+// $db['mips_gl']['dbprefix'] = '';
+// $db['mips_gl']['pconnect'] = TRUE;
+// $db['mips_gl']['db_debug'] = TRUE;
+// $db['mips_gl']['cache_on'] = FALSE;
+// $db['mips_gl']['cachedir'] = '';
+// $db['mips_gl']['char_set'] = 'utf8';
+// $db['mips_gl']['dbcollat'] = 'utf8_general_ci';
+// $db['mips_gl']['swap_pre'] = '{PRE}';
+// $db['mips_gl']['autoinit'] = TRUE;
+// $db['mips_gl']['stricton'] = FALSE;
 /* END-DB-GL */
+
+$db['mips_gl_msal'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_gl_msal',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['mips_gl_psam'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_gl_psam',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
 
 
 /* START-DB-CB */

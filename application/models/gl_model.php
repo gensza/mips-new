@@ -6,7 +6,8 @@ class Gl_model extends CI_Model
     {
         parent::__construct();
         //$this->load->database();
-        $this->mips_gl = $this->load->database('mips_gl', TRUE);
+        $db_pt = check_db_pt();
+        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
         //$this->mstcode = $this->load->database('mstcode', TRUE);
 
     }
@@ -218,6 +219,9 @@ class Gl_model extends CI_Model
         $sess_lokasi = $this->get_nama_lokasi();
 
         $tgl_ymd = date('Y-m-d', strtotime($data['tanggal']));
+        // $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6);
+        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6) . '-01';
+
         $today = date('Y-m-d H:i:s');
 
         $entry_temp['ref'] = $data['no_ref'];
@@ -228,7 +232,7 @@ class Gl_model extends CI_Model
         $entry_temp['dr'] = $nominal_dr;
         $entry_temp['cr'] = $nominal_cr;
         $entry_temp['date'] = $tgl_ymd;
-        $entry_temp['periode'] = $tgl_ymd;
+        $entry_temp['periode'] = $periodes;
         $entry_temp['ket'] = $data['deskripsi'];
         $entry_temp['periodetxt'] = $txtperiode;
         $entry_temp['module'] = 'GL';

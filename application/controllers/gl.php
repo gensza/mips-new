@@ -21,7 +21,10 @@ class Gl extends CI_Controller
 
 
         $this->db_msal_personalia = $this->load->database('db_msal_personalia', TRUE);
-        $this->mips_gl = $this->load->database('mips_gl', TRUE);
+
+        $db_pt = check_db_pt();
+
+        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
 
         date_default_timezone_set('Asia/Jakarta');
     }

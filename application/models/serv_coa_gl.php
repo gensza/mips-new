@@ -19,7 +19,9 @@ class serv_coa_gl extends CI_Model
     {
         parent::__construct();
         //$this->mstcode = $this->load->database('mstcode', TRUE);
-        $this->mips_gl = $this->load->database('mips_gl', TRUE);
+
+        $db_pt = check_db_pt();
+        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
     }
 
     private function _get_datatables_query($divisi)

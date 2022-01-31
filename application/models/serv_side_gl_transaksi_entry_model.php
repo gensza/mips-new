@@ -12,7 +12,9 @@ class Serv_side_gl_transaksi_entry_model extends CI_Model{
 
     function __construct() {
         parent::__construct();
-        $this->mips_gl = $this->load->database('mips_gl', TRUE);
+
+        $db_pt = check_db_pt();
+        $this->mips_gl = $this->load->database('mips_gl_'. $db_pt, TRUE);
         
     }
     
@@ -90,4 +92,3 @@ class Serv_side_gl_transaksi_entry_model extends CI_Model{
         }
 
 }
-?>
