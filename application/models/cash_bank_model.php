@@ -12,9 +12,9 @@ class Cash_bank_model extends CI_Model
     function __construct()
     {
         parent::__construct();
-        $this->mips_gl  = $this->load->database('mips_gl', TRUE);
         // $this->mips_caba = $this->load->database('mips_caba', TRUE);
         $db_pt = check_db_pt();
+        $this->mips_gl  = $this->load->database('mips_gl_' . $db_pt, TRUE);
         $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
         $this->mstcode = $this->load->database('mstcode', TRUE);
         $this->mips_logistik = $this->load->database('mips_logistik', TRUE);
@@ -3668,22 +3668,18 @@ class Cash_bank_model extends CI_Model
 
         $jumlah_amount    = str_replace(",", "", $data['jumlah']);
 
-        $val_kredit;
         if ($data['kredit'] == '') {
             $val_kredit = '0';
         } else {
             $val_kredit = str_replace(",", "", $data['kredit']);;
         }
 
-        $val_debet;
         if ($data['debit'] == '') {
             $val_debet = '0';
         } else {
             $val_debet = str_replace(",", "", $data['debit']);
         }
 
-        $ceknoref;
-        $nopp;
         if ($data['noref_select'] == '-') {
             $ceknoref = '-';
             $nopp     = '-';
@@ -3698,56 +3694,7 @@ class Cash_bank_model extends CI_Model
 
         $lokasi = $this->get_nama_lokasi();
         $nama_user = $this->session->userdata('sess_nama');
-        ///*$data[nomor_voucher]*/
-        //            $sql = "INSERT INTO voucher_tmp (trans,
-        //                                    voucno,
-        //                                    date,
-        //                                    acctno,
-        //                                    debit,
-        //                                    credit,
-        //                                    descript,
-        //                                    jenis,
-        //                                    cheqno,
-        //                                    `to`,
-        //                                    `from`,
-        //                                    pay,
-        //                                    amount,
-        //                                    bank,
-        //                                    remarks,
-        //                                    lokasi,
-        //                                    project,
-        //                                    kode_pt,
-        //                                    user,
-        //                                    no_pp,
-        //                                    pdo,
-        //                                    sumber,
-        //                                    tgltxt,
-        //                                    txtperiode) 
-        //                            VALUES ('$data[kas_bank]',
-        //                                    '$data[kode_sementara]',
-        //                                    STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
-        //                                    '$data[acct]',
-        //                                    '$val_debet',
-        //                                    '$val_kredit',
-        //                                    '$data[acct_nama]',
-        //                                    '$data[pay_rec]',
-        //                                    '$ceknoref',
-        //                                    '-',
-        //                                    '$data[kepada]',
-        //                                    '$data[terbilang]',
-        //                                    '$jumlah_amount',
-        //                                    '$data[bank_nama]',
-        //                                    '$data[transaksi_remark]',
-        //                                    '$lokasi',
-        //                                    '-',
-        //                                    '$data[divisi_v]',
-        //                                    'sfbahri',
-        //                                    '$nopp',
-        //                                    '-',
-        //                                    '-',
-        //                                    $tgltxt,
-        //                                    $tgltxtperiode
-        //                                )";
+        $id_user = $this->session->userdata('sess_id');
 
         $sql = "INSERT INTO voucher_tmp (trans,
                                     voucno,
@@ -3767,6 +3714,7 @@ class Cash_bank_model extends CI_Model
                                     lokasi,
                                     project,
                                     kode_pt,
+                                    id_user,
                                     user,
                                     pdo,
                                     sumber,
@@ -3792,6 +3740,7 @@ class Cash_bank_model extends CI_Model
                                     '$lokasi',
                                     '-',
                                     '$data[divisi_v]',
+                                    '$id_user',
                                     '$nama_user',
                                     '-',
                                     '-',
@@ -3810,15 +3759,12 @@ class Cash_bank_model extends CI_Model
 
         $jumlah_amount    = str_replace(",", "", $data['jumlah']);
 
-        $val_debet;
         if ($data['debit'] == '') {
             $val_debet = '0';
         } else {
             $val_debet = str_replace(",", "", $data['debit']);
         }
 
-        $ceknoref;
-        $nopp;
         if ($data['noref_select'] == '-') {
             $ceknoref = '-';
             $nopp     = '-';
@@ -3833,6 +3779,7 @@ class Cash_bank_model extends CI_Model
 
         $lokasi = $this->get_nama_lokasi();
         $nama_user = $this->session->userdata('sess_nama');
+        $id_user = $this->session->userdata('sess_id');
 
 
         ///*$data[nomor_voucher]*/
@@ -3853,6 +3800,7 @@ class Cash_bank_model extends CI_Model
                                     lokasi,
                                     project,
                                     kode_pt,
+                                    id_user,
                                     user,
                                     no_pp,
                                     pdo,
@@ -3879,6 +3827,7 @@ class Cash_bank_model extends CI_Model
                                     '$lokasi',
                                     '-',
                                     '$data[kodept]',
+                                    '$id_user',
                                     '$nama_user',
                                     '$nopp',
                                     '-',
@@ -3977,14 +3926,32 @@ class Cash_bank_model extends CI_Model
 
     function data_list_voucher_detail($data)
     {
-        $nama = $this->session->userdata('sess_nama');
+        $id = $this->session->userdata('sess_id');
 
         $sql = "SELECT *,FORMAT(debit, 2) debit_f
                             ,FORMAT(credit, 2) credit_f,
                             ID as id_vouc_tmp 
-                        FROM voucher_tmp where voucno = '$data[kode_sementara]'";
+                        FROM voucher_tmp where id_user = '$id' ";
+        // FROM voucher_tmp where VOUCNO = '$data[kode_sementara]' ";
         return $this->mips_caba->query($sql);
     }
+
+    function cek_voucher()
+    {
+        $period = $this->periode();
+        $id = $this->session->userdata('sess_id');
+        $data = $this->mips_caba->query("SELECT * FROM voucher_tmp WHERE id_user='$id' AND txtperiode='$period'")->num_rows();
+        return $data;
+    }
+
+    function getvoucher()
+    {
+        $period = $this->periode();
+        $id = $this->session->userdata('sess_id');
+        $data = $this->mips_caba->query("SELECT * FROM voucher_tmp WHERE id_user='$id' AND txtperiode='$period'")->row();
+        return $data;
+    }
+
 
 
     function coba_data()
@@ -4308,6 +4275,17 @@ class Cash_bank_model extends CI_Model
                             FORMAT(AMOUNT, 2) amount,
                             DATE_FORMAT(TGLCEK, '%d-%m-%Y') TGLCEK
                              FROM head_voucher where id = '$data[id_vouc]'";
+        return $this->mips_caba->query($sql);
+    }
+    function get_data_head_vouch2($data)
+    {
+
+        $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,
+                            SUBSTRING(CHEQNO, 1, 5) REF_PP,
+                            SUBSTRING(CHEQNO, 7, 100) NOMOR_REF_PP,
+                            FORMAT(DEBIT, 2) DEBIT,
+                            DATE_FORMAT(DATE, '%d-%m-%Y') TGLCEK
+                             FROM voucher_tmp where id = '$data[id_vouc]'";
         return $this->mips_caba->query($sql);
     }
 
