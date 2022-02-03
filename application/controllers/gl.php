@@ -20,10 +20,10 @@ class Gl extends CI_Controller
         $this->load->model('serv_side_list_acc_saldo');
 
 
-        $this->db_msal_personalia = $this->load->database('db_msal_personalia', TRUE);
 
         $db_pt = check_db_pt();
 
+        $this->db_personalia = $this->load->database('db_personalia_' . $db_pt, TRUE);
         $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
 
         date_default_timezone_set('Asia/Jakarta');

@@ -965,13 +965,13 @@ class Gl_model extends CI_Model
     {
 
         $query = "SELECT DISTINCT(afd) FROM item_pekerjaan WHERE kategori='$kategori' ORDER BY afd ASC";
-        return $this->db_msal_personalia->query($query)->result();
+        return $this->db_personalia->query($query)->result();
     }
 
     function get_tahuntanam($kategori, $afd_unit)
     {
         $query_thn_tanam = "SELECT DISTINCT(tahuntanam) FROM masterblok WHERE afd = '$afd_unit' ORDER BY tahuntanam ASC";
-        return $this->db_msal_personalia->query($query_thn_tanam)->result();
+        return $this->db_personalia->query($query_thn_tanam)->result();
     }
 
 

@@ -158,6 +158,71 @@ $db['mips_gl_psam'] = array(
 	'save_queries' => TRUE
 );
 
+$db['mips_gl_mapa'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_gl_mapa',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['mips_gl_peak'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_gl_peak',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['mips_gl_kpp'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_gl_kpp',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
 
 /* START-DB-CB */
 $db['db_mips_cb_msal'] = array(
@@ -203,6 +268,72 @@ $db['db_mips_cb_psam'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+$db['db_mips_cb_mapa'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_cb_mapa',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['db_mips_cb_peak'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_cb_peak',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['db_mips_cb_kpp'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_cb_kpp',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
 /* END-DB-CB */
 
 
@@ -226,23 +357,133 @@ $db['mstcode']['stricton'] = FALSE;
 
 
 /* START-DB-GL */
-$db['mips_logistik']['hostname'] = '192.168.1.237';
-$db['mips_logistik']['username'] = 'mis';
-$db['mips_logistik']['password'] = 'msaljkt@88';
-$db['mips_logistik']['database'] = 'dev_new_logistikmsal_2021';
-$db['mips_logistik']['dbdriver'] = 'mysqli';
-$db['mips_logistik']['dbprefix'] = '';
-$db['mips_logistik']['pconnect'] = TRUE;
-$db['mips_logistik']['db_debug'] = TRUE;
-$db['mips_logistik']['cache_on'] = FALSE;
-$db['mips_logistik']['cachedir'] = '';
-$db['mips_logistik']['char_set'] = 'utf8';
-$db['mips_logistik']['dbcollat'] = 'utf8_general_ci';
-$db['mips_logistik']['swap_pre'] = '{PRE}';
-$db['mips_logistik']['autoinit'] = TRUE;
-$db['mips_logistik']['stricton'] = FALSE;
+// $db['mips_logistik']['hostname'] = '192.168.1.237';
+// $db['mips_logistik']['username'] = 'mis';
+// $db['mips_logistik']['password'] = 'msaljkt@88';
+// $db['mips_logistik']['database'] = 'dev_new_logistikmsal_2021';
+// $db['mips_logistik']['dbdriver'] = 'mysqli';
+// $db['mips_logistik']['dbprefix'] = '';
+// $db['mips_logistik']['pconnect'] = TRUE;
+// $db['mips_logistik']['db_debug'] = TRUE;
+// $db['mips_logistik']['cache_on'] = FALSE;
+// $db['mips_logistik']['cachedir'] = '';
+// $db['mips_logistik']['char_set'] = 'utf8';
+// $db['mips_logistik']['dbcollat'] = 'utf8_general_ci';
+// $db['mips_logistik']['swap_pre'] = '{PRE}';
+// $db['mips_logistik']['autoinit'] = TRUE;
+// $db['mips_logistik']['stricton'] = FALSE;
 
-$db['db_msal_personalia'] = array(
+$db['mips_logistik_msal'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'new_logistikmsal_2021',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['mips_logistik_mapa'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'new_logistikmapa_2021',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['mips_logistik_psam'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'new_logistikpsam_2021',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['mips_logistik_peak'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'new_logistikpeak_2021',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['mips_logistik_kpp'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.237',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'new_logistikkpp_2021',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['db_personalia_msal'] = array(
 	'dsn'	=> '',
 	// 'hostname' => 'localhost',
 	// 'username' => 'root',
@@ -251,6 +492,106 @@ $db['db_msal_personalia'] = array(
 	'username' => 'mis',
 	'password' => 'msaljkt@88',
 	'database' => 'msalgrou_personalia',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['db_personalia_psam'] = array(
+	'dsn'	=> '',
+	// 'hostname' => 'localhost',
+	// 'username' => 'root',
+	// 'password' => '',
+	'hostname' => '192.168.1.231',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'msalgrou_personalia_psam',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['db_personalia_mapa'] = array(
+	'dsn'	=> '',
+	// 'hostname' => 'localhost',
+	// 'username' => 'root',
+	// 'password' => '',
+	'hostname' => '192.168.1.231',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'msalgrou_personalia_mapa',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['db_personalia_peak'] = array(
+	'dsn'	=> '',
+	// 'hostname' => 'localhost',
+	// 'username' => 'root',
+	// 'password' => '',
+	'hostname' => '192.168.1.231',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'msalgrou_personalia_peak',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['db_personalia_kpp'] = array(
+	'dsn'	=> '',
+	// 'hostname' => 'localhost',
+	// 'username' => 'root',
+	// 'password' => '',
+	'hostname' => '192.168.1.231',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'msalgrou_personalia_kpp',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
