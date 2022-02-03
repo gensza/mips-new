@@ -36,19 +36,19 @@ class Cash_bank extends CI_Controller
 
         $tahun = date('Y');
         $bulan = date('m');
-        // $d = $this->cash_bank_model->cek_voucher();
+        $d = $this->cash_bank_model->cek_voucher();
 
 
         if ($result == '1') {
             if ($tahun == $data['period_tahun'] && $bulan == $data['period_bulan']) {
                 # code...
-                // if ($d > 0) {
-                //     # code...
-                //     $this->load->view('cash_bank/cb_adavoucher', $data);
-                // } else {
+                if ($d > 0) {
+                    # code...
+                    $this->load->view('cash_bank/cb_adavoucher', $data);
+                } else {
 
-                // }
-                $this->load->view('cash_bank/cb_input_voucher_view', $data);
+                    $this->load->view('cash_bank/cb_input_voucher_view', $data);
+                }
             } else {
                 $this->load->view('cash_bank/cb_pw_vouc', $data);
                 # code...
