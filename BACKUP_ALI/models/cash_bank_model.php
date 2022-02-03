@@ -3931,8 +3931,8 @@ class Cash_bank_model extends CI_Model
         $sql = "SELECT *,FORMAT(debit, 2) debit_f
                             ,FORMAT(credit, 2) credit_f,
                             ID as id_vouc_tmp 
-        FROM voucher_tmp where VOUCNO = '$data[kode_sementara]' ";
-        // -- FROM voucher_tmp where id_user = '$id' ";
+                        FROM voucher_tmp where id_user = '$id' ";
+        // FROM voucher_tmp where VOUCNO = '$data[kode_sementara]' ";
         return $this->mips_caba->query($sql);
     }
 
@@ -3940,7 +3940,7 @@ class Cash_bank_model extends CI_Model
     {
         $period = $this->periode();
         $id = $this->session->userdata('sess_id');
-        $data = $this->mips_caba->query("SELECT * FROM voucher_tmp WHERE id_user='$id' AND txtperiode='$period' AND NO_PO <> NULL ")->num_rows();
+        $data = $this->mips_caba->query("SELECT * FROM voucher_tmp WHERE id_user='$id' AND txtperiode='$period'")->num_rows();
         return $data;
     }
 

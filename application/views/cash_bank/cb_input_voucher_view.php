@@ -25,7 +25,18 @@
     return [day, month, year].join('-');
   }
 
+  function myfun() {
+    // Write your business logic here
+    console.log('hello');
+  }
+
   $(document).ready(function() {
+
+    // $(window).bind('beforeunload', function() {
+    //   myfun();
+    //   return 'Are you sure you want to leave?';
+    // });
+
     // cekVoucher()
     var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
     var lokasi_usr = '<?php echo $this->session->userdata('sess_nama_lokasi'); ?>';
