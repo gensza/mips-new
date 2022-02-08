@@ -17,7 +17,7 @@ class Cash_bank_model extends CI_Model
         $this->mips_gl  = $this->load->database('mips_gl_' . $db_pt, TRUE);
         $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
         $this->mstcode = $this->load->database('mstcode', TRUE);
-        $this->mips_logistik = $this->load->database('mips_logistik', TRUE);
+        $this->mips_logistik = $this->load->database('mips_logistik_' . $db_pt, TRUE);
     }
 
 
@@ -4560,29 +4560,29 @@ class Cash_bank_model extends CI_Model
 
 
         $var_bulan = 0;
-        if ($bln == 01) {
+        if ($bln == '01') {
             $var_bulan = 'saldo_1 = ' . $saldo . '';
-        } else if ($bln == 02) {
+        } else if ($bln == '02') {
             $var_bulan = 'saldo_2 = ' . $saldo . '';
-        } else if ($bln == 03) {
+        } else if ($bln == '03') {
             $var_bulan = 'saldo_3 = ' . $saldo . '';
-        } else if ($bln == 04) {
+        } else if ($bln == '04') {
             $var_bulan = 'saldo_4 = ' . $saldo . '';
-        } else if ($bln == 05) {
+        } else if ($bln == '05') {
             $var_bulan = 'saldo_5 = ' . $saldo . '';
-        } else if ($bln == 06) {
+        } else if ($bln == '06') {
             $var_bulan = 'saldo_6 = ' . $saldo . '';
-        } else if ($bln == 07) {
+        } else if ($bln == '07') {
             $var_bulan = 'saldo_7 = ' . $saldo . '';
-        } else if ($bln == 08) {
+        } else if ($bln == '08') {
             $var_bulan = 'saldo_8 = ' . $saldo . '';
-        } else if ($bln == 09) {
+        } else if ($bln == '09') {
             $var_bulan = 'saldo_9 = ' . $saldo . '';
-        } else if ($bln == 10) {
+        } else if ($bln == '10') {
             $var_bulan = 'saldo_10 = ' . $saldo . '';
-        } else if ($bln == 11) {
+        } else if ($bln == '11') {
             $var_bulan = 'saldo_11 = ' . $saldo . '';
-        } else if ($bln == 12) {
+        } else if ($bln == '12') {
             $var_bulan = 'saldo_12 = ' . $saldo . '';
         } else {
             $var_bulan = '-';

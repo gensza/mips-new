@@ -50,14 +50,14 @@ class Serv_side_coa_by_kategori_popup_model extends CI_Model
 
                 if ($i === 0) // looping awal
                 {
-                    $this->mips_gl->group_start();
+                    // $this->mips_gl->group_start();
                     $this->mips_gl->like($item, $_POST['search']['value']);
                 } else {
                     $this->mips_gl->or_like($item, $_POST['search']['value']);
                 }
 
                 if (count($this->column_search) - 1 == $i) {
-                    $this->mips_gl->group_end();
+                    // $this->mips_gl->group_end();
                 }
             }
             $i++;
