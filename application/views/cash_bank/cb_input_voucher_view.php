@@ -955,6 +955,7 @@
         success: function(result) {
 
 
+
           if (result.account == '' || result.account == null) {
 
             Command: toastr["error"]("Silahkan cek pada Data Master Supplier.", "Account Supplier Tidak Tersedia !");

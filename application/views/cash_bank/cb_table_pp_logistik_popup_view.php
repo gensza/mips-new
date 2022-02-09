@@ -79,7 +79,7 @@
                 },
                 success: function(response) {
 
-                    // console.log('ini respon nya', response);
+                    console.log('ini respon nya', response);
                     //noid,noac,nama
                     $("#no_ref").val(response.nopp);
                     $("#ref_po").val(response.ref_po);
@@ -111,7 +111,7 @@
 
                                 setTimeout(function() {
                                     set_jumlah_tot();
-                                }, 1000);
+                                }, 3000);
                                 // setTimeout(function() {
                                 //     set_jumlah_tot();
                                 // }, 1000);

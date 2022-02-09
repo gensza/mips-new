@@ -80,8 +80,8 @@ class Cash_bank_model extends CI_Model
 
         $jumlah_amount    = str_replace(",", "", $data['jumlah']);
 
-        $ceknoref;
-        $nopp;
+        $ceknoref = 0;
+        $nopp = 0;
         if ($data['noref_select'] == '-') {
             $ceknoref = '-';
             $nopp     = '-';
@@ -108,7 +108,41 @@ class Cash_bank_model extends CI_Model
 
 
         // fungsi insert batch
-        $this->mips_caba->insert_batch('voucher', $n);
+        foreach ($n as $ds) {
+            $dt_vou['TRANS'] = $ds->TRANS;
+            $dt_vou['VOUCNO'] = $ds->VOUCNO;
+            $dt_vou['DATE'] = $ds->DATE;
+            $dt_vou['ACCTNO'] = $ds->ACCTNO;
+            $dt_vou['DEBIT'] = $ds->DEBIT;
+            $dt_vou['CREDIT'] = $ds->CREDIT;
+            $dt_vou['DESCRIPT'] = $ds->DESCRIPT;
+            $dt_vou['JENIS'] = $ds->JENIS;
+            $dt_vou['CHEQNO'] = $ds->CHEQNO;
+            $dt_vou['TO'] = $ds->TO;
+            $dt_vou['FROM'] = $ds->FROM;
+            $dt_vou['PAY'] = $ds->PAY;
+            $dt_vou['AMOUNT'] = $ds->AMOUNT;
+            $dt_vou['BANK'] = $ds->BANK;
+            $dt_vou['POSTED'] = $ds->POSTED;
+            $dt_vou['REMARKS'] = $ds->REMARKS;
+            $dt_vou['LOKASI'] = $ds->LOKASI;
+            $dt_vou['PROJECT'] = $ds->PROJECT;
+            $dt_vou['PRINTED'] = $ds->PRINTED;
+            $dt_vou['TGLTXT'] = $ds->TGLTXT;
+            $dt_vou['KODE_PT'] = $ds->KODE_PT;
+            $dt_vou['txtperiode'] = $ds->txtperiode;
+            $dt_vou['MODULE'] = $ds->MODULE;
+            $dt_vou['user'] = $ds->user;
+            $dt_vou['NO_PP'] = $ds->NO_PP;
+            $dt_vou['NO_PO'] = $ds->NO_PO;
+            $dt_vou['PDO'] = $ds->PDO;
+            $dt_vou['sumber'] = $ds->sumber;
+
+            $this->mips_caba->insert('voucher', $dt_vou);
+        }
+
+
+        // $this->mips_caba->insert_batch('voucher', $n);
         // $this->mips_caba->insert_batch('voucher', $n); 
 
         //hapus yang ada di table voucher tmp
@@ -2178,10 +2212,10 @@ class Cash_bank_model extends CI_Model
 
                             //update semua kode voucher yang tadinya generate kode sementara dengan kode dari konfigurasi ini : 
                             //voucher detail
-                            $sql88 = "UPDATE voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                            $sql88 = "UPDATE voucher SET voucno  = '$nofix', lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
                             $this->mips_caba->query($sql88);
                             //voucher header
-                            $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                            $sql99 = "UPDATE head_voucher SET voucno  = '$nofix', lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
                             $this->mips_caba->query($sql99);
 
 
@@ -2205,7 +2239,7 @@ class Cash_bank_model extends CI_Model
                                                                             WHERE nopp  = '$c[NO_PP]'";
                                     $this->mips_caba->query($sq_logistik);
 
-                                    $pplogis = "UPDATE pp SET   no_vou  = '$no_urut_terakhir',
+                                    $pplogis = "UPDATE pp SET no_vou  = '$no_urut_terakhir',
                                                                             no_voutxt  = '$nofix',
                                                                             tgl_vou    = STR_TO_DATE('$data[tanggal]', '%d-%m-%Y'),
                                                                             tgl_voutxt = '$tgls',
@@ -2437,6 +2471,21 @@ class Cash_bank_model extends CI_Model
                             //voucher header
                             $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
                             $this->mips_caba->query($sql99);
+                            // $d_kode  = array(
+                            //     'VOUCNO' => $nofix,
+                            //     'LOKASI' => $lokasi,
+                            //  );
+
+                            // $this->mips_caba->set($d_kode);
+                            // $this->mips_caba->where(['VOUCNO' => $data['kode_sementara']]);
+                            // $this->mips_caba->update('voucher');
+                            //voucher header
+                            // $sql99 = "UPDATE head_voucher SET voucno  = '$nofix',lokasi = '$lokasi' WHERE voucno = '$data[kode_sementara]'";
+                            // $this->mips_caba->query($sql99);
+
+                            // $this->mips_caba->set($d_kode);
+                            // $this->mips_caba->where(['VOUCNO' => $data['kode_sementara']]);
+                            // $this->mips_caba->update('head_voucher');
 
 
                             //START : ini fungsi untuk update table pp_logistik

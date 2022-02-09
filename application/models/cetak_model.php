@@ -299,7 +299,8 @@ class Cetak_model extends CI_Model
     function get_data_lpj($sumber, $coa, $tgl_start, $tgl_end)
     {
         $lokasi   = $this->lokasi();
-        $sql = "SELECT * FROM voucher WHERE ACCTNO='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND sumber='$sumber' ORDER BY `DATE` ASC";
+        // $sql = "SELECT * FROM head_voucher WHERE ACCTNO LIKE '$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND PDO='$sumber' ORDER BY `DATE` ASC";
+        $sql = "SELECT * FROM `head_voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = 'ESTATE' AND DATE(`DATE`) >= STR_TO_DATE('01-02-2022', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('28-02-2022', '%d-%m-%Y') AND PDO='$sumber' ORDER BY `DATE` ASC";
         return $this->mips_caba->query($sql);
     }
     function get_data_bank($coa, $tgl_start, $tgl_end)

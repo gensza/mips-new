@@ -146,18 +146,21 @@ class Cetak extends CI_Controller
             # code...
         } else if ($sumber == 5) {
             $pdo = "Dana Kontanan";
-            $coa = '100101031500000';
+            $coa = '100101021500000';
+
             # code...
         }
 
 
         $nama_dokumen = 'Laporan_pertanggung_jawaban_' . $tgl_start . '_' . $tgl_end . '';
+        // var_dump($pdo, $coa, $tgl_start, $tgl_end) . die();
         $data['res_data'] = $this->cetak_model->get_data_lpj($pdo, $coa, $tgl_start, $tgl_end)->result_array();
+        // var_dump($data) . die();
         $p = $this->cetak_model->get_data_lpj_vou($pdo, $coa, $tgl_start, $tgl_end)->row();
         $dt = $p->ACCTNO;
         $saldo = $this->cetak_model->get_list_saldo_akhir_lpj($dt)->row();
         $data['saldo'] = $saldo->saldonya;
-        var_dump($data['res_data']) . die();
+        // var_dump($data['res_data']) . die();
         $data['namapt']  = $this->main_model->get_pt()->row_array();
 
         $this->load->library('mpdf/mpdf');
