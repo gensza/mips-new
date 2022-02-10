@@ -139,22 +139,30 @@
             <tr>
                 <td colspan="6" style="text-align: center;"> Tidak ada data</td>
             <tr>
-            <?php } else { ?>
+                <?php } else {
+                foreach ($saldo as $d) {
+                ?>
             <tr>
-                <td></td>
-                <td></td>
+                <td colspan="2"><?= $d->ACCTNAME ?></td>
                 <td width="100px" colspan="1"><b>Saldo Awal&nbsp;&nbsp;<?php echo date_format(date_create($this->uri->segment(4)), 'd-M-Y') ?></b></td>
                 <td align="right" width="150px"><b></b>
                 </td>
                 <td align="right" width="150px"><b></b>
                 </td>
-                <td align="right" width="150px"><?= number_format($saldo, 2, ",", ".") ?>
+                <td align="right" width="150px"><?= number_format($d->saldonya, 2, ",", ".") ?>
                 </td>
             </tr>
             <?php
-            $saldoakhir = $saldo;
-            foreach ($res_data as $a) {
-                $saldoakhir =  $saldoakhir + $a['DEBIT'] - $a['CREDIT'];
+                    $lokasi = $this->session->userdata('sess_nama_lokasi');
+                    if ($coa == 0) {
+                        $sql = $this->mips_caba->query("SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO ='$d->ACCTNO' AND DATE(`DATE`) >= STR_TO_DATE('$tgl1', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl2', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE` ASC")->result_array();
+                    } else {
+                        $sql = $this->mips_caba->query("SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO ='$d->ACCTNO' AND DATE(`DATE`) >= STR_TO_DATE('$tgl1', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl2', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC")->result_array();
+                    }
+
+                    $saldoakhir = $d->saldonya;
+                    foreach ($sql as $a) {
+                        $saldoakhir =  $saldoakhir + $a['DEBIT'] - $a['CREDIT'];
             ?>
                 <tr>
                     <td width="100px" align="center"><?= $a['TGL'] ?></td>
@@ -164,10 +172,11 @@
                     <td align="right" width="150px"><?= number_format($a['CREDIT'], 2, ",", ".") ?></td>
                     <td align="right" width="150px"><?= number_format($saldoakhir, 2, ",", ".") ?></td>
                 </tr>
-        <?php
+    <?php
+                    }
+                }
             }
-        }
-        ?>
+    ?>
 
     </tbody>
 </table>

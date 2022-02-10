@@ -52,14 +52,14 @@ class serv_side_po_logistik_model extends CI_Model
                 if ($i === 0) // looping awal
                 {
 
-                    $this->mips_caba->group_start();
+                    // $this->mips_caba->group_start();
                     $this->mips_caba->like($item, $_POST['search']['value']);
                 } else {
                     $this->mips_caba->or_like($item, $_POST['search']['value']);
                 }
 
                 if (count($this->column_search) - 1 == $i) {
-                    $this->mips_caba->group_end();
+                    // $this->mips_caba->group_end();
                     //$this->db->group_end(); 
                 }
             }

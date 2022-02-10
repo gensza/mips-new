@@ -95,6 +95,7 @@
                         beforeSend: function() {
                             //loadingPannel.show();
                         },
+
                         complete: function() {
                             //loadingPannel.hide();
                             $('#tbl_lap_saldo_akhir').show();

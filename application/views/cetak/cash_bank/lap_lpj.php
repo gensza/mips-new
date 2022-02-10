@@ -93,11 +93,11 @@
             <?php if ($this->uri->segment(3) == 1) { ?>
                 <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDO Upah</span>
             <?php } else if ($this->uri->segment(3) == 2) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDO Remise</span>
-            <?php } else if ($this->uri->segment(3) == 3) { ?>
                 <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDDO & IM</span>
-            <?php } else if ($this->uri->segment(3) == 4) { ?>
+            <?php } else if ($this->uri->segment(3) == 3) { ?>
                 <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban Dana GRTT</span>
+            <?php } else if ($this->uri->segment(3) == 4) { ?>
+                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDO Remise</span>
             <?php } else { ?>
                 <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban Dana Kontanan</span>
             <?php } ?>
@@ -136,7 +136,7 @@
 <table class="blueTable font-styles">
     <thead>
         <tr>
-            <th>Tgl</th>
+            <th>Tanggal</th>
             <th>No. Vouc</th>
             <th>Keterangan</th>
             <th>Debit</th>

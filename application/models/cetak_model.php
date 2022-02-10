@@ -275,8 +275,53 @@ class Cetak_model extends CI_Model
         } else if ($bulan == '12') {
             $var_bulan = '12';
         }
-        $sql = "SELECT saldo_$var_bulan as saldonya FROM master_accountcb WHERE ACCTNO='$dt' AND SITENO='$lokasi' AND thn = '$tahun'";
+        $sql = "SELECT ACCTNAME, saldo_$var_bulan as saldonya FROM master_accountcb WHERE ACCTNO='$dt' AND SITENO='$lokasi' AND thn = '$tahun'";
         return $this->mips_caba->query($sql);
+    }
+    function get_list_bank($coa)
+    {
+        $mandiri = "100105030000000";
+        $bri = "100105110000000";
+
+        $lokasi   = $this->get_id_lokasi();
+        $period = $this->session->userdata('sess_periode');
+        $tahun  = substr($period, 0, 4);
+        $bulan  = substr($period, 4, 5);
+
+        if ($bulan == '01') {
+            $var_bulan = '1';
+        } else if ($bulan == '02') {
+            $var_bulan = '2';
+        } else if ($bulan == '03') {
+            $var_bulan = '3';
+        } else if ($bulan == '04') {
+            $var_bulan = '4';
+        } else if ($bulan == '05') {
+            $var_bulan = '5';
+        } else if ($bulan == '06') {
+            $var_bulan = '6';
+        } else if ($bulan == '07') {
+            $var_bulan = '7';
+        } else if ($bulan == '08') {
+            $var_bulan = '8';
+        } else if ($bulan == '09') {
+            $var_bulan = '9';
+        } else if ($bulan == '10') {
+            $var_bulan = '10';
+        } else if ($bulan == '11') {
+            $var_bulan = '11';
+        } else if ($bulan == '12') {
+            $var_bulan = '12';
+        }
+        if ($coa == 0) {
+            # code...
+            $sql = "SELECT ACCTNO, ACCTNAME, saldo_$var_bulan as saldonya FROM master_accountcb WHERE ACCTNO IN ('$mandiri','$bri') AND SITENO='$lokasi' AND thn = '$tahun'";
+            return $this->mips_caba->query($sql);
+        } else {
+            $sql = "SELECT ACCTNO, ACCTNAME, saldo_$var_bulan as saldonya FROM master_accountcb WHERE ACCTNO ='$coa' AND SITENO='$lokasi' AND thn = '$tahun'";
+            return $this->mips_caba->query($sql);
+            # code...
+        }
     }
 
 
@@ -300,7 +345,14 @@ class Cetak_model extends CI_Model
     {
         $lokasi   = $this->lokasi();
         // $sql = "SELECT * FROM head_voucher WHERE ACCTNO LIKE '$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND PDO='$sumber' ORDER BY `DATE` ASC";
-        $sql = "SELECT * FROM `head_voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = 'ESTATE' AND DATE(`DATE`) >= STR_TO_DATE('01-02-2022', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('28-02-2022', '%d-%m-%Y') AND PDO='$sumber' ORDER BY `DATE` ASC";
+        $sql = "SELECT * FROM `head_voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND PDO='$sumber' ORDER BY `DATE` ASC";
+        return $this->mips_caba->query($sql);
+    }
+    function get_lpj($coa, $tgl_start, $tgl_end)
+    {
+        $lokasi   = $this->lokasi();
+        // $sql = "SELECT * FROM head_voucher WHERE ACCTNO LIKE '$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND PDO='$sumber' ORDER BY `DATE` ASC";
+        $sql = "SELECT * FROM `voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = 'ESTATE' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') ORDER BY `DATE` ASC";
         return $this->mips_caba->query($sql);
     }
     function get_data_bank($coa, $tgl_start, $tgl_end)
@@ -328,6 +380,7 @@ class Cetak_model extends CI_Model
         $lokasi   = $this->lokasi();
         $mandiri = "100105030000000";
         $bri = "100105110000000";
+
         if ($coa == 0) {
             # code...
             $sql = "SELECT * FROM voucher WHERE ACCTNO IN ('$mandiri','$bri') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE` DESC";

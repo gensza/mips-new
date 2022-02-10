@@ -154,13 +154,13 @@ class Cetak extends CI_Controller
 
         $nama_dokumen = 'Laporan_pertanggung_jawaban_' . $tgl_start . '_' . $tgl_end . '';
         // var_dump($pdo, $coa, $tgl_start, $tgl_end) . die();
-        $data['res_data'] = $this->cetak_model->get_data_lpj($pdo, $coa, $tgl_start, $tgl_end)->result_array();
+        $head_vou = $this->cetak_model->get_data_lpj($pdo, $coa, $tgl_start, $tgl_end)->row();
+        $data['res_data'] = $this->cetak_model->get_lpj($head_vou->ACCTNO, $tgl_start, $tgl_end)->result_array();
         // var_dump($data) . die();
-        $p = $this->cetak_model->get_data_lpj_vou($pdo, $coa, $tgl_start, $tgl_end)->row();
-        $dt = $p->ACCTNO;
-        $saldo = $this->cetak_model->get_list_saldo_akhir_lpj($dt)->row();
+
+        $saldo = $this->cetak_model->get_list_saldo_akhir_lpj($head_vou->ACCTNO)->row();
         $data['saldo'] = $saldo->saldonya;
-        // var_dump($data['res_data']) . die();
+        // var_dump($data['saldo']) . die();
         $data['namapt']  = $this->main_model->get_pt()->row_array();
 
         $this->load->library('mpdf/mpdf');
@@ -191,13 +191,17 @@ class Cetak extends CI_Controller
     {
         $nama_dokumen = 'Laporan_buku_bank_' . $tgl_start . '_' . $tgl_end . '';
         $data['res_data'] = $this->cetak_model->get_data_bank($bank, $tgl_start, $tgl_end)->result_array();
-        $p = $this->cetak_model->get_data_bank_vou($bank, $tgl_start, $tgl_end)->row();
-        $dt = $p->ACCTNO;
-        $saldo = $this->cetak_model->get_list_saldo_akhir_lpj($dt)->row();
-        $data['saldo'] = $saldo->saldonya;
+        $data['tgl1'] = $tgl_start;
+        $data['tgl2'] = $tgl_end;
+        $data['coa'] = $bank;
+        // $p = $this->cetak_model->get_data_bank_vou($bank, $tgl_start, $tgl_end)->row();
+        // $dt = $p->ACCTNO;
+        $data['saldo'] = $this->cetak_model->get_list_bank($bank)->result();
+        // var_dump($data['coa']) . die();
+        // $data['saldo'] = $saldo->saldonya;
         $data['namapt']  = $this->main_model->get_pt()->row_array();
 
-        // var_dump($data['res_data']) . die();
+        // var_dump($data['saldo']) . die();
 
         $this->load->library('mpdf/mpdf');
 
@@ -517,7 +521,7 @@ class Cetak extends CI_Controller
             $row[] = $no;
             $row[] = $customers->ACCTNO;
             $row[] = $customers->ACCTNAME;
-            $row[] = number_format($saldo, 2, ",", ".");
+            $row[] = number_format($isi->saldo_f, 2, ",", ".");
 
 
             $data[] = $row;
