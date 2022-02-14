@@ -131,18 +131,44 @@ class Cetak extends CI_Controller
     {
         if ($sumber == 1) {
             $pdo = "PDO Gaji";
-            $coa = '100101030100000';
+            if ($this->session->userdata('sess_nama_lokasi') == 'ESTATE') {
+                # code...
+                $coa = '100101030100000';
+            } else {
+                # code...
+                $coa = '100101040100000';
+            }
         } else if ($sumber == 2) {
             $pdo = "PDDO IM";
-            $coa = '100101030100000';
+
+            if ($this->session->userdata('sess_nama_lokasi') == 'ESTATE') {
+                # code...
+                $coa = '100101030100000';
+            } else {
+                var_dump("belum ada") . die();
+                # code...
+            }
+
             # code...
         } else if ($sumber == 3) {
             $pdo = "PDDO GRTT";
-            $coa = '100101032000000';
+            if ($this->session->userdata('sess_nama_lokasi') == 'ESTATE') {
+                # code...
+                $coa = '100101032000000';
+            } else {
+                $coa = '100101032000000';
+                # code...
+            }
             # code...
         } else if ($sumber == 4) {
             $pdo = "PDO Remise Kas";
-            $coa = '100101031000000';
+            if ($this->session->userdata('sess_nama_lokasi') == 'ESTATE') {
+                # code...
+                $coa = '100101031000000';
+            } else {
+                $coa = '100101041000000';
+                # code...
+            }
             # code...
         } else if ($sumber == 5) {
             $pdo = "Dana Kontanan";

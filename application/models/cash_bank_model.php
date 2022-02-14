@@ -23,10 +23,10 @@ class Cash_bank_model extends CI_Model
 
     function master_detail_account($acct_no, $acct_id)
     {
-
+        /* selama expose ke pks saya ubah mips caba */
         $sql = "SELECT noid,noac,nama FROM noac where noid = '$acct_id' and noac = '$acct_no'";
 
-        return $this->mips_gl->query($sql);
+        return $this->mips_caba->query($sql);
         //return $this->mstcode->query($sql);
     }
 
@@ -62,6 +62,7 @@ class Cash_bank_model extends CI_Model
 
     function get_bank()
     {
+        /* sementar di ubah selama expose ke pks */
         $sql = "SELECT * FROM noac ORDER BY NOID ASC";
         return $this->mips_gl->query($sql);
     }
@@ -5536,7 +5537,122 @@ class Cash_bank_model extends CI_Model
 
             return $this->mips_caba->query($sql);
         } else if ($data['lokasi'] == 'RO') { //RO
+            $sql = "UPDATE konfigur SET pay_inikas  = '$data[kode_payment_kas_inisial_1]',
+            pay_nokas   = '$data[kode_payment_kas_kode_1]',
+            NOACC_KAS1  = '$data[kode_payment_kas_coa_1]',
+            pay_inikas2 = '$data[kode_payment_kas_inisial_2]',
+            pay_nokas2  = '$data[kode_payment_kas_kode_2]',
+            NOAC_KAS2   = '$data[kode_payment_kas_coa_2]',
+            pay_inikas3 = '$data[kode_payment_kas_inisial_3]',
+            pay_nokas3  = '$data[kode_payment_kas_kode_3]',
+            NOAC_KAS3   = '$data[kode_payment_kas_coa_3]',
+            pay_inikas4 = '$data[kode_payment_kas_inisial_4]',
+            pay_nokas4  = '$data[kode_payment_kas_kode_4]',
+            NOAC_KAS4   = '$data[kode_payment_kas_coa_4]',
+            pay_inikas5 = '$data[kode_payment_kas_inisial_5]',
+            pay_nokas5  = '$data[kode_payment_kas_kode_5]',
+            NOAC_KAS5   = '$data[kode_payment_kas_coa_5]',
+            pay_namabank1 = '$data[kode_payment_bank_nama_1]',
+            NOAC_BANK1    = '$data[kode_payment_bank_coa_1]',
+            pay_nobank1   = '$data[kode_payment_bank_kode_1]',
+            pay_inibank1  = '$data[kode_payment_bank_inisial_1]',
+            pay_namabank2 = '$data[kode_payment_bank_nama_2]',
+            NOAC_BANK2    = '$data[kode_payment_bank_coa_2]',
+            pay_nobank2   = '$data[kode_payment_bank_kode_2]',
+            pay_inibank2  = '$data[kode_payment_bank_inisial_2]',
+            pay_namabank3 = '$data[kode_payment_bank_nama_3]',
+            NOAC_BANK3    = '$data[kode_payment_bank_coa_3]',
+            pay_nobank3   = '$data[kode_payment_bank_kode_3]',
+            pay_inibank3  = '$data[kode_payment_bank_inisial_3]',
+            pay_namabank4 = '$data[kode_payment_bank_nama_4]',
+            NOAC_BANK4    = '$data[kode_payment_bank_coa_4]',
+            pay_nobank4   = '$data[kode_payment_bank_kode_4]',
+            pay_inibank4  = '$data[kode_payment_bank_inisial_4]',
+            rec_nokas     = '$data[kode_receive_kas_kode_1]',
+            NOACCKAS1     = '$data[kode_receive_kas_coa_1]',
+            rec_inikas    = '$data[kode_receive_kas_inisial_1]',
+            rec_nokas2    = '$data[kode_receive_kas_kode_2]',
+            NOACCKAS2     = '$data[kode_receive_kas_coa_2]',
+            rec_inikas2   = '$data[kode_receive_kas_inisial_2]',
+            rec_nokas3    = '$data[kode_receive_kas_kode_3]',
+            NOACCKAS3     = '$data[kode_receive_kas_coa_3]',
+            rec_inikas3   = '$data[kode_receive_kas_inisial_3]',
+            rec_nokas4    = '$data[kode_receive_kas_kode_4]',
+            NOACCKAS4     = '$data[kode_receive_kas_coa_4]',
+            rec_inikas4   = '$data[kode_receive_kas_inisial_4]',
+            rec_nokas5    = '$data[kode_receive_kas_kode_5]',
+            NOACCKAS5     = '$data[kode_receive_kas_coa_5]',
+            rec_inikas5   = '$data[kode_receive_kas_inisial_5]',
+            rec_namabank1  = '$data[kode_receive_bank_nama_1]',
+            NOACC_RECBANK1 = '$data[kode_receive_bank_coa_1]',
+            rec_nobank1    = '$data[kode_receive_bank_kode_1]',
+            rec_inibank1   = '$data[kode_receive_bank_inisial_1]',
+            rec_namabank2  = '$data[kode_receive_bank_nama_2]', 
+            NOACC_RECBANK2 = '$data[kode_receive_bank_coa_2]',
+            rec_nobank2    = '$data[kode_receive_bank_kode_2]',
+            rec_inibank2   = '$data[kode_receive_bank_inisial_2]'
+            WHERE lokasi = 'RO' and pt = '$pt'";
 
+            return $this->mips_caba->query($sql);
+        } elseif ($data['lokasi'] == 'PKS') {
+            # code...
+            $sql = "UPDATE konfigur SET pay_inikas  = '$data[kode_payment_kas_inisial_1]',
+            pay_nokas   = '$data[kode_payment_kas_kode_1]',
+            NOACC_KAS1  = '$data[kode_payment_kas_coa_1]',
+            pay_inikas2 = '$data[kode_payment_kas_inisial_2]',
+            pay_nokas2  = '$data[kode_payment_kas_kode_2]',
+            NOAC_KAS2   = '$data[kode_payment_kas_coa_2]',
+            pay_inikas3 = '$data[kode_payment_kas_inisial_3]',
+            pay_nokas3  = '$data[kode_payment_kas_kode_3]',
+            NOAC_KAS3   = '$data[kode_payment_kas_coa_3]',
+            pay_inikas4 = '$data[kode_payment_kas_inisial_4]',
+            pay_nokas4  = '$data[kode_payment_kas_kode_4]',
+            NOAC_KAS4   = '$data[kode_payment_kas_coa_4]',
+            pay_inikas5 = '$data[kode_payment_kas_inisial_5]',
+            pay_nokas5  = '$data[kode_payment_kas_kode_5]',
+            NOAC_KAS5   = '$data[kode_payment_kas_coa_5]',
+            pay_namabank1 = '$data[kode_payment_bank_nama_1]',
+            NOAC_BANK1    = '$data[kode_payment_bank_coa_1]',
+            pay_nobank1   = '$data[kode_payment_bank_kode_1]',
+            pay_inibank1  = '$data[kode_payment_bank_inisial_1]',
+            pay_namabank2 = '$data[kode_payment_bank_nama_2]',
+            NOAC_BANK2    = '$data[kode_payment_bank_coa_2]',
+            pay_nobank2   = '$data[kode_payment_bank_kode_2]',
+            pay_inibank2  = '$data[kode_payment_bank_inisial_2]',
+            pay_namabank3 = '$data[kode_payment_bank_nama_3]',
+            NOAC_BANK3    = '$data[kode_payment_bank_coa_3]',
+            pay_nobank3   = '$data[kode_payment_bank_kode_3]',
+            pay_inibank3  = '$data[kode_payment_bank_inisial_3]',
+            pay_namabank4 = '$data[kode_payment_bank_nama_4]',
+            NOAC_BANK4    = '$data[kode_payment_bank_coa_4]',
+            pay_nobank4   = '$data[kode_payment_bank_kode_4]',
+            pay_inibank4  = '$data[kode_payment_bank_inisial_4]',
+            rec_nokas     = '$data[kode_receive_kas_kode_1]',
+            NOACCKAS1     = '$data[kode_receive_kas_coa_1]',
+            rec_inikas    = '$data[kode_receive_kas_inisial_1]',
+            rec_nokas2    = '$data[kode_receive_kas_kode_2]',
+            NOACCKAS2     = '$data[kode_receive_kas_coa_2]',
+            rec_inikas2   = '$data[kode_receive_kas_inisial_2]',
+            rec_nokas3    = '$data[kode_receive_kas_kode_3]',
+            NOACCKAS3     = '$data[kode_receive_kas_coa_3]',
+            rec_inikas3   = '$data[kode_receive_kas_inisial_3]',
+            rec_nokas4    = '$data[kode_receive_kas_kode_4]',
+            NOACCKAS4     = '$data[kode_receive_kas_coa_4]',
+            rec_inikas4   = '$data[kode_receive_kas_inisial_4]',
+            rec_nokas5    = '$data[kode_receive_kas_kode_5]',
+            NOACCKAS5     = '$data[kode_receive_kas_coa_5]',
+            rec_inikas5   = '$data[kode_receive_kas_inisial_5]',
+            rec_namabank1  = '$data[kode_receive_bank_nama_1]',
+            NOACC_RECBANK1 = '$data[kode_receive_bank_coa_1]',
+            rec_nobank1    = '$data[kode_receive_bank_kode_1]',
+            rec_inibank1   = '$data[kode_receive_bank_inisial_1]',
+            rec_namabank2  = '$data[kode_receive_bank_nama_2]', 
+            NOACC_RECBANK2 = '$data[kode_receive_bank_coa_2]',
+            rec_nobank2    = '$data[kode_receive_bank_kode_2]',
+            rec_inibank2   = '$data[kode_receive_bank_inisial_2]'
+            WHERE lokasi = 'PKS' and pt = '$pt'";
+
+            return $this->mips_caba->query($sql);
         }
     }
 

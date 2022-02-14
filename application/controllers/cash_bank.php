@@ -657,6 +657,26 @@ class Cash_bank extends CI_Controller
             echo "<script> window.location = 'main/logout' </script>";
         }
     }
+
+    public function master_tabel_coa_popup_new()
+    {
+        $tokens   = $this->input->post('tokens', TRUE);
+        $id_modal = $this->input->post('id_modal', TRUE);
+        $id_row = $this->input->post('id_row', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens']     = $tokens;
+        $data['id_modal']   = $id_modal;
+        $data['id_row']     = $id_row;
+
+        if ($result == '1') {
+            $this->load->view('cash_bank/coa/coa_tabel_popup_view', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
+
+
     public function tabel_coa_popup()
     {
         $tokens   = $this->input->post('tokens', TRUE);
@@ -674,6 +694,8 @@ class Cash_bank extends CI_Controller
             echo "<script> window.location = 'main/logout' </script>";
         }
     }
+
+
 
 
     /* untuk coa */
@@ -719,6 +741,50 @@ class Cash_bank extends CI_Controller
         //output to json format
         echo json_encode($output);
     }
+
+    public function gl_mastercode_popup_new()
+    {
+
+        //onclick=\"getpopup('module/edit_sub','"+tokens+"','popupedit','"+result[i].id+"');\"
+        $tokensapp = $this->session->userdata('sess_token');
+        // $divisi = $this->input->post('divisi');
+
+        $list = $this->serv_coa_gl->get_datatables();
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $customers) {
+
+            $name = str_replace(' ', '_', $customers->nama);
+
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $customers->noac;
+            $row[] = $customers->nama;
+            $row[] = $customers->sbu;
+            $row[] = $customers->group;
+            $row[] = $customers->type;
+
+            if ($customers->type == 'D') {
+                $row[] = "<button class='btn btn-success btn-sm' onclick=pilih_account(" . $customers->noac . "," . $customers->NOID . ") title=' Pilih- " . $customers->noac . " - " . $customers->nama . "'>Pilih</button>";
+            } else {
+                $row[] = "<button class='btn btn-danger btn-sm'>x</button>";
+            }
+
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->serv_coa_gl->count_all(),
+            "recordsFiltered" => $this->serv_coa_gl->count_filtered(),
+            "data" => $data,
+        );
+        //output to json format
+        echo json_encode($output);
+    }
+
     public function mastercode_popup()
     {
 
@@ -955,7 +1021,7 @@ class Cash_bank extends CI_Controller
         $data['tokens'] = $tokens;
 
         $data['lokasi'] = $this->session->userdata('sess_nama_lokasi');
-
+        // var_dump($data) . die();
         if ($result == '1') {
             $this->load->view('cash_bank/cb_configurasi_view', $data);
         } else {
@@ -1196,7 +1262,171 @@ class Cash_bank extends CI_Controller
             //END - KODE RECEIVE (BANK)
 
         } else if ($this->input->post('lokasi_s', TRUE) == 'RO') {
+            //START - KODE PAYMENT (KAS)
+            $data['kode_payment_kas_inisial_1'] = $this->input->post('kode_payment_kas_inisial_1', TRUE);
+            $data['kode_payment_kas_kode_1']    = $this->input->post('kode_payment_kas_kode_1', TRUE);
+            $data['kode_payment_kas_coa_1']     = $this->input->post('kode_payment_kas_coa_1', TRUE);
+
+            $data['kode_payment_kas_inisial_2'] = $this->input->post('kode_payment_kas_inisial_2', TRUE);
+            $data['kode_payment_kas_kode_2']    = $this->input->post('kode_payment_kas_kode_2', TRUE);
+            $data['kode_payment_kas_coa_2']     = $this->input->post('kode_payment_kas_coa_2', TRUE);
+
+            $data['kode_payment_kas_inisial_3'] = $this->input->post('kode_payment_kas_inisial_3', TRUE);
+            $data['kode_payment_kas_kode_3']    = $this->input->post('kode_payment_kas_kode_3', TRUE);
+            $data['kode_payment_kas_coa_3']     = $this->input->post('kode_payment_kas_coa_3', TRUE);
+
+            $data['kode_payment_kas_inisial_4'] = $this->input->post('kode_payment_kas_inisial_4', TRUE);
+            $data['kode_payment_kas_kode_4']    = $this->input->post('kode_payment_kas_kode_4', TRUE);
+            $data['kode_payment_kas_coa_4']     = $this->input->post('kode_payment_kas_coa_4', TRUE);
+
+            $data['kode_payment_kas_inisial_5'] = $this->input->post('kode_payment_kas_inisial_5', TRUE);
+            $data['kode_payment_kas_kode_5']    = $this->input->post('kode_payment_kas_kode_5', TRUE);
+            $data['kode_payment_kas_coa_5']     = $this->input->post('kode_payment_kas_coa_5', TRUE);
+            //END - KODE PAYMENT (KAS)
+
+
+            //START - KODE PAYMENT (BANK)
+            $data['kode_payment_bank_nama_1']   = $this->input->post('kode_payment_bank_nama_1', TRUE);
+            $data['kode_payment_bank_inisial_1'] = $this->input->post('kode_payment_bank_inisial_1', TRUE);
+            $data['kode_payment_bank_kode_1']   = $this->input->post('kode_payment_bank_kode_1', TRUE);
+            $data['kode_payment_bank_coa_1']    = $this->input->post('kode_payment_bank_coa_1', TRUE);
+
+            $data['kode_payment_bank_nama_2']   = $this->input->post('kode_payment_bank_nama_2', TRUE);
+            $data['kode_payment_bank_inisial_2'] = $this->input->post('kode_payment_bank_inisial_2', TRUE);
+            $data['kode_payment_bank_kode_2']   = $this->input->post('kode_payment_bank_kode_2', TRUE);
+            $data['kode_payment_bank_coa_2']    = $this->input->post('kode_payment_bank_coa_2', TRUE);
+
+            $data['kode_payment_bank_nama_3']   = $this->input->post('kode_payment_bank_nama_3', TRUE);
+            $data['kode_payment_bank_inisial_3'] = $this->input->post('kode_payment_bank_inisial_3', TRUE);
+            $data['kode_payment_bank_kode_3']   = $this->input->post('kode_payment_bank_kode_3', TRUE);
+            $data['kode_payment_bank_coa_3']    = $this->input->post('kode_payment_bank_coa_3', TRUE);
+
+            $data['kode_payment_bank_nama_4']   = $this->input->post('kode_payment_bank_nama_4', TRUE);
+            $data['kode_payment_bank_inisial_4'] = $this->input->post('kode_payment_bank_inisial_4', TRUE);
+            $data['kode_payment_bank_kode_4']   = $this->input->post('kode_payment_bank_kode_4', TRUE);
+            $data['kode_payment_bank_coa_4']    = $this->input->post('kode_payment_bank_coa_4', TRUE);
+            //END - KODE PAYMENT (BANK)
+
+
+
+
+            //START - KODE RECEIVE (KAS)
+            $data['kode_receive_kas_inisial_1'] = $this->input->post('kode_receive_kas_inisial_1', TRUE);
+            $data['kode_receive_kas_kode_1']    = $this->input->post('kode_receive_kas_kode_1', TRUE);
+            $data['kode_receive_kas_coa_1']     = $this->input->post('kode_receive_kas_coa_1', TRUE);
+
+            $data['kode_receive_kas_inisial_2'] = $this->input->post('kode_receive_kas_inisial_2', TRUE);
+            $data['kode_receive_kas_kode_2']    = $this->input->post('kode_receive_kas_kode_2', TRUE);
+            $data['kode_receive_kas_coa_2']     = $this->input->post('kode_receive_kas_coa_2', TRUE);
+
+            $data['kode_receive_kas_inisial_3'] = $this->input->post('kode_receive_kas_inisial_3', TRUE);
+            $data['kode_receive_kas_kode_3']    = $this->input->post('kode_receive_kas_kode_3', TRUE);
+            $data['kode_receive_kas_coa_3']     = $this->input->post('kode_receive_kas_coa_3', TRUE);
+
+            $data['kode_receive_kas_inisial_4'] = $this->input->post('kode_receive_kas_inisial_4', TRUE);
+            $data['kode_receive_kas_kode_4']    = $this->input->post('kode_receive_kas_kode_4', TRUE);
+            $data['kode_receive_kas_coa_4']     = $this->input->post('kode_receive_kas_coa_4', TRUE);
+
+            $data['kode_receive_kas_inisial_5'] = $this->input->post('kode_receive_kas_inisial_5', TRUE);
+            $data['kode_receive_kas_kode_5']    = $this->input->post('kode_receive_kas_kode_5', TRUE);
+            $data['kode_receive_kas_coa_5']     = $this->input->post('kode_receive_kas_coa_5', TRUE);
+            //END - KODE RECEIVE (KAS)
+
+
+            //START - KODE RECEIVE (BANK)
+            $data['kode_receive_bank_nama_1']   = $this->input->post('kode_receive_bank_nama_1', TRUE);
+            $data['kode_receive_bank_inisial_1'] = $this->input->post('kode_receive_bank_inisial_1', TRUE);
+            $data['kode_receive_bank_kode_1']   = $this->input->post('kode_receive_bank_kode_1', TRUE);
+            $data['kode_receive_bank_coa_1']    = $this->input->post('kode_receive_bank_coa_1', TRUE);
+
+            $data['kode_receive_bank_nama_2']   = $this->input->post('kode_receive_bank_nama_2', TRUE);
+            $data['kode_receive_bank_inisial_2'] = $this->input->post('kode_receive_bank_inisial_2', TRUE);
+            $data['kode_receive_bank_kode_2']   = $this->input->post('kode_receive_bank_kode_2', TRUE);
+            $data['kode_receive_bank_coa_2']    = $this->input->post('kode_receive_bank_coa_2', TRUE);
+            //END - KODE RECEIVE (BANK)
         } else {
+            //START - KODE PAYMENT (KAS)
+            $data['kode_payment_kas_inisial_1'] = $this->input->post('kode_payment_kas_inisial_1', TRUE);
+            $data['kode_payment_kas_kode_1']    = $this->input->post('kode_payment_kas_kode_1', TRUE);
+            $data['kode_payment_kas_coa_1']     = $this->input->post('kode_payment_kas_coa_1', TRUE);
+
+            $data['kode_payment_kas_inisial_2'] = $this->input->post('kode_payment_kas_inisial_2', TRUE);
+            $data['kode_payment_kas_kode_2']    = $this->input->post('kode_payment_kas_kode_2', TRUE);
+            $data['kode_payment_kas_coa_2']     = $this->input->post('kode_payment_kas_coa_2', TRUE);
+
+            $data['kode_payment_kas_inisial_3'] = $this->input->post('kode_payment_kas_inisial_3', TRUE);
+            $data['kode_payment_kas_kode_3']    = $this->input->post('kode_payment_kas_kode_3', TRUE);
+            $data['kode_payment_kas_coa_3']     = $this->input->post('kode_payment_kas_coa_3', TRUE);
+
+            $data['kode_payment_kas_inisial_4'] = $this->input->post('kode_payment_kas_inisial_4', TRUE);
+            $data['kode_payment_kas_kode_4']    = $this->input->post('kode_payment_kas_kode_4', TRUE);
+            $data['kode_payment_kas_coa_4']     = $this->input->post('kode_payment_kas_coa_4', TRUE);
+
+            $data['kode_payment_kas_inisial_5'] = $this->input->post('kode_payment_kas_inisial_5', TRUE);
+            $data['kode_payment_kas_kode_5']    = $this->input->post('kode_payment_kas_kode_5', TRUE);
+            $data['kode_payment_kas_coa_5']     = $this->input->post('kode_payment_kas_coa_5', TRUE);
+            //END - KODE PAYMENT (KAS)
+
+
+            //START - KODE PAYMENT (BANK)
+            $data['kode_payment_bank_nama_1']   = $this->input->post('kode_payment_bank_nama_1', TRUE);
+            $data['kode_payment_bank_inisial_1'] = $this->input->post('kode_payment_bank_inisial_1', TRUE);
+            $data['kode_payment_bank_kode_1']   = $this->input->post('kode_payment_bank_kode_1', TRUE);
+            $data['kode_payment_bank_coa_1']    = $this->input->post('kode_payment_bank_coa_1', TRUE);
+
+            $data['kode_payment_bank_nama_2']   = $this->input->post('kode_payment_bank_nama_2', TRUE);
+            $data['kode_payment_bank_inisial_2'] = $this->input->post('kode_payment_bank_inisial_2', TRUE);
+            $data['kode_payment_bank_kode_2']   = $this->input->post('kode_payment_bank_kode_2', TRUE);
+            $data['kode_payment_bank_coa_2']    = $this->input->post('kode_payment_bank_coa_2', TRUE);
+
+            $data['kode_payment_bank_nama_3']   = $this->input->post('kode_payment_bank_nama_3', TRUE);
+            $data['kode_payment_bank_inisial_3'] = $this->input->post('kode_payment_bank_inisial_3', TRUE);
+            $data['kode_payment_bank_kode_3']   = $this->input->post('kode_payment_bank_kode_3', TRUE);
+            $data['kode_payment_bank_coa_3']    = $this->input->post('kode_payment_bank_coa_3', TRUE);
+
+            $data['kode_payment_bank_nama_4']   = $this->input->post('kode_payment_bank_nama_4', TRUE);
+            $data['kode_payment_bank_inisial_4'] = $this->input->post('kode_payment_bank_inisial_4', TRUE);
+            $data['kode_payment_bank_kode_4']   = $this->input->post('kode_payment_bank_kode_4', TRUE);
+            $data['kode_payment_bank_coa_4']    = $this->input->post('kode_payment_bank_coa_4', TRUE);
+            //END - KODE PAYMENT (BANK)
+
+
+
+
+            //START - KODE RECEIVE (KAS)
+            $data['kode_receive_kas_inisial_1'] = $this->input->post('kode_receive_kas_inisial_1', TRUE);
+            $data['kode_receive_kas_kode_1']    = $this->input->post('kode_receive_kas_kode_1', TRUE);
+            $data['kode_receive_kas_coa_1']     = $this->input->post('kode_receive_kas_coa_1', TRUE);
+
+            $data['kode_receive_kas_inisial_2'] = $this->input->post('kode_receive_kas_inisial_2', TRUE);
+            $data['kode_receive_kas_kode_2']    = $this->input->post('kode_receive_kas_kode_2', TRUE);
+            $data['kode_receive_kas_coa_2']     = $this->input->post('kode_receive_kas_coa_2', TRUE);
+
+            $data['kode_receive_kas_inisial_3'] = $this->input->post('kode_receive_kas_inisial_3', TRUE);
+            $data['kode_receive_kas_kode_3']    = $this->input->post('kode_receive_kas_kode_3', TRUE);
+            $data['kode_receive_kas_coa_3']     = $this->input->post('kode_receive_kas_coa_3', TRUE);
+
+            $data['kode_receive_kas_inisial_4'] = $this->input->post('kode_receive_kas_inisial_4', TRUE);
+            $data['kode_receive_kas_kode_4']    = $this->input->post('kode_receive_kas_kode_4', TRUE);
+            $data['kode_receive_kas_coa_4']     = $this->input->post('kode_receive_kas_coa_4', TRUE);
+
+            $data['kode_receive_kas_inisial_5'] = $this->input->post('kode_receive_kas_inisial_5', TRUE);
+            $data['kode_receive_kas_kode_5']    = $this->input->post('kode_receive_kas_kode_5', TRUE);
+            $data['kode_receive_kas_coa_5']     = $this->input->post('kode_receive_kas_coa_5', TRUE);
+            //END - KODE RECEIVE (KAS)
+
+
+            //START - KODE RECEIVE (BANK)
+            $data['kode_receive_bank_nama_1']   = $this->input->post('kode_receive_bank_nama_1', TRUE);
+            $data['kode_receive_bank_inisial_1'] = $this->input->post('kode_receive_bank_inisial_1', TRUE);
+            $data['kode_receive_bank_kode_1']   = $this->input->post('kode_receive_bank_kode_1', TRUE);
+            $data['kode_receive_bank_coa_1']    = $this->input->post('kode_receive_bank_coa_1', TRUE);
+
+            $data['kode_receive_bank_nama_2']   = $this->input->post('kode_receive_bank_nama_2', TRUE);
+            $data['kode_receive_bank_inisial_2'] = $this->input->post('kode_receive_bank_inisial_2', TRUE);
+            $data['kode_receive_bank_kode_2']   = $this->input->post('kode_receive_bank_kode_2', TRUE);
+            $data['kode_receive_bank_coa_2']    = $this->input->post('kode_receive_bank_coa_2', TRUE);
+            //END - KODE RECEIVE (BANK)
         }
 
         $result = $this->cash_bank_model->configurasi_update($data);

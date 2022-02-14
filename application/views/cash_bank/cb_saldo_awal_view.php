@@ -48,7 +48,7 @@
     document.getElementById("acctno").addEventListener("keyup", function(event) {
       event.preventDefault();
       if (event.keyCode === 13) {
-        getpopup('gl/master_tabel_coa_popup', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', '1');
+        getpopup('cash_bank/master_tabel_coa_popup_new', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', '1');
       }
     });
 

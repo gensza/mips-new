@@ -352,7 +352,7 @@ class Cetak_model extends CI_Model
     {
         $lokasi   = $this->lokasi();
         // $sql = "SELECT * FROM head_voucher WHERE ACCTNO LIKE '$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND PDO='$sumber' ORDER BY `DATE` ASC";
-        $sql = "SELECT * FROM `voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = 'ESTATE' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') ORDER BY `DATE` ASC";
+        $sql = "SELECT * FROM `voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') ORDER BY `DATE` ASC";
         return $this->mips_caba->query($sql);
     }
     function get_data_bank($coa, $tgl_start, $tgl_end)

@@ -1316,19 +1316,20 @@ for ($i = 0; $i < 6; $i++) {
                   if ($this->session->userdata('sess_id_lokasi') != 1) {
                   ?>
 
-                    <select class="form-control span17" name="divisi_v" id="divisi_v">
-                      <option value="0">-Pilih-</option>
-                      <option value="06">06</option>
-                      <option value="07">07</option>
-                      <option value="08">08</option>
-                      <option value="09">09</option>
-                    </select>
-                  <?php
-                  } elseif ($this->session->userdata('sess_id_lokasi') == 3) { ?>
-                    <select class="form-control span17" name="divisi_v" id="divisi_v">
-                      <option value="03">03</option>
-                    </select>
+                    <?php if ($this->session->userdata('sess_id_lokasi') == 3) { ?>
 
+                      <select class="form-control span17" name="divisi_v" id="divisi_v">
+                        <option value="03">03</option>
+                      </select>
+                    <?php } else { ?>
+                      <select class="form-control span17" name="divisi_v" id="divisi_v">
+                        <option value="0">-Pilih-</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                      </select>
+                    <?php } ?>
                   <?php  } else {
                   ?>
 
