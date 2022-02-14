@@ -24,14 +24,14 @@ class serv_coa_gl extends CI_Model
         $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
     }
 
-    private function _get_datatables_query($divisi)
+    private function _get_datatables_query()
     {
 
         $this->mips_gl->from($this->table);
-        if ($divisi != 0) {
-            $this->mips_gl->where('sbu', $divisi);
-            # code...
-        }
+        // if ($divisi != 0) {
+        //     $this->mips_gl->where('sbu', $divisi);
+        //     # code...
+        // }
         $this->mips_gl->where('type !=', 'G');
 
 
@@ -65,29 +65,25 @@ class serv_coa_gl extends CI_Model
         }
     }
 
-    function get_datatables($divisi)
+    function get_datatables()
     {
-        $this->_get_datatables_query($divisi);
+        $this->_get_datatables_query();
         if ($_POST['length'] != -1)
             $this->mips_gl->limit($_POST['length'], $_POST['start']);
         $query = $this->mips_gl->get();
         return $query->result();
     }
 
-    function count_filtered($divisi)
+    function count_filtered()
     {
-        $this->_get_datatables_query($divisi);
+        $this->_get_datatables_query();
         $query = $this->mips_gl->get();
         return $query->num_rows();
     }
 
-    public function count_all($divisi)
+    public function count_all()
     {
         $this->mips_gl->from($this->table);
-        if ($divisi != 0) {
-            $this->mips_gl->where('sbu', $divisi);
-            # code...
-        }
         return $this->mips_gl->count_all_results();
     }
 }

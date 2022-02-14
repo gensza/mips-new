@@ -682,9 +682,9 @@ class Cash_bank extends CI_Controller
 
         //onclick=\"getpopup('module/edit_sub','"+tokens+"','popupedit','"+result[i].id+"');\"
         $tokensapp = $this->session->userdata('sess_token');
-        $divisi = $this->input->post('divisi');
+        // $divisi = $this->input->post('divisi');
 
-        $list = $this->serv_coa_gl->get_datatables($divisi);
+        $list = $this->serv_coa_gl->get_datatables();
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $customers) {
@@ -712,8 +712,8 @@ class Cash_bank extends CI_Controller
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->serv_coa_gl->count_all($divisi),
-            "recordsFiltered" => $this->serv_coa_gl->count_filtered($divisi),
+            "recordsTotal" => $this->serv_coa_gl->count_all(),
+            "recordsFiltered" => $this->serv_coa_gl->count_filtered(),
             "data" => $data,
         );
         //output to json format
@@ -775,8 +775,6 @@ class Cash_bank extends CI_Controller
 
     /* end coa */
 
-
-
     public function simpan_voucher_header()
     {
 
@@ -808,7 +806,9 @@ class Cash_bank extends CI_Controller
     public function update_saldo_akhir()
     {
         $coa = $this->input->post('coa');
-        $result = $this->cash_bank_model->update_saldo_akhir($coa);
+        $jml = $this->input->post('jml');
+        $pay = $this->input->post('pay');
+        $result = $this->cash_bank_model->update_saldo_akhir($coa, $jml, $pay);
         echo json_encode($result);
     }
 

@@ -2,7 +2,7 @@
     $(document).ready(function() {
         var id_modal = '<?php echo $id_modal; ?>';
         var tokens = '<?php echo $tokens; ?>';
-        var divisi = $('#divisi_v').val();
+        // var divisi = $('#divisi_v').val();
 
 
         $('#tabel_gl_coa').hide();
@@ -25,7 +25,7 @@
                 type: 'POST',
                 data: {
                     <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
-                    divisi: divisi
+                    // divisi: divisi
                 },
                 dataType: "json",
                 beforeSend: function() {

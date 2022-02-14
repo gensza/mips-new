@@ -30,6 +30,32 @@
     console.log('hello');
   }
 
+  function saldo_akhir(coa, jml, py) {
+    $.ajax({
+      url: base_url + 'cash_bank/update_saldo_akhir',
+      type: "post",
+      data: {
+        coa: coa,
+        jml: jml,
+        pay: py,
+        <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+      },
+      dataType: "json",
+      async: 'false',
+      success: function(result) {
+        console.log('oke berhasil', result);
+        // console.log(result);
+
+      },
+      beforeSend: function() {
+        //loadingPannel.show();
+      },
+      complete: function() {
+        //loadingPannel.hide();
+      }
+    });
+  }
+
   $(document).ready(function() {
 
     // $(window).bind('beforeunload', function() {
@@ -657,8 +683,10 @@
           cache: false,
           processData: false,
           success: function(response) {
-            // console.log(response);
+            console.log(response);
             var coa = response.head;
+            var jml = response.jml;
+            var py = response.pay;
 
             if (response.status == true) {
               swal.close();
@@ -666,7 +694,7 @@
               $('#divisi_v').val(0);
               $('.clears').val('');
               table_caba_detail();
-              saldo_akhir(coa);
+              saldo_akhir(coa, jml, py);
               getcontents('cash_bank/input_voucher', '<?php echo $this->session->userdata('sess_token'); ?>');
 
             } else {
@@ -693,33 +721,7 @@
 
     });
 
-    /* untuk update saldo akhir */
-    saldo_akhir = function(coa) {
 
-      $.ajax({
-        url: base_url + 'cash_bank/update_saldo_akhir',
-        type: "post",
-        data: {
-          coa: coa,
-          <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
-        },
-        dataType: "json",
-        async: 'false',
-        success: function(result) {
-
-          // console.log(result);
-
-        },
-        beforeSend: function() {
-          //loadingPannel.show();
-        },
-        complete: function() {
-          //loadingPannel.hide();
-        }
-      });
-
-    }
-    /* end untuk update saldo akhir */
 
 
     //ini fungsi angka contoh : 5000000 menjadi 5,000,000
@@ -1322,7 +1324,12 @@ for ($i = 0; $i < 6; $i++) {
                       <option value="09">09</option>
                     </select>
                   <?php
-                  } else {
+                  } elseif ($this->session->userdata('sess_id_lokasi') == 3) { ?>
+                    <select class="form-control span17" name="divisi_v" id="divisi_v">
+                      <option value="03">03</option>
+                    </select>
+
+                  <?php  } else {
                   ?>
 
                     <select class="form-control span17" name="divisi_v" id="divisi_v">

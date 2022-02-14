@@ -97,6 +97,7 @@
                 data: {},
                 dataType: 'json',
                 success: function(data) {
+                    console.log('ini ya', data);
                     $('#role').empty();
                     var $kategori = $('#role');
                     $kategori.append('<option value=0 selected> -Pilih Role- </option>');

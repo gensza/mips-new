@@ -172,7 +172,7 @@
                     <div class="form-group">
                         <label for="demo-vs-definput" class="control-label">Account</label>
                         <div class="input-prepend">
-                            <input type="text" size="20" class="span9 form-control" id="accn" name="accn" autocomplete="off"><span class="add-on" id="accn" style="cursor: pointer;"><i class="icon-book"></i></span>
+                            <input type="text" size="20" class="span9 form-control" id="accn" name="accn" placeholder="Enter disini..." autocomplete="off"><span class="add-on" id="accn" style="cursor: pointer;"><i class="icon-book"></i></span>
                         </div>
                     </div>
                 </div>

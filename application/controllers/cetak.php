@@ -409,7 +409,9 @@ class Cetak extends CI_Controller
 
         $nama_dokumen = 'Laporan_CB_Voucher_Register_' . $no_vouc . '';
         $data['h_vouc'] = $this->cetak_model->get_data_vouc_header_detail($no_vouc, $id_vouc, $txtperiode)->row_array();
-        $data['d_vouc'] = $this->cetak_model->get_trans_cb_vou($no_vouc, $txtperiode)->result_array();
+        $data['d_vouc'] = $this->cetak_model->get_trans_cb_vou($data['h_vouc']['ACCTNO'], $no_vouc, $txtperiode)->result_array();
+
+        // var_dump($data['d_vouc']) . die();
 
         //$data['d_vouc_c'] = $this->cetak_model->get_data_vouc_list_detail_cr($no_vouc,$txtperiode)->result_array();
 
@@ -444,7 +446,7 @@ class Cetak extends CI_Controller
 
         $nama_dokumen = 'Laporan_CB_Voucher_Register_' . $no_vouc . '';
         $data['h_vouc'] = $this->cetak_model->get_data_vouc_header_detail($no_vouc, $id_vouc, $txtperiode)->row_array();
-        $data['d_vouc'] = $this->cetak_model->get_trans_cb_vou($no_vouc, $txtperiode)->result_array();
+        $data['d_vouc'] = $this->cetak_model->get_trans_cb_vou($data['h_vouc']['ACCTNO'], $no_vouc, $txtperiode)->result_array();
         $data['isi_vouc'] = $this->cetak_model->isi_trans_cb_vou($no_vouc, $txtperiode)->num_rows();
         // var_dump($data['isi_vouc']) . die();
 

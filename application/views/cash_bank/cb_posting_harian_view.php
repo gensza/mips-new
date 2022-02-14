@@ -60,8 +60,9 @@
                                 var formats = d.hours() + ' Jam : ' + d.minutes() + ' Menit : ' + d.seconds() + ' Detik';
 
                                 swal("Selesai", "Terima Kasih, Data berhasil di Posting dan tersimpan, Waktu Proses Posting " + formats + "", "success");
-
-                                window.location.href = base_url + "index.aspx?TokEn=" + tokens + "&IdUs=" + c_usid + "&AkTif=" + c_active + "";
+                                setInterval(() => {
+                                    window.location.href = base_url + "index.aspx?TokEn=" + tokens + "&IdUs=" + c_usid + "&AkTif=" + c_active + "";
+                                }, 2000);
                             } else {
                                 Command: toastr["error"]("Posting error, data tidak berhasil diproses", "Error");
                             }

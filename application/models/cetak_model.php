@@ -102,12 +102,12 @@ class Cetak_model extends CI_Model
         $tahun  = substr($txtperiode, 0, 4);
         $bulan  = substr($txtperiode, 4, 6);
 
-        $sql = "SELECT *,FORMAT(SUM(AMOUNT), 2) as amount, DATE_FORMAT(`DATE`, '%d-%m-%Y') as TGL FROM head_voucher WHERE ID = '$id_vouc' AND VOUCNO = '$no_vouc' AND MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun'";
+        $sql = "SELECT *,FORMAT(SUM(AMOUNT), 2) as amount, DATE_FORMAT(`DATE`, '%d-%m-%Y') as TGL FROM head_voucher WHERE ID = '$id_vouc' AND VOUCNO = '$no_vouc' AND MONTH(`DATE`) = '$bulan' AND YEAR(`DATE`) = '$tahun' ";
 
         return $this->mips_caba->query($sql);
     }
 
-    function get_trans_cb_vou($no_vouc, $txtperiode)
+    function get_trans_cb_vou($coa, $no_vouc, $txtperiode)
     {
 
         $period = $this->periode();
@@ -126,7 +126,7 @@ class Cetak_model extends CI_Model
                         a.JENIS AS HV_JENIS,
                         a.ACCTNO AS HV_ACCTNO
                         FROM voucher AS a
-                        WHERE a.VOUCNO = '$no_vouc' AND MONTH(a.`date`) = '$bulan' AND YEAR(a.`date`) = '$tahun'  ORDER BY a.ID ASC";
+                        WHERE a.VOUCNO = '$no_vouc' AND MONTH(a.`date`) = '$bulan' AND YEAR(a.`date`) = '$tahun' AND ACCTNO <> '$coa' ORDER BY a.ID ASC";
 
         /* NEW BY ALI */
 

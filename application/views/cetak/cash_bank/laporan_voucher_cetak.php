@@ -68,13 +68,13 @@
     } else {
       $nominals = 0;
       if ($v['HV_JENIS'] == 'Payment') {
-        if (($v['CREDIT_NO_F'] <> 0) && ($v['DT_ACCTNO'] <> $h_vouc['ACCTNO'])) {
-          $nominals = 0 - $v['CREDIT_NO_F'];
-        } else {
-          $nominals = $v['DEBET_NO_F'];
-        }
+        // if (($v['CREDIT_NO_F'] <> 0) && ($v['DT_ACCTNO'] <> $h_vouc['ACCTNO'])) {
+        //   $nominals = 0 - $v['CREDIT_NO_F'];
+        // } else {
+        // }
+        $nominals = $v['DEBIT'];
       } else {
-        $nominals = $v['CREDIT_NO_F'];
+        $nominals = $v['CREDIT'];
       }
   ?>
       <tr>
@@ -98,11 +98,11 @@
         if ($h_vouc['TRANS'] == 'Bank') {
           echo $h_vouc['ACCTNO'] . '-' . $h_vouc['GENERAL'] . ', ' . $h_vouc['DESCRIPT'];
         } else {
-          echo $h_vouc['ACCTNO'] . ',&nbsp; ' . $h_vouc['DESCRIPT'];
+          echo $h_vouc['ACCTNO'] . ', &nbsp; ' . $h_vouc['DESCRIPT'];
         } ?>
       </i>
     </td>
-    <td align="right" class="ukuran_teks" valign="top"> <?php echo number_format($sum, 2); ?>
+    <td align="right" class="ukuran_teks" valign="top"> <?php echo number_format($h_vouc['AMOUNT'], 2); ?>
     </td>
   </tr>
   <?php if ($isi_vouc < 8) {
