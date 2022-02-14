@@ -312,8 +312,141 @@
 
       } else if (lokasi_usr == 'RO') {
 
-      } else {
 
+        if (payrc == 'Payment') {
+
+          $.ajax({
+            type: 'POST',
+            url: base_url + 'cash_bank/get_bank_konfig',
+            data: {
+              lokasi: lokasi_usr
+            },
+            dataType: 'json',
+            success: function(data) {
+
+              var str1 = data.pay_namabank1;
+              var str_1 = data.NOAC_BANK1;
+              str1 = str1.replace(/\s+/g, '_');
+
+              var str2 = data.pay_namabank2;
+              var str_2 = data.NOAC_BANK2;
+              str2 = str2.replace(/\s+/g, '_');
+
+              var str3 = data.pay_namabank3;
+              var str_3 = data.NOAC_BANK3;
+              str3 = str3.replace(/\s+/g, '_');
+
+              var str4 = data.pay_namabank4;
+              var str_4 = data.NOAC_BANK4;
+              str4 = str4.replace(/\s+/g, '_');
+
+              $('#bank_descript').empty();
+              var $kategori = $('#bank_descript');
+              $kategori.append('<option value=0>-Pilih Bank-</option>');
+              $kategori.append('<option value=' + str_1 + '|' + str1 + '|1>' + data.pay_namabank1 + '</option>');
+              $kategori.append('<option value=' + str_2 + '|' + str2 + '|2>' + data.pay_namabank2 + '</option>');
+              $kategori.append('<option value=' + str_3 + '|' + str3 + '|3>' + data.pay_namabank3 + '</option>');
+              $kategori.append('<option value=' + str_4 + '|' + str4 + '|4>' + data.pay_namabank4 + '</option>');
+            }
+          });
+
+        } else if (payrc == 'Receive') {
+
+          $.ajax({
+            type: 'POST',
+            url: base_url + 'cash_bank/get_bank_konfig',
+            data: {
+              lokasi: lokasi_usr
+            },
+            dataType: 'json',
+            success: function(data) {
+
+              var str1 = data.rec_namabank1;
+              //var strr_1 = data.NOACC_RECBANK1;
+              str1 = str1.replace(/\s+/g, '_');
+
+              var str2 = data.rec_namabank2;
+              //var strr_2 = data.NOACC_RECBANK1;
+              str2 = str2.replace(/\s+/g, '_');
+
+              $('#bank_descript').empty();
+              var $kategori = $('#bank_descript');
+              $kategori.append('<option value=0>-Pilih Bank-</option>');
+              $kategori.append('<option value=' + str1 + '|1>' + data.rec_namabank1 + '</option>');
+              $kategori.append('<option value=' + str2 + '|2>' + data.rec_namabank2 + '</option>');
+            }
+          });
+
+        }
+      } else if (lokasi_usr == 'PKS') {
+
+
+        if (payrc == 'Payment') {
+
+          $.ajax({
+            type: 'POST',
+            url: base_url + 'cash_bank/get_bank_konfig',
+            data: {
+              lokasi: lokasi_usr
+            },
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+
+              var str1 = data.pay_namabank1;
+              var str_1 = data.NOAC_BANK1;
+              str1 = str1.replace(/\s+/g, '_');
+
+              var str2 = data.pay_namabank2;
+              var str_2 = data.NOAC_BANK2;
+              str2 = str2.replace(/\s+/g, '_');
+
+              var str3 = data.pay_namabank3;
+              var str_3 = data.NOAC_BANK3;
+              str3 = str3.replace(/\s+/g, '_');
+
+              var str4 = data.pay_namabank4;
+              var str_4 = data.NOAC_BANK4;
+              str4 = str4.replace(/\s+/g, '_');
+
+              $('#bank_descript').empty();
+              var $kategori = $('#bank_descript');
+              $kategori.append('<option value=0>-Pilih Bank-</option>');
+              $kategori.append('<option value=' + str_1 + '|' + str1 + '|1>' + data.pay_namabank1 + '</option>');
+              $kategori.append('<option value=' + str_2 + '|' + str2 + '|2>' + data.pay_namabank2 + '</option>');
+              $kategori.append('<option value=' + str_3 + '|' + str3 + '|3>' + data.pay_namabank3 + '</option>');
+              $kategori.append('<option value=' + str_4 + '|' + str4 + '|4>' + data.pay_namabank4 + '</option>');
+            }
+          });
+
+        } else if (payrc == 'Receive') {
+
+          $.ajax({
+            type: 'POST',
+            url: base_url + 'cash_bank/get_bank_konfig',
+            data: {
+              lokasi: lokasi_usr
+            },
+            dataType: 'json',
+            success: function(data) {
+
+              var str1 = data.rec_namabank1;
+              //var strr_1 = data.NOACC_RECBANK1;
+              str1 = str1.replace(/\s+/g, '_');
+
+              var str2 = data.rec_namabank2;
+              //var strr_2 = data.NOACC_RECBANK1;
+              str2 = str2.replace(/\s+/g, '_');
+
+              $('#bank_descript').empty();
+              var $kategori = $('#bank_descript');
+              $kategori.append('<option value=0>-Pilih Bank-</option>');
+              $kategori.append('<option value=' + str1 + '|1>' + data.rec_namabank1 + '</option>');
+              $kategori.append('<option value=' + str2 + '|2>' + data.rec_namabank2 + '</option>');
+            }
+          });
+
+        }
       }
 
 
