@@ -159,24 +159,31 @@
                     } else {
                         $sql = $this->mips_caba->query("SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO ='$d->ACCTNO' AND DATE(`DATE`) >= STR_TO_DATE('$tgl1', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl2', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC")->result_array();
                     }
-
-                    $saldoakhir = $d->saldonya;
-                    foreach ($sql as $a) {
-                        $saldoakhir =  $saldoakhir + $a['DEBIT'] - $a['CREDIT'];
-            ?>
+                    if (empty($sql)) { ?>
                 <tr>
-                    <td width="100px" align="center"><?= $a['TGL'] ?></td>
-                    <td width="100px" align="center"><?= $a['VOUCNO'] ?></td>
-                    <td align="left" width="250px"><?= $a['REMARKS'] ?></td>
-                    <td align="right" width="150px"><?= number_format($a['DEBIT'], 2, ",", ".") ?></td>
-                    <td align="right" width="150px"><?= number_format($a['CREDIT'], 2, ",", ".") ?></td>
-                    <td align="right" width="150px"><?= number_format($saldoakhir, 2, ",", ".") ?></td>
+                    <td colspan="6" style="text-align: center;"> Tidak ada data</td>
+                <tr>
+                <?php } else { ?>
+                    <?php
+                        $saldo = $d->saldonya;
+                        foreach ($sql as $row) {
+                            $saldo = $saldo + $row['DEBIT'] - $row['CREDIT'];
+                    ?>
+                <tr>
+                    <td><?= $row['TGL'] ?></td>
+                    <td><?= $row['VOUCNO'] ?></td>
+                    <td><?= $row['DESCRIPT'] ?></td>
+                    <td align="right"><?= number_format($row['DEBIT'], 2, ",", ".") ?></td>
+                    <td align="right"><?= number_format($row['CREDIT'], 2, ",", ".") ?></td>
+                    <td align="right"><?= number_format($saldo, 2, ",", ".") ?></td>
                 </tr>
-    <?php
+
+<?php
+                        }
                     }
                 }
             }
-    ?>
+?>
 
     </tbody>
 </table>

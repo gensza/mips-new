@@ -18,7 +18,7 @@
                     foreach ($modules as $d) {
                         if ($d['position'] == 2 and $d['have_child'] == 'Y' and $d['parent'] == $mod['id']) {
 
-                            if (($d['name'] == 'Income Statement' or $d['name'] == 'Balance' or $d['name'] == 'Report PKRM' or $d['name'] == 'Financial Conditions') and $this->session->userdata('sess_nama_lokasi') == 'ESTATE') {
+                            if (($d['name'] == 'Income Statement' or $d['name'] == 'Balance' or $d['name'] == 'Report PKRM' or $d['name'] == 'Financial Conditions') and ($this->session->userdata('sess_nama_lokasi') == 'ESTATE' or $this->session->userdata('sess_nama_lokasi') == 'PKS')) {
                             } else {
 
                                 echo '<li class="dropdown">
@@ -34,7 +34,7 @@
                             }
                         } else if ($d['position'] == 2 and $d['have_child'] == 'N' and $d['parent'] == $mod['id']) {
 
-                            if (($d['name'] == 'Income Statement' or $d['name'] == 'Balance' or $d['name'] == 'Report PKRM' or $d['name'] == 'Financial Conditions') and $this->session->userdata('sess_nama_lokasi') == 'ESTATE') {
+                            if (($d['name'] == 'Income Statement' or $d['name'] == 'Balance' or $d['name'] == 'Report PKRM' or $d['name'] == 'Financial Conditions') and ($this->session->userdata('sess_nama_lokasi') == 'ESTATE' or $this->session->userdata('sess_nama_lokasi') == 'PKS')) {
                             } else {
 
                                 if ($d['line'] == 1) {
