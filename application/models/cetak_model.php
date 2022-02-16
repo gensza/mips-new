@@ -344,8 +344,16 @@ class Cetak_model extends CI_Model
     function get_data_lpj($sumber, $coa, $tgl_start, $tgl_end)
     {
         $lokasi   = $this->lokasi();
-        // $sql = "SELECT * FROM head_voucher WHERE ACCTNO LIKE '$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND PDO='$sumber' ORDER BY `DATE` ASC";
-        $sql = "SELECT * FROM `head_voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND PDO='$sumber' ORDER BY `DATE` ASC";
+
+        if ($sumber == '0') {
+            # code...
+            $sql = "SELECT * FROM `head_voucher` WHERE LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y')  ORDER BY `DATE` ASC";
+        } else {
+            # code...
+            // $sql = "SELECT * FROM head_voucher WHERE ACCTNO LIKE '$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND PDO='$sumber' ORDER BY `DATE` ASC";
+            $sql = "SELECT * FROM `head_voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND PDO='$sumber' ORDER BY `DATE` ASC";
+        }
+
         return $this->mips_caba->query($sql);
     }
     function get_lpj($coa, $tgl_start, $tgl_end)
@@ -355,6 +363,108 @@ class Cetak_model extends CI_Model
         $sql = "SELECT * FROM `voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') ORDER BY `DATE` ASC";
         return $this->mips_caba->query($sql);
     }
+
+
+    public function get_data_lpj_all($tgl_start, $tgl_end)
+    {
+        $lokasi   = $this->lokasi();
+        if ($lokasi == 'ESTATE') {
+            $remise = '100101031000000';
+            $pddo = '100101030500000';
+            $kontanan = '100101031500000';
+            $grtt = '100101032000000';
+            $gaji = '100101030100000';
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$remise','$pddo', '$kontanan', '$grtt', '$gaji') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC";
+        } else if ($lokasi == 'PKS') {
+            $remise = '100101041000000';
+            $pddo = '100101040500000';
+            $gaji = '100101040100000';
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$remise','$pddo', '$gaji') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC";
+            # code...
+        } else {
+            $remise = '100101031000000';
+            $pddo = '100101030500000';
+            $kontanan = '100101031500000';
+            $grtt = '100101032000000';
+            $gaji = '100101030100000';
+
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$remise','$pddo', '$kontanan', '$grtt', '$gaji') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC";
+            # code...
+        }
+
+        return $this->mips_caba->query($sql);
+        # code...
+    }
+
+    function get_list_all_lpj()
+    {
+        $lokasi   = $this->get_id_lokasi();
+        $period = $this->session->userdata('sess_periode');
+        $tahun  = substr($period, 0, 4);
+        $bulan  = substr($period, 4, 5);
+
+        $lok   = $this->lokasi();
+
+        if ($bulan == '01') {
+            $var_bulan = '1';
+        } else if ($bulan == '02') {
+            $var_bulan = '2';
+        } else if ($bulan == '03') {
+            $var_bulan = '3';
+        } else if ($bulan == '04') {
+            $var_bulan = '4';
+        } else if ($bulan == '05') {
+            $var_bulan = '5';
+        } else if ($bulan == '06') {
+            $var_bulan = '6';
+        } else if ($bulan == '07') {
+            $var_bulan = '7';
+        } else if ($bulan == '08') {
+            $var_bulan = '8';
+        } else if ($bulan == '09') {
+            $var_bulan = '9';
+        } else if ($bulan == '10') {
+            $var_bulan = '10';
+        } else if ($bulan == '11') {
+            $var_bulan = '11';
+        } else if ($bulan == '12') {
+            $var_bulan = '12';
+        }
+
+
+        if ($lok == 'ESTATE') {
+            $remise = '100101031000000';
+            $pddo = '100101030500000';
+            $kontanan = '100101031500000';
+            $grtt = '100101032000000';
+            $gaji = '100101030100000';
+
+            $sql = "SELECT ACCTNO, ACCTNAME, saldo_$var_bulan as saldonya FROM master_accountcb WHERE ACCTNO IN ('$remise','$pddo', '$kontanan', '$grtt', '$gaji') AND SITENO='$lokasi' AND thn = '$tahun'";
+            return $this->mips_caba->query($sql);
+        } else if ($lok == 'PKS') {
+            $remise = '100101041000000';
+            $pddo = '100101040500000';
+            $gaji = '100101040100000';
+
+            $sql = "SELECT ACCTNO, ACCTNAME, saldo_$var_bulan as saldonya FROM master_accountcb WHERE ACCTNO IN ('$remise','$pddo', '$gaji') AND SITENO='$lokasi' AND thn = '$tahun'";
+            # code...
+            return $this->mips_caba->query($sql);
+        } else {
+            $remise = '100101031000000';
+            $pddo = '100101030500000';
+            $kontanan = '100101031500000';
+            $grtt = '100101032000000';
+            $gaji = '100101030100000';
+            # code...
+
+            $sql = "SELECT ACCTNO, ACCTNAME, saldo_$var_bulan as saldonya FROM master_accountcb WHERE ACCTNO IN ('$remise','$pddo', '$kontanan', '$grtt', '$gaji') AND SITENO='$lokasi' AND thn = '$tahun'";
+            return $this->mips_caba->query($sql);
+        }
+    }
+
+
     function get_data_bank($coa, $tgl_start, $tgl_end)
     {
         $mandiri = "100105030000000";

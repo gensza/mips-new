@@ -90,20 +90,8 @@
     <tr>
 
         <td colspan="2">
-            <?php if ($this->uri->segment(3) == 1) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDO Upah</span>
-            <?php } else if ($this->uri->segment(3) == 2) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDDO & IM</span>
-            <?php } else if ($this->uri->segment(3) == 3) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban Dana GRTT</span>
-            <?php } else if ($this->uri->segment(3) == 4) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban PDO Remise</span>
-            <?php } else if ($this->uri->segment(3) == 5) { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban Dana Kontanan</span>
-            <?php } else { ?>
-                <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban</span>
 
-            <?php } ?>
+            <span style="font-size: 18px;font-weight: normal;">Laporan Pertanggung Jawaban</span>
 
         </td>
         <td style="text-align: right;font-size: 10px" rowspan="2">Tanggal : <?php echo date("m/d/Y"); ?>
@@ -122,7 +110,6 @@
                 <span style="font-size: 14px">Periode : <?php echo $this->uri->segment(4); ?> s/d <?php echo $this->uri->segment(5); ?></span>
             <?php
                         } else {
-
             ?>
                 <span style="font-size: 14px">Periode : <?php echo $this->uri->segment(4); ?> s/d <?php echo $this->uri->segment(5); ?></span>
             <?php
@@ -142,45 +129,82 @@
             <th>Tanggal</th>
             <th>No. Vouc</th>
             <th>Keterangan</th>
+            <th>No. PDDO/IM</th>
             <th>Debit</th>
             <th>Kredit</th>
             <th>Saldo</th>
         </tr>
     </thead>
     <tbody>
-        <?php if (empty($res_data)) { ?>
+        <?php if (empty($saldo)) { ?>
             <tr>
                 <td colspan="6" style="text-align: center;"> Tidak ada data</td>
             <tr>
-            <?php } else { ?>
+                <?php } else {
+                foreach ($saldo as $d) {
+                ?>
             <tr>
-                <td></td>
-                <td></td>
+                <td colspan="2"><?= $d->ACCTNAME ?></td>
                 <td width="100px" colspan="1"><b>Saldo Awal&nbsp;&nbsp;<?php echo date_format(date_create($this->uri->segment(4)), 'd-M-Y') ?></b></td>
                 <td align="right" width="150px"><b></b>
                 </td>
                 <td align="right" width="150px"><b></b>
                 </td>
-                <td align="right" width="150px"><?= number_format($saldo, 2, ",", ".") ?>
+                <td align="right" width="150px"><b></b>
+                </td>
+                <td align="right" width="150px"><?= number_format($d->saldonya, 2, ",", ".") ?>
                 </td>
             </tr>
             <?php
-            $saldoakhir = $saldo;
-            foreach ($res_data as $a) {
-                $saldoakhir =  $saldoakhir + $a['DEBIT'] - $a['CREDIT'];
-            ?>
+                    $lokasi = $this->session->userdata('sess_nama_lokasi');
+
+                    $sql = $this->mips_caba->query("SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO ='$d->ACCTNO' AND DATE(`DATE`) >= STR_TO_DATE('$tgl1', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl2', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE` ASC")->result_array();
+
+                    if (empty($sql)) { ?>
                 <tr>
-                    <td width="100px" align="center"><?= date_format(date_create($a['DATE']), 'd-m-Y') ?></td>
+                    <td colspan="7" style="text-align: center;"> Tidak ada data</td>
+                <tr>
+                    <?php } else {
+                        $saldoakhir = $d->saldonya;
+                        foreach ($sql as $a) {
+                            $saldoakhir =  $saldoakhir + $a['DEBIT'] - $a['CREDIT'];
+                    ?>
+
+
+
+                <tr>
+                    <td width="100px" align="center"><?= $a['TGL'] ?></td>
                     <td width="100px" align="center"><?= $a['VOUCNO'] ?></td>
                     <td align="left" width="250px"><?= $a['REMARKS'] ?></td>
+                    <td align="left" width="250px">-</td>
                     <td align="right" width="150px"><?= number_format($a['DEBIT'], 2, ",", ".") ?></td>
                     <td align="right" width="150px"><?= number_format($a['CREDIT'], 2, ",", ".") ?></td>
                     <td align="right" width="150px"><?= number_format($saldoakhir, 2, ",", ".") ?></td>
                 </tr>
-        <?php
+<?php $sum += $saldoakhir;
+                        }
+                    }
+                }
             }
-        }
-        ?>
+?>
+<tr>
+    <td width="100px" align="center"></td>
+    <td width="100px" align="center"></td>
+    <td width="100px" align="center"></td>
+    <td align="left" width="250px">Total Debit/Kredit</td>
+    <td align="right" width="150px"><b><?= number_format(0, 2, ",", ".") ?></b></td>
+    <td align="right" width="150px"><b><?= number_format(0, 2, ",", ".") ?></b></td>
+    <td align="right" width="150px"><b><?= number_format(0, 2, ",", ".") ?></b></td>
+</tr>
+<tr>
+    <td width="100px" align="center"></td>
+    <td width="100px" align="center"></td>
+    <td width="100px" align="center"></td>
+    <td align="left" width="250px">Saldo Akhir</td>
+    <td align="right" width="150px"></td>
+    <td align="right" width="150px"></td>
+    <td align="right" width="150px"><b><?= number_format($sum, 2, ",", ".") ?></b></td>
+</tr>
 
     </tbody>
 </table>

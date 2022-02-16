@@ -181,8 +181,16 @@ class Cash_bank extends CI_Controller
         $period = $this->session->userdata('sess_periode');
         $tahun  = substr($period, 0, 4);
 
-        $mandiri = "100105030000000";
-        $bri = "100105110000000";
+        if ($this->session->userdata('sess_nama_lokasi') == 'ESTATE') {
+            # code...
+            $mandiri = "100105030000000";
+            $bri = "100105110000000";
+        } else {
+            $mandiri = "300101010000000";
+            $bri = "100105110000000";
+            # code...
+        }
+
         $data = $this->mips_caba->query("SELECT ACCTNO, ACCTNAME FROM master_accountcb WHERE ACCTNO in ('$mandiri','$bri')  AND thn='$tahun'")->result();
         echo json_encode($data);
     }

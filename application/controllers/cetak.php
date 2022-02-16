@@ -127,6 +127,45 @@ class Cetak extends CI_Controller
         $mpdf->Output($nama_dokumen . ".pdf", 'I');
         exit;
     }
+
+    public function cb_laporan_lpj_gabungan($sumber, $tgl_start, $tgl_end)
+    {
+        $nama_dokumen = 'Laporan_pertanggung_jawaban_' . $tgl_start . '_' . $tgl_end . '';
+        $data['tgl1'] = $tgl_start;
+        $data['tgl2'] = $tgl_end;
+        // $p = $this->cetak_model->get_data_bank_vou($bank, $tgl_start, $tgl_end)->row();
+        // $dt = $p->ACCTNO;
+        $data['saldo'] = $this->cetak_model->get_list_all_lpj()->result();
+        // var_dump($data['saldo']) . die();
+        // $data['saldo'] = $saldo->saldonya;
+        $data['namapt']  = $this->main_model->get_pt()->row_array();
+
+        // var_dump($data['saldo']) . die();
+
+        $this->load->library('mpdf/mpdf');
+
+        $mpdf = new mPDF([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            // 'format' => [190, 236],
+            'margin_top' => '3',
+            'orientation' => 'P'
+        ]);
+        //Memulai proses untuk menyimpan variabel php dan html
+        ob_start();
+
+        $this->load->view('cetak/cash_bank/lap_lpj_all', $data);
+
+        // $mpdf->setFooter('{PAGENO}');
+        //penulisan output selesai, sekarang menutup mpdf dan generate kedalam format pdf
+        $html = ob_get_contents(); //Proses untuk mengambil hasil dari OB..
+        ob_end_clean();
+        //Disini dimulai proses convert UTF-8, kalau ingin ISO-8859-1 cukup dengan mengganti $mpdf->WriteHTML($html);
+        $mpdf->WriteHTML(utf8_encode($html));
+        $mpdf->Output($nama_dokumen . ".pdf", 'I');
+        exit;
+    }
+
     public function cb_laporan_lpj($sumber, $tgl_start, $tgl_end)
     {
         if ($sumber == 1) {
@@ -175,6 +214,10 @@ class Cetak extends CI_Controller
             $coa = '100101021500000';
 
             # code...
+        } else {
+            /* semua kas */
+            $pdo = 0;
+            $coa = 0;
         }
 
 

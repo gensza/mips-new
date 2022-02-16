@@ -62,9 +62,16 @@
             var tgl_end = $("#tgl_akhir").val();
             //window.open(base_url+'cetak/cash_bank_lap_register/'+tgl_start+'/'+tgl_end+'');
 
+            if (sumber == 0) {
 
-            var url = '<?php echo base_url('cetak/cb_laporan_lpj/'); ?>';
-            newwindow = window.open(url + '/' + sumber + '/' + tgl_start + '/' + tgl_end + '/0', 'Perincian Aktivitas', '_blank');
+                var url = '<?php echo base_url('cetak/cb_laporan_lpj_gabungan/'); ?>';
+                newwindow = window.open(url + '/' + sumber + '/' + tgl_start + '/' + tgl_end + '/0', 'Laporan Pertanggung Jawaban', '_blank');
+            } else {
+
+                var url = '<?php echo base_url('cetak/cb_laporan_lpj/'); ?>';
+                newwindow = window.open(url + '/' + sumber + '/' + tgl_start + '/' + tgl_end + '/0', 'Laporan Pertanggung Jawaban', '_blank');
+            }
+
 
         });
 
@@ -140,14 +147,32 @@
                     <div class="form-group">
                         <label for="demo-vs-definput" class="control-label">Sumber Dana</label>
                         <div class="input-prepend">
-                            <select class="span17 form-control" name="sumber_dana" id="sumber_dana">
-                                <!-- <option value="0">-Pilih-</option> -->
-                                <option value="1">PDO Gaji</option>
-                                <option value="2">PDDO IM</option>
-                                <option value="3">PDDO GRTT</option>
-                                <option value="4">PDO Remise Kas</option>
-                                <option value="5">Dana Kontanan</option>
-                            </select>
+                            <?php if ($this->session->userdata('sess_nama_lokasi') == 'ESTATE') { ?>
+                                <select class="span17 form-control" name="sumber_dana" id="sumber_dana">
+                                    <option value="0">Gabungan</option>
+                                    <option value="1">PDO Gaji</option>
+                                    <option value="2">PDDO IM</option>
+                                    <option value="3">PDDO GRTT</option>
+                                    <option value="4">PDO Remise Kas</option>
+                                    <option value="5">Dana Kontanan</option>
+                                </select>
+                            <?php } else if ($this->session->userdata('sess_nama_lokasi') == 'PKS') { ?>
+                                <select class="span17 form-control" name="sumber_dana" id="sumber_dana">
+                                    <option value="0">Gabungan</option>
+                                    <option value="1">PDO Gaji</option>
+                                    <option value="2">PDDO IM</option>
+                                    <option value="4">PDO Remise Kas</option>
+                                </select>
+                            <?php } else { ?>
+                                <select class="span17 form-control" name="sumber_dana" id="sumber_dana">
+                                    <option value="0">Gabungan</option>
+                                    <option value="1">PDO Gaji</option>
+                                    <option value="2">PDDO IM</option>
+                                    <option value="3">PDDO GRTT</option>
+                                    <option value="4">PDO Remise Kas</option>
+                                    <option value="5">Dana Kontanan</option>
+                                </select>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
