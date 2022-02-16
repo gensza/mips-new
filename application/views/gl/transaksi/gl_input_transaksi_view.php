@@ -1003,6 +1003,7 @@ for ($i = 0; $i < 6; $i++) {
                   <option value="0">-Pilih-</option>
                   <option value="01">01</option>
                   <option value="02">02</option>
+                  <option value="03">03</option>
                   <option value="06">06</option>
                 </select>
               </div>
