@@ -81,7 +81,8 @@ class Users extends CI_Controller
 
 
         $data['nama']       = $this->input->post('nama', TRUE);
-        $data['email']      = $this->input->post('email', TRUE);
+        $data['dept']      = $this->input->post('dept', TRUE);
+        $data['level']      = $this->input->post('level', TRUE);
         $data['username']   = $this->input->post('username', TRUE);
         $data['pt']         = $this->input->post('pt', TRUE);
         $data['role']       = $this->input->post('role', TRUE);
@@ -99,7 +100,8 @@ class Users extends CI_Controller
     {
 
         $data['nama']          = $this->input->post('nama_edit', TRUE);
-        $data['email']         = $this->input->post('email_edit', TRUE);
+        $data['dept']         = $this->input->post('dept_edit', TRUE);
+        $data['level']         = $this->input->post('level_edit', TRUE);
         $data['idpengguna']    = $this->input->post('idpengguna', TRUE);
         $data['role_edit']     = $this->input->post('role_edit', TRUE);
         $data['pt_edit']        = $this->input->post('pt_edit', TRUE);
@@ -107,6 +109,14 @@ class Users extends CI_Controller
         $data['group_modul']   = $this->input->post('group_modul_edit', TRUE);
 
         $result = $this->users_model->update($data);
+        echo json_encode($result);
+    }
+
+
+    function get_pt()
+    {
+        $sql = "SELECT * FROM tb_pt ORDER BY nama_pt ASC";
+        $result =  $this->db->query($sql)->result();
         echo json_encode($result);
     }
 

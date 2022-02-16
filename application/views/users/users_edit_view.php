@@ -16,9 +16,8 @@
             },
             success: function(res) {
                 $("#nama_edit").val(res.nama);
-                $("#email_edit").val(res.email);
                 $("#role_edit").val(res.id_module_role);
-                $("#pt_edit").val(res.id_pt);
+                // $("#pt_edit").val(res.id_pt);
 
                 console.log(res.id_pt);
 
@@ -65,7 +64,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: base_url + 'login/get_pt',
+                    url: base_url + 'users/get_pt',
                     data: {},
                     dataType: 'json',
                     success: function(data) {
@@ -73,7 +72,7 @@
                         var $kategori = $('#pt_edit');
                         $kategori.append('<option value=0>-Pilih PT-</option>');
                         for (var i = 0; i < data.length; i++) {
-                            if (res.pt_edit == data[i].kode_pt) {
+                            if (res.id_pt == data[i].kode_pt) {
                                 $kategori.append('<option value=' + data[i].kode_pt + ' selected>' + data[i].nama_pt + '</option>');
                             } else {
                                 $kategori.append('<option value=' + data[i].kode_pt + '>' + data[i].nama_pt + '</option>');
@@ -97,6 +96,43 @@
                                 $kategori.append('<option value=' + data[i].valueid + ' selected>' + data[i].nama + '</option>');
                             } else {
                                 $kategori.append('<option value=' + data[i].valueid + '>' + data[i].nama + '</option>');
+                            }
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: base_url + 'role/dept',
+                    data: {},
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#dept_edit').empty();
+                        var $kategori = $('#dept_edit');
+                        $kategori.append('<option value=0 selected> -Pilih Departement- </option>');
+                        for (var i = 0; i < data.length; i++) {
+                            if (res.kode_dept == data[i].kode) {
+                                $kategori.append('<option value=' + data[i].kode + ' selected>' + data[i].nama + '</option>');
+                            } else {
+                                $kategori.append('<option value=' + data[i].kode + '>' + data[i].nama + '</option>');
+                            }
+                        }
+                    }
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: base_url + 'role/level',
+                    data: {},
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#level_edit').empty();
+                        var $kategori = $('#level_edit');
+                        $kategori.append('<option value=0 selected> -Pilih Departement- </option>');
+                        for (var i = 0; i < data.length; i++) {
+                            if (res.kode_level == data[i].kode_level) {
+                                $kategori.append('<option value=' + data[i].kode_level + ' selected>' + data[i].level + '</option>');
+                            } else {
+                                $kategori.append('<option value=' + data[i].kode_level + '>' + data[i].level + '</option>');
                             }
                         }
                     }
@@ -177,8 +213,12 @@
             </div>
 
             <div class="form-group">
-                <label for="demo-vs-definput" class="control-label">Email</label>
-                <input type="text" id="email_edit" name="email_edit" class="form-control">
+                <label for="demo-vs-definput" class="control-label">Departement</label>
+                <select class="form-control" name="dept_edit" id="dept_edit"></select>
+            </div>
+            <div class="form-group">
+                <label for="demo-vs-definput" class="control-label">Level</label>
+                <select class="form-control" name="level_edit" id="level_edit"></select>
             </div>
 
             <div class="form-group">

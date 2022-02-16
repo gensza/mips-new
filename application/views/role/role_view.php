@@ -17,6 +17,7 @@ $('.dataTables_length').addClass('bs-select');
             async : 'false',
             success: function(result)
             {
+                console.log(result);
                 var data = [];
                 for ( var i=0 ; i<result.length ; i++ ) {
                     var no = i+1;

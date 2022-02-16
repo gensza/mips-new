@@ -22,7 +22,7 @@ class Users_model extends CI_Model
 
     function data()
     {
-        $sql = "SELECT  a.nama, a.email, a.id, b.nama AS nama_role, a.username, c.nama_pt as nama_pt, d.nama as nama_lokasi, e.nama as groupmodul FROM users AS a INNER JOIN module_role AS b ON a.id_module_role = b.id AND b.is_deleted = 0 INNER JOIN tb_pt AS c ON a.id_pt = c.kode_pt INNER JOIN codegroup AS d ON a.id_lokasi = d.value and d.group_n = 'LOKASI_USERS' LEFT JOIN codegroup AS e ON a.group_modul = e.value AND e.group_n = 'GROUP_MODULE' WHERE a.is_deleted = 0 ORDER BY a.id ASC";
+        $sql = "SELECT  a.nama, a.dept, a.id, b.nama AS nama_role, a.username, c.nama_pt as nama_pt, d.nama as nama_lokasi, e.nama as groupmodul FROM users AS a INNER JOIN module_role AS b ON a.id_module_role = b.id AND b.is_deleted = 0 INNER JOIN tb_pt AS c ON a.id_pt = c.kode_pt INNER JOIN codegroup AS d ON a.id_lokasi = d.value and d.group_n = 'LOKASI_USERS' LEFT JOIN codegroup AS e ON a.group_modul = e.value AND e.group_n = 'GROUP_MODULE' WHERE a.is_deleted = 0 ORDER BY a.id ASC";
         return $this->db->query($sql);
     }
 
@@ -37,8 +37,14 @@ class Users_model extends CI_Model
 
         $username = $this->username();
 
+        $dept = $this->db->query("SELECT * FROM dept WHERE kode='$data[dept]'")->row();
+        $level = $this->db->query("SELECT * FROM level_user WHERE kode_level='$data[level]'")->row();
+
         $d['nama'] = $data['nama'];
-        $d['email'] = $data['email'];
+        $d['kode_dept'] = $dept->kode;
+        $d['dept'] = $dept->nama;
+        $d['kode_level'] = $level->kode_level;
+        $d['level'] = $level->level;
         $d['id_pt'] = $data['pt'];
         $d['id_module_role'] = $data['role'];
         $d['id_lokasi'] = $data['lokasi'];
@@ -57,9 +63,15 @@ class Users_model extends CI_Model
     {
 
         $username = $this->username();
+        $dept = $this->db->query("SELECT * FROM dept WHERE kode='$data[dept]'")->row();
+        $level = $this->db->query("SELECT * FROM level_user WHERE kode_level='$data[level]'")->row();
+
 
         $sql = "UPDATE users SET nama           = '$data[nama]',
-                                email           = '$data[email]',
+                                kode_dept           = '$dept->kode',
+                                dept           = '$dept->nama',
+                                kode_level           = '$level->kode_level',
+                                level           = '$level->level',
                                 id_module_role  = '$data[role_edit]',
                                 id_pt           = '$data[pt_edit]',
                                 id_lokasi           = '$data[lokasi]',

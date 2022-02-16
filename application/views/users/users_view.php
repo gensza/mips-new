@@ -24,7 +24,7 @@
 
                         var link_edit = "<a href='javascript:void(0)' onclick=\"getpopup('users/edit','" + tokens + "','popupedit','" + result[i].id + "');\"><div class='btn btn-default' title='Akses' ><i class='splashy-contact_blue_edit'></i></div></a>";
 
-                        data.push([no, result[i].nama, result[i].nama_pt, result[i].username, result[i].email, result[i].nama_role, result[i].nama_lokasi, result[i].groupmodul, link_edit]);
+                        data.push([no, result[i].nama, result[i].nama_pt, result[i].username, result[i].dept, result[i].nama_role, result[i].nama_lokasi, result[i].groupmodul, link_edit]);
 
                     }
 
@@ -88,6 +88,46 @@
             /* select Kategori */
         }
         get_data_group_modul();
+        /* dept */
+        var get_data_dept = function() {
+            /* select role */
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'role/dept',
+                data: {},
+                dataType: 'json',
+                success: function(data) {
+                    $('#dept').empty();
+                    var $kategori = $('#dept');
+                    $kategori.append('<option value=0 selected> -Pilih Departement- </option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $kategori.append('<option value=' + data[i].kode + '>' + data[i].nama + '</option>');
+                    }
+                }
+            });
+            /* select Kategori */
+        }
+        get_data_dept();
+        /* dept */
+        var get_data_level = function() {
+            /* select role */
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'role/level',
+                data: {},
+                dataType: 'json',
+                success: function(data) {
+                    $('#level').empty();
+                    var $kategori = $('#level');
+                    $kategori.append('<option value=0 selected> -Pilih Level- </option>');
+                    for (var i = 0; i < data.length; i++) {
+                        $kategori.append('<option value=' + data[i].kode_level + '>' + data[i].level + '</option>');
+                    }
+                }
+            });
+            /* select Kategori */
+        }
+        get_data_level();
 
         var get_data_users = function() {
             /* select role */
@@ -139,8 +179,8 @@
                 Command: toastr["warning"]("Silahkan masukan nama !", "Opps !");
                 $("#nama").focus();
             }
-            else if ($("#email").val() == '') {
-                Command: toastr["warning"]("Silahkan masukan email !", "Opps !");
+            else if ($("#dept").val() == '') {
+                Command: toastr["warning"]("Silahkan Departement !", "Opps !");
                 $("#email").focus();
             }
             else if ($("#role").val() == 0) {
@@ -191,7 +231,7 @@
                                 pt: $("#pt").val(),
                                 nama: $("#nama").val(),
                                 username: $("#username").val(),
-                                email: $("#email").val(),
+                                dept: $("#dept").val(),
                                 role: $("#role").val(),
                                 password: $("#pass_word").val(),
                                 group_modul: $("#group_modul").val(),
@@ -205,7 +245,7 @@
                                     data_users();
                                     get_pt();
                                     $("#nama").val('');
-                                    $("#email").val('');
+                                    $("#dept").val(0);
                                     $("#role").val(0);
                                     $("#pt").val(0);
                                     $("#group_modul").val(0);
@@ -293,8 +333,12 @@ for ($i = 0; $i < 5; $i++) {
             <input type="text" id="nama" name="nama" class="form-control">
         </div>
         <div class="form-group">
-            <label for="demo-vs-definput" class="control-label">Email </label>
-            <input type="email" id="email" name="email" class="form-control">
+            <label for="demo-vs-definput" class="control-label">Departement</label>
+            <select class="form-control" name="dept" id="dept"></select>
+        </div>
+        <div class="form-group">
+            <label for="demo-vs-definput" class="control-label">Level</label>
+            <select class="form-control" name="level" id="level"></select>
         </div>
         <div class="form-group">
             <label for="demo-vs-definput" class="control-label">Role </label>
@@ -336,7 +380,7 @@ for ($i = 0; $i < 5; $i++) {
                         <th style="width: 20%">Nama Role</th>
                         <th style="width: 20%">PT / Site</th>
                         <th style="width: 10%">Username</th>
-                        <th style="width: 10%">Email</th>
+                        <th style="width: 10%">Dept</th>
                         <th style="width: 10%">Role</th>
                         <th style="width: 10%">Lokasi</th>
                         <th style="width: 10%">Modul</th>
