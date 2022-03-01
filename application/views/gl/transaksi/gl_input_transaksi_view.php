@@ -374,7 +374,7 @@
     $('.maskmoney_money').maskMoney({
       thousands: ',',
       decimal: '.',
-      precision: 2,
+      precision: 0,
     });
     $('.maskmoney_money_kurs').maskMoney({
       thousands: ',',
