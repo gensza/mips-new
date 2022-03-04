@@ -127,6 +127,14 @@ class coa extends CI_Controller
             echo "<script> window.location = 'main/logout' </script>";
         }
     }
+
+    function approved_coa()
+    {
+        $id = $this->input->post('id', TRUE);
+
+        /* update kodebar */
+        /* end update kodebar */
+    }
 }
 
 /* End of file coa.php */

@@ -62,8 +62,31 @@
                 closeOnConfirm: false
             },
             function() {
-
+                /* post to noac */
                 console.log('hello world');
+
+                $.ajax({
+                    url: base_url + 'coa/approved_coa',
+                    type: "post",
+                    data: {
+                        id: id,
+                        <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+                    },
+                    dataType: "json",
+                    async: 'false',
+                    success: function(result) {
+
+                        console.log('oke siappp');
+                    },
+                    beforeSend: function() {
+                        //loadingPannel.show();
+                    },
+                    complete: function() {
+                        //loadingPannel.hide();
+                        //$('#tabel_detail_caba').show();
+                    }
+                });
+                /* end noac */
             });
     }
 
