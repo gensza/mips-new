@@ -231,6 +231,7 @@
                                 pt: $("#pt").val(),
                                 nama: $("#nama").val(),
                                 username: $("#username").val(),
+                                level: $("#level").val(),
                                 dept: $("#dept").val(),
                                 role: $("#role").val(),
                                 password: $("#pass_word").val(),

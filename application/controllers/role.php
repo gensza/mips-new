@@ -84,6 +84,18 @@ class Role extends CI_Controller
         echo json_encode($result);
     }
 
+    public function kode()
+    {
+        $kode = $this->input->post('kode');
+        $result = $this->db->query("SELECT kode_level FROM level_user WHERE kode_level='$kode'")->num_rows();
+        echo json_encode($result);
+    }
+    public function data_level()
+    {
+        $result = $this->role_model->data_level()->result_array();
+        echo json_encode($result);
+    }
+
     public function data_by_users()
     {
         $result = $this->role_model->data_by_users()->result_array();
@@ -95,6 +107,14 @@ class Role extends CI_Controller
     {
         $data['nama']    = $this->input->post('nama', TRUE);
         $result = $this->role_model->simpan($data);
+        echo json_encode($result);
+    }
+    public function simpan_level()
+    {
+        $data['kode_level']    = $this->input->post('kode', TRUE);
+        $data['level']    = $this->input->post('nama', TRUE);
+        $data['status_lokasi']    = $this->input->post('lokasi', TRUE);
+        $result = $this->role_model->simpan_level($data);
         echo json_encode($result);
     }
 

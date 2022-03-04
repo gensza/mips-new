@@ -10,6 +10,7 @@ class Users extends CI_Controller
         $this->load->model('main_model');
         $this->load->model('users_model');
         $this->load->library('cipasswordhash');
+        // $this->load->library('bcrypt');
     }
 
     public function index()
@@ -79,6 +80,15 @@ class Users extends CI_Controller
         $key  = $this->config->item('encryption_key');
         $pass = $this->input->post('password', TRUE);
 
+        if ($this->input->post('role', TRUE) == 4) {
+            $password = password_hash($pass, PASSWORD_DEFAULT);
+            # code...
+        } else {
+            $password =  $this->cipasswordhash->create_hash($pass, $key);
+            # code...
+        }
+
+
 
         $data['nama']       = $this->input->post('nama', TRUE);
         $data['dept']      = $this->input->post('dept', TRUE);
@@ -86,7 +96,7 @@ class Users extends CI_Controller
         $data['username']   = $this->input->post('username', TRUE);
         $data['pt']         = $this->input->post('pt', TRUE);
         $data['role']       = $this->input->post('role', TRUE);
-        $data['password']   = $this->cipasswordhash->create_hash($pass, $key);
+        $data['password']   = $password;
         $data['lokasi']     = $this->input->post('lokasi', TRUE);
         $data['group_modul'] = $this->input->post('group_modul', TRUE);
 

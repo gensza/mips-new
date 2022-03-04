@@ -18,31 +18,31 @@
                     foreach ($modules as $d) {
                         if ($d['position'] == 2 and $d['have_child'] == 'Y' and $d['parent'] == $mod['id']) {
 
-                            if (($d['name'] == 'Income Statement' or $d['name'] == 'Balance' or $d['name'] == 'Report PKRM' or $d['name'] == 'Financial Conditions') and ($this->session->userdata('sess_nama_lokasi') == 'ESTATE' or $this->session->userdata('sess_nama_lokasi') == 'PKS')) {
-                            } else {
+                            // if (($d['name'] == 'Income Statement' or $d['name'] == 'Balance' or $d['name'] == 'Report PKRM' or $d['name'] == 'Financial Conditions') and ($this->session->userdata('sess_nama_lokasi') == 'ESTATE' or $this->session->userdata('sess_nama_lokasi') == 'PKS')) {
+                            // } else {
 
-                                echo '<li class="dropdown">
-                                    <a class="line_menu" href="javascript:void(0)" onclick=getcontents("' . $d['controller'] . '","' . $this->session->userdata('sess_token') . '")>' . $d['name'] . '<b class="caret-right"></b></a>
-                                        <ul class="dropdown-menu">';
-                                foreach ($modules as $ex) {
-                                    if ($ex['position'] == 3 and $ex['parent'] == $d['id']) {
-                                        echo '<li><a href="javascript:void(0)" onclick=getcontents("' . $ex['controller'] . '","' . $this->session->userdata('sess_token') . '");><span class="fa fa-dot-circle-o"></span> ' . $ex['name'] . '</a></li>';
-                                    }
+                            // }
+                            echo '<li class="dropdown">
+                                <a class="line_menu" href="javascript:void(0)" onclick=getcontents("' . $d['controller'] . '","' . $this->session->userdata('sess_token') . '")>' . $d['name'] . '<b class="caret-right"></b></a>
+                                    <ul class="dropdown-menu">';
+                            foreach ($modules as $ex) {
+                                if ($ex['position'] == 3 and $ex['parent'] == $d['id']) {
+                                    echo '<li><a href="javascript:void(0)" onclick=getcontents("' . $ex['controller'] . '","' . $this->session->userdata('sess_token') . '");><span class="fa fa-dot-circle-o"></span> ' . $ex['name'] . '</a></li>';
                                 }
-                                echo '</ul>
-                          </li>';
                             }
+                            echo '</ul>
+                      </li>';
                         } else if ($d['position'] == 2 and $d['have_child'] == 'N' and $d['parent'] == $mod['id']) {
 
-                            if (($d['name'] == 'Income Statement' or $d['name'] == 'Balance' or $d['name'] == 'Report PKRM' or $d['name'] == 'Financial Conditions') and ($this->session->userdata('sess_nama_lokasi') == 'ESTATE' or $this->session->userdata('sess_nama_lokasi') == 'PKS')) {
-                            } else {
+                            // if (($d['name'] == 'Income Statement' or $d['name'] == 'Balance' or $d['name'] == 'Report PKRM' or $d['name'] == 'Financial Conditions') and ($this->session->userdata('sess_nama_lokasi') == 'ESTATE' or $this->session->userdata('sess_nama_lokasi') == 'PKS')) {
+                            // } else {
 
-                                if ($d['line'] == 1) {
-                                    //ini bedasnya ditambah class line_menu
-                                    echo '<li><a class="line_menu" href="javascript:void(0)" onclick=getcontents("' . $d['controller'] . '","' . $this->session->userdata('sess_token') . '")>' . $d['name'] . '</a></li>';
-                                } else {
-                                    echo '<li><a href="javascript:void(0)" onclick=getcontents("' . $d['controller'] . '","' . $this->session->userdata('sess_token') . '")>' . $d['name'] . '</a></li>';
-                                }
+                            // }
+                            if ($d['line'] == 1) {
+                                //ini bedasnya ditambah class line_menu
+                                echo '<li><a class="line_menu" href="javascript:void(0)" onclick=getcontents("' . $d['controller'] . '","' . $this->session->userdata('sess_token') . '")>' . $d['name'] . '</a></li>';
+                            } else {
+                                echo '<li><a href="javascript:void(0)" onclick=getcontents("' . $d['controller'] . '","' . $this->session->userdata('sess_token') . '")>' . $d['name'] . '</a></li>';
                             }
                         }
                     }

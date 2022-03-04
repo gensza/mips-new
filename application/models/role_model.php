@@ -20,6 +20,11 @@ class Role_model extends CI_Model
         $sql = "SELECT * FROM module_role WHERE is_deleted = 0 ORDER BY id ASC";
         return $this->db->query($sql);
     }
+    function data_level()
+    {
+        $sql = "SELECT * FROM level_user ORDER BY id ASC";
+        return $this->db->query($sql);
+    }
 
     function group_modul()
     {
@@ -68,6 +73,18 @@ class Role_model extends CI_Model
                             VALUES ('$data[nama]',
                                     '$username',
                                     NOW())";
+
+        return $this->db->query($sql);
+    }
+    function simpan_level($data)
+    {
+        //$sql = "SELECT * FROM module WHERE is_deleted = 0 ORDER BY id ASC ";
+        $sql = "INSERT INTO level_user (status_lokasi,
+                                    kode_level,
+                                    `level`) 
+                            VALUES ('$data[status_lokasi]',
+                                    '$data[kode_level]',
+                                    '$data[level]')";
 
         return $this->db->query($sql);
     }
