@@ -30,13 +30,15 @@ $coa_general = '700501200800000';
     }
 </style>
 
+<title>Laba Rugi Biaya Langsung Kebun</title>
+
 <table width="100%" border="0" align="center" class="font-style">
     <tr>
         <!--<td rowspan="2" width="0%" height="10px"><img src="<?php echo base_url('assets/theme/adm2/img/logo.jpg'); ?>" style="width: 30px"></td>-->
         <td align="left" style="font-size:14px;font-style: italic;">PT MULIA SAWIT AGRO LESTARI</td>
     </tr>
     <tr>
-        <td align="center" style="font-size:16px;font-weight:bold;">Income Statement<br />
+        <td align="center" style="font-size:16px;font-weight:bold;">Income Statement (Biaya Langsung Kebun)<br />
         </td>
     </tr>
     <tr>
@@ -44,27 +46,29 @@ $coa_general = '700501200800000';
 
             Periode :
             <?php
-            if ($bln == 01) {
+            if ($bln == '01') {
                 echo 'Januari';
-            } else if ($bln == 02) {
+            } else if ($bln == '02') {
                 echo 'Februari';
-            } else if ($bln == 03) {
+            } else if ($bln == '03') {
                 echo 'Maret';
-            } else if ($bln == 04) {
+            } else if ($bln == '04') {
                 echo 'April';
-            } else if ($bln == 05) {
+            } else if ($bln == '05') {
                 echo 'Mei';
-            } else if ($bln == 06) {
+            } else if ($bln == '06') {
                 echo 'Juni';
-            } else if ($bln == 07) {
+            } else if ($bln == '07') {
                 echo 'Juli';
-            } else if ($bln == 08) {
+            } else if ($bln == '08') {
+                echo 'Agustus';
+            } else if ($bln == '09') {
                 echo 'September';
-            } else if ($bln == 09) {
+            } else if ($bln == '10') {
                 echo 'Oktober';
-            } else if ($bln == 10) {
+            } else if ($bln == '11') {
                 echo 'November';
-            } else if ($bln == 11) {
+            } else if ($bln == '12') {
                 echo 'Desember';
             }
 

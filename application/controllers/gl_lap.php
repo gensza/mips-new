@@ -435,9 +435,8 @@ class Gl_lap extends CI_Controller
 
 
 
-    function income_tahun_semua_by_level($periode_terkini, $param3)
+    function income_tahun_semua_by_level($periode_terkini, $level)
     {
-
 
         $thn   = substr($periode_terkini, 0, 4);
         $bln   = substr($periode_terkini, 4, 6);
@@ -564,7 +563,7 @@ class Gl_lap extends CI_Controller
     }
 
 
-    function balance_tahun_level_2($periode_terkini, $param2, $param3)
+    function balance_tahun_level_2($periode_terkini, $level, $param3)
     {
 
         $thn   = substr($periode_terkini, 0, 4);
@@ -572,7 +571,7 @@ class Gl_lap extends CI_Controller
 
 
         $data['bln'] = $bln;
-        $data['level'] = $param2; // ini bisa diubah fleksibel
+        $data['level'] = $level; // ini bisa diubah fleksibel
 
         $data['aset_lancar']       = $this->gl_lap_model->balance_aset_lancar_tahunan($bln, $level)->result_array();
         $data['aset_tidak_lancar'] = $this->gl_lap_model->balance_aset_tidak_lancar_tahunan($bln, $level)->result_array();

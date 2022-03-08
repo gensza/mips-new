@@ -25,13 +25,15 @@ $account_labarugi = '504500000000000';
     }
 </style>
 
+<title>Laba Rugi Semua Level</title>
+
 <table width="100%" border="0" align="center" class="font-style">
     <tr>
         <!--<td rowspan="2" width="0%" height="10px"><img src="<?php echo base_url('assets/theme/adm2/img/logo.jpg'); ?>" style="width: 30px"></td>-->
         <td align="left" style="font-size:14px;font-style: italic;">PT MULIA SAWIT AGRO LESTARI</td>
     </tr>
     <tr>
-        <td align="center" style="font-size:16px;font-weight:bold;">Detail Income Statement<br />
+        <td align="center" style="font-size:16px;font-weight:bold;">Detail Income Statement (All Level)<br />
         </td>
     </tr>
     <tr>
