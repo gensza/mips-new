@@ -5,6 +5,8 @@
         var id_row = '<?php echo $id_row; ?>';
 
 
+        loading_coa();
+
 
         $('#tabel_approved').DataTable().destroy();
         $('#tabel_approved').DataTable({
@@ -63,20 +65,34 @@
             },
             function() {
                 /* post to noac */
-                console.log('hello world');
+                // console.log('hello world');
+                swal.close();
+                $('#' + '<?php echo $id_modal; ?>').modal('hide');
+                loadingPannel.show();
 
                 $.ajax({
                     url: base_url + 'coa/approved_coa',
                     type: "post",
                     data: {
                         id: id,
+                        nama: $('#nama_' + id).val(),
+                        grp: $('#grp_coa_' + id).val(),
                         <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
                     },
                     dataType: "json",
                     async: 'false',
                     success: function(result) {
+                        console.log(result);
+                        if (result.hasilitemppo == true) {
+                            loadingPannel.hide();
 
-                        console.log('oke siappp');
+
+                            // swal("Good job!", "You clicked the button!", "success");
+                            Command: toastr["success"]("COA berhasil dibuatkan", "Berhasil");
+                            data_coa()
+                        } else {
+
+                        }
                     },
                     beforeSend: function() {
                         //loadingPannel.show();

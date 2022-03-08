@@ -337,6 +337,30 @@
         })();
     }
 
+    function loading_coa() {
+        loadingPannel = (function() {
+            var lpDialog = $("" +
+                "<div class='modal' id='lpDialog' data-backdrop='static' data-keyboard='false' style='border-color:#0080FF;width: 150px;height: 10px;margin:0 auto;display:table;position: absolute;left: 0;right:0;top: 50%;position: absolute;border:1px solid;-webkit-transform:translateY(-50%);-moz-transform:translateY(-50%);-ms-transform:translateY(-50%);-o-transform:translateY(-50%);transform:translateY(-50%);'>" +
+                "<div class='modal-dialog' >" +
+                "<div class='modal-content'>" +
+                //"<div class='modal-header'><b>Loading...</b></div>" + //Processing
+                "<div class='modal-body'>" +
+                "<div style='text-align:center'><img src='<?php echo base_url('assets/theme/adm2/img/ajax_loader.gif'); ?>'> <br> Proses Simpan...</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>");
+            return {
+                show: function() {
+                    lpDialog.modal('show');
+                },
+                hide: function() {
+                    lpDialog.modal('hide');
+                }
+            };
+        })();
+    }
+
     function loading_show() {
 
         $("#loading-spin").show();

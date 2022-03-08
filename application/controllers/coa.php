@@ -131,9 +131,27 @@ class coa extends CI_Controller
     function approved_coa()
     {
         $id = $this->input->post('id', TRUE);
+        // $nabar = $this->input->post('nabar', TRUE);
+        $grp = $this->input->post('grp', TRUE);
 
-        /* update kodebar */
-        /* end update kodebar */
+        /* ambil kode barang */
+        $kode_barang = $this->get_coa_approved->get_kode_barang($grp);
+        $kodebar = $kode_barang + 1;
+        /* update kodebar di item_ppo_tmp */
+        $hasil = $this->get_coa_approved->update_kodebar($id, $kodebar);
+        /* end */
+
+        /* insert coa baru */
+        $kodebarang = $this->get_coa_approved->save_kode_barang($id, $kodebar, $grp);
+        $noac = $this->get_coa_approved->save_coa_baru($id, $kodebar, $grp);
+        /* end insert coa baru */
+
+        /* proses pindah ppo_tmp dan item_ppo_tmp */
+        $dt = $this->get_coa_approved->cut_data_ppo_tmp($id);
+        /* end */
+
+
+        echo json_encode($dt);
     }
 }
 

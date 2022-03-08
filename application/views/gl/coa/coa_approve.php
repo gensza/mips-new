@@ -43,6 +43,7 @@
                 searchPlaceholder: 'Cari',
                 sSearch: '',
                 lengthMenu: '_MENU_',
+                "infoFiltered": ""
             },
         });
 
