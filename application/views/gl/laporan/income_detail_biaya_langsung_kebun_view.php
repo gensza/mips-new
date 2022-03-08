@@ -1,5 +1,4 @@
-
-<?php 
+<?php
 $prd = $this->uri->segment(3);
 $thn = substr($prd, 0, 4);
 $bln = substr($prd, 4, 6);
@@ -16,124 +15,121 @@ $coa_general = '700501200800000';
 ?>
 
 <style>
-   
-    
-    
     .spinner-wrapper {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background-color: #ff6347;
-z-index: 999999;
-}
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ff6347;
+        z-index: 999999;
+    }
 
-body {
-  font-family: Verdana, Geneva, sans-serif;
-}
-
+    body {
+        font-family: Verdana, Geneva, sans-serif;
+    }
 </style>
 
 <table width="100%" border="0" align="center" class="font-style">
-                                <tr>
-                                    <!--<td rowspan="2" width="0%" height="10px"><img src="<?php echo base_url('assets/theme/adm2/img/logo.jpg');?>" style="width: 30px"></td>-->
-                                    <td align="left" style="font-size:14px;font-style: italic;">PT MULIA SAWIT AGRO LESTARI</td>
-                                </tr>
-                                <tr>
-                                    <td align="center" style="font-size:16px;font-weight:bold;">Income Statement<br /> 
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="center">
-                                      
-                                      Periode : 
-                                        <?php 
-                                            if($bln == 01){
-                                                echo 'Januari';
-                                            }else if($bln == 02){
-                                                echo 'Februari';
-                                            }else if($bln == 03){
-                                                echo 'Maret';
-                                            }else if($bln == 04){
-                                                echo 'April';
-                                            }else if($bln == 05){
-                                                echo 'Mei';
-                                            }else if($bln == 06){
-                                                echo 'Juni';
-                                            }else if($bln == 07){
-                                                echo 'Juli';
-                                            }else if($bln == 08){
-                                                echo 'September';
-                                            }else if($bln == 09){
-                                                echo 'Oktober';
-                                            }else if($bln == 10){
-                                                echo 'November';
-                                            }else if($bln == 11){
-                                                echo 'Desember';
-                                            }
-                                            
-                                            echo ', '.$thn;
-                                        ?>
+    <tr>
+        <!--<td rowspan="2" width="0%" height="10px"><img src="<?php echo base_url('assets/theme/adm2/img/logo.jpg'); ?>" style="width: 30px"></td>-->
+        <td align="left" style="font-size:14px;font-style: italic;">PT MULIA SAWIT AGRO LESTARI</td>
+    </tr>
+    <tr>
+        <td align="center" style="font-size:16px;font-weight:bold;">Income Statement<br />
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
 
-                                       
-                                    </td>
-                                </tr>
-                            </table>
+            Periode :
+            <?php
+            if ($bln == 01) {
+                echo 'Januari';
+            } else if ($bln == 02) {
+                echo 'Februari';
+            } else if ($bln == 03) {
+                echo 'Maret';
+            } else if ($bln == 04) {
+                echo 'April';
+            } else if ($bln == 05) {
+                echo 'Mei';
+            } else if ($bln == 06) {
+                echo 'Juni';
+            } else if ($bln == 07) {
+                echo 'Juli';
+            } else if ($bln == 08) {
+                echo 'September';
+            } else if ($bln == 09) {
+                echo 'Oktober';
+            } else if ($bln == 10) {
+                echo 'November';
+            } else if ($bln == 11) {
+                echo 'Desember';
+            }
 
-                            <br><!-- Periode : 01/02/2019 - 31/01/2019 -->
+            echo ', ' . $thn;
+            ?>
+
+
+        </td>
+    </tr>
+</table>
+
+<br><!-- Periode : 01/02/2019 - 31/01/2019 -->
 
 <style type="text/css">
-table {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    border-collapse: collapse;
-}
+    table {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        border-collapse: collapse;
+    }
 
-.tbl_tr{
-  border-bottom:1pt solid black;
-}
+    .tbl_tr {
+        border-bottom: 1pt solid black;
+    }
 
-.tbl_tr_top{
-  border-bottom:1pt solid black;
-  border-top:1pt solid black;
-}
-.wd_table{
-    width:10%;
-}
+    .tbl_tr_top {
+        border-bottom: 1pt solid black;
+        border-top: 1pt solid black;
+    }
+
+    .wd_table {
+        width: 10%;
+    }
 </style>
 
 <div style="padding-left:300px">
-   
-<table width="70%" border="0" class="font-style">
-    <tr>
-        <td align="left" style="font-style: italic;">
-            <table width="100%" border="0" align="center" class="font-styles">
-                <tr>
-                    <td align="left" style="font-style: italic;">Generated By System MIPS - GL</td>
-                </tr>
-                <tr>
-                    <td align="left" style="font-style: italic;">MIS - MSAL GROUP</td>
-                </tr>
-            </table>
-        </td>
-        <td align="right" style="font-style: italic;">
-            <div style="width: 100%;text-align: right;font-size: 10px" class="font-styles">
-                Tanggal : <?php echo date("m/d/Y");?>
-                <br>
-                Waktu   : <?php 
-                date_default_timezone_set("Asia/Bangkok");
-                echo date("h:i:s a",time());?>
-            </div>
-        </td>
-    </tr>
-</table>      
-<br>    
-<table border="1" width="70%" class="font-style" >
-<tbody>
-    
-    
-<!-- KATEGORI 
+
+    <table width="70%" border="0" class="font-style">
+        <tr>
+            <td align="left" style="font-style: italic;">
+                <table width="100%" border="0" align="center" class="font-styles">
+                    <tr>
+                        <td align="left" style="font-style: italic;">Generated By System MIPS - GL</td>
+                    </tr>
+                    <tr>
+                        <td align="left" style="font-style: italic;">MIS - MSAL GROUP</td>
+                    </tr>
+                </table>
+            </td>
+            <td align="right" style="font-style: italic;">
+                <div style="width: 100%;text-align: right;font-size: 10px" class="font-styles">
+                    Tanggal : <?php echo date("m/d/Y"); ?>
+                    <br>
+                    Waktu : <?php
+                            date_default_timezone_set("Asia/Bangkok");
+                            echo date("h:i:s a", time()); ?>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <table border="1" width="70%" class="font-style">
+        <tbody>
+
+
+            <!-- KATEGORI 
 
 if {noac.group}="Revenue"then  "PENDAPATAN"
 else if {noac.group}="Expenses" THEN
@@ -142,443 +138,455 @@ else if {noac.group}="Expenses" THEN
 
 else if {noac.group}="Other Expenses" then "BIAYA LAINNYA"
 else if {noac.group}="Other Revenue" then "PENDAPATAN LAINNYA"-->
-    
-    
-<!-- START PENDAPATAN -->    
-<tr>
-    <td style="font-weight:bold;height: 30px;font-size:15px">&nbsp;
-        PENDAPATAN <!-- Revenue -->
-    </td>
-    <td>&nbsp;&nbsp; </td>
-</tr>
-<?php
-$tot_re;
-foreach ($ic_revenue as $a){
-?>
-<tr>
-    <td><div style="padding-left:<?php echo $a['level'];?>0px"><?php echo $a['nama'];?></div></td>
-    <td align="right">&nbsp;
-    <?php 
-    if($a['level'] == $lo_level2){
-        
-        if($bln == '01'){
-            $sal_re = (($a['saldo01c'])-($a['saldo01d'])*-1);
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re; 
-        }else if($bln == '02'){
-            $sal_re = ($a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }else if($bln == '03'){
-            $sal_re = ($a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }else if($bln == '04'){
-            $sal_re = ($a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }else if($bln == '05'){
-            $sal_re = ($a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }else if($bln == '06'){
-           $sal_re = ($a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d'])*-1;
-           echo number_format($sal_re, 0);
-           $tot_re +=$sal_re;
-        }else if($bln == '07'){
-            $sal_re = ($a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }else if($bln == '08'){
-            $sal_re = ($a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }else if($bln == '09'){
-            $sal_re = ($a['saldo09c']+$a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d']+$a['saldo09d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }else if($bln == '10'){
-            $sal_re = ($a['saldo10c']+$a['saldo09c']+$a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d']+$a['saldo09d']+$a['saldo10d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }else if($bln == '11'){
-            $sal_re = ($a['saldo11c']+$a['saldo10c']+$a['saldo09c']+$a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d']+$a['saldo09d']+$a['saldo10d']+$a['saldo11d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }else if($bln == '12'){
-            $sal_re = ($a['saldo12c']+$a['saldo11c']+$a['saldo10c']+$a['saldo09c']+$a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d']+$a['saldo09d']+$a['saldo10d']+$a['saldo11d']+$a['saldo12d'])*-1;
-            echo number_format($sal_re, 0);
-            $tot_re +=$sal_re;
-        }
-        
-    }else if($a['level'] == $lo_level5){
-        
-        if($bln == '01'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo01d']-$a['saldo01c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
+
+
+            <!-- START PENDAPATAN -->
+            <tr>
+                <td style="font-weight:bold;height: 30px;font-size:15px">&nbsp;
+                    PENDAPATAN
+                    <!-- Revenue -->
+                </td>
+                <td>&nbsp;&nbsp; </td>
+            </tr>
+            <?php
+            $tot_re;
+            foreach ($ic_revenue as $a) {
+            ?>
+                <tr>
+                    <td>
+                        <div style="padding-left:<?php echo $a['level']; ?>0px"><?php echo $a['nama']; ?></div>
+                    </td>
+                    <td align="right">&nbsp;
+                        <?php
+                        if ($a['level'] == $lo_level2) {
+
+                            if ($bln == '01') {
+                                $sal_re = (($a['saldo01c']) - ($a['saldo01d']) * -1);
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '02') {
+                                $sal_re = ($a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '03') {
+                                $sal_re = ($a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '04') {
+                                $sal_re = ($a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '05') {
+                                $sal_re = ($a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '06') {
+                                $sal_re = ($a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '07') {
+                                $sal_re = ($a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '08') {
+                                $sal_re = ($a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '09') {
+                                $sal_re = ($a['saldo09c'] + $a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d'] + $a['saldo09d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '10') {
+                                $sal_re = ($a['saldo10c'] + $a['saldo09c'] + $a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d'] + $a['saldo09d'] + $a['saldo10d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '11') {
+                                $sal_re = ($a['saldo11c'] + $a['saldo10c'] + $a['saldo09c'] + $a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d'] + $a['saldo09d'] + $a['saldo10d'] + $a['saldo11d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            } else if ($bln == '12') {
+                                $sal_re = ($a['saldo12c'] + $a['saldo11c'] + $a['saldo10c'] + $a['saldo09c'] + $a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d'] + $a['saldo09d'] + $a['saldo10d'] + $a['saldo11d'] + $a['saldo12d']) * -1;
+                                echo number_format($sal_re, 0);
+                                $tot_re += $sal_re;
+                            }
+                        } else if ($a['level'] == $lo_level5) {
+
+                            if ($bln == '01') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo01d'] - $a['saldo01c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '02') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '03') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '04') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '05') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '06') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '07') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '08') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '09') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '10') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo10d'] + $a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c'] + $a['saldo10c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '11') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo11d'] + $a['saldo10d'] + $a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c'] + $a['saldo10c'] + $a['saldo11c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            } else if ($bln == '12') {
+                                if ($a['general'] == $coa_general) {
+                                    $sal_re = ($a['saldo12d'] + $a['saldo11d'] + $a['saldo10d'] + $a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c'] + $a['saldo10c'] + $a['saldo11c'] + $a['saldo12c']);
+                                    echo number_format($sal_re, 0);
+                                    $tot_re += $sal_re;
+                                }
+                            }
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php
             }
-        }else if($bln == '02'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
+            ?>
+            <tr>
+                <td style="font-weight:bold;height: 20px">&nbsp; <i>JUMLAH PENDAPATAN</i> </td>
+                <td align="right">&nbsp;
+                    <?php
+                    echo '<b>' . number_format($tot_re, 0) . '</b>';
+                    ?>
+                </td>
+            </tr>
+            <!-- START PENDAPATAN -->
+
+
+
+
+
+            <!-- START HARGA POKOK PENJUALAN -->
+            <tr>
+                <td style="font-weight:bold;height: 30px;font-size:15px">&nbsp;
+                    HARGA POKOK PENJUALAN
+                    <!-- Revenue -->
+                </td>
+                <td>&nbsp;&nbsp; </td>
+            </tr>
+            <?php
+            $tot_xe;
+            foreach ($ic_expenses as $a) {
+            ?>
+                <tr>
+                    <td>
+                        <div style="padding-left:<?php echo $a['level']; ?>0px"><?php echo $a['nama']; ?></div>
+                    </td>
+                    <td align="right">
+                        <?php
+                        if ($bln == '01') {
+                            $sal_ex = ($a['saldo01c'] - $a['saldo01d']);
+                            echo number_format($sal_ex, 0);
+                            $tot_xe += $sal_ex;
+                        } else if ($bln == '02') {
+                            $sal_ex = ($a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '03') {
+                            $sal_ex = ($a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) + ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '04') {
+                            $sal_ex = ($a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '05') {
+                            $sal_ex = ($a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '06') {
+                            $sal_ex = ($a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '07') {
+                            $sal_ex = ($a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '08') {
+                            $sal_ex = ($a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '09') {
+                            $sal_ex = ($a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '10') {
+                            $sal_ex = ($a['saldo10d'] + $a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c'] + $a['saldo10c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '11') {
+                            $sal_ex = ($a['saldo11d'] + $a['saldo10d'] + $a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c'] + $a['saldo10c'] + $a['saldo11c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        } else if ($bln == '12') {
+                            $sal_ex = ($a['saldo12d'] + $a['saldo11d'] + $a['saldo10d'] + $a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c'] + $a['saldo10c'] + $a['saldo11c'] + $a['saldo12c']);
+                            echo number_format($sal_ex, 0);
+                            $tot_ex += $sal_ex;
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php
             }
-        }else if($bln == '03'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
+            ?>
+            <tr>
+                <td style="font-weight:bold;height: 20px">&nbsp; <i>JUMLAH HARGA POKOK PENJUALAN</i> </td>
+                <td align="right">&nbsp;
+                    <?php
+                    echo '<b>' . number_format($tot_ex, 0) . '</b>';
+                    ?>
+                </td>
+            </tr>
+            <!-- END HARGA POKOK PENJUALAN -->
+
+
+            <tr>
+                <td style="font-weight:bold;height: 30px;font-size: 17px">&nbsp;
+                    LABA KOTOR
+                    <!-- Other Expenses -->
+                </td>
+                <td>&nbsp;&nbsp; </td>
+            </tr>
+
+
+            <!-- START BIAYA LAINNYA -->
+            <tr>
+                <td style="font-weight:bold;height: 30px">&nbsp;
+                    BIAYA LAINNYA
+                    <!-- Other Expenses -->
+                </td>
+                <td>&nbsp;&nbsp; </td>
+            </tr>
+            <?php
+            $tot_or;
+            foreach ($ic_other_revenue as $a) {
+            ?>
+                <tr>
+                    <td>
+                        <div style="padding-left:<?php echo $a['level']; ?>0px"><?php echo $a['nama']; ?></div>
+                    </td>
+                    <td align="right">&nbsp;
+                        <?php
+                        if ($bln == '01') {
+                            $sal_or = ($a['saldo01c'] - $a['saldo01d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '02') {
+                            $sal_or = ($a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '03') {
+                            $sal_or = ($a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '04') {
+                            $sal_or = ($a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '05') {
+                            $sal_or = ($a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '06') {
+                            $sal_or = ($a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '07') {
+                            $sal_or = ($a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '08') {
+                            $sal_or = ($a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '09') {
+                            $sal_or = ($a['saldo09c'] + $a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d'] + $a['saldo09d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '10') {
+                            $sal_or = ($a['saldo10c'] + $a['saldo09c'] + $a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d'] + $a['saldo09d'] + $a['saldo10d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '11') {
+                            $sal_or = ($a['saldo11c'] + $a['saldo10c'] + $a['saldo09c'] + $a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d'] + $a['saldo09d'] + $a['saldo10d'] + $a['saldo11d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        } else if ($bln == '12') {
+                            $sal_or = ($a['saldo12c'] + $a['saldo11c'] + $a['saldo10c'] + $a['saldo09c'] + $a['saldo08c'] + $a['saldo07c'] + $a['saldo06c'] + $a['saldo05c'] + $a['saldo04c'] + $a['saldo03c'] + $a['saldo02c'] + $a['saldo01c']) + ($a['saldo01d'] + $a['saldo02d'] + $a['saldo03d'] + $a['saldo04d'] + $a['saldo05d'] + $a['saldo06d'] + $a['saldo07d'] + $a['saldo08d'] + $a['saldo09d'] + $a['saldo10d'] + $a['saldo11d'] + $a['saldo12d']) * -1;
+                            echo number_format($sal_or, 0);
+                            $tot_or += $sal_or;
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php
             }
-        }else if($bln == '04'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
+            ?>
+            <tr>
+                <td style="font-weight:bold;height: 20px">&nbsp; <i>JUMLAH BIAYA LAINNYA</i> </td>
+                <td align="right">&nbsp;
+                    <?php
+                    echo '<b>' . number_format($tot_or, 0) . '</b>';
+                    ?>
+                </td>
+            </tr>
+            <!-- END BIAYA LAINNYA -->
+
+
+
+
+            <!-- START PENDAPATAN LAINNYA -->
+            <tr>
+                <td style="font-weight:bold;height: 30px">&nbsp;
+                    HARGA POKOK PENJUALAN
+                    <!-- Other Revenue -->
+                </td>
+                <td>&nbsp;&nbsp; </td>
+            </tr>
+            <?php
+            $tot_oex;
+            foreach ($ic_other_expenses as $a) {
+            ?>
+                <tr>
+                    <td>
+                        <div style="padding-left:<?php echo $a['level']; ?>0px"><?php echo $a['nama']; ?></div>
+                    </td>
+                    <td align="right">&nbsp;
+                        <?php
+                        if ($bln == '01') {
+                            $sal_oex = ($a['saldo01c'] - $a['saldo01d']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '02') {
+                            $sal_oex = ($a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '03') {
+                            $sal_oex = ($a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) + ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '04') {
+                            $sal_oex = ($a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '05') {
+                            $sal_oex = ($a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '06') {
+                            $sal_oex = ($a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '07') {
+                            $sal_oex = ($a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '08') {
+                            $sal_oex = ($a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '09') {
+                            $sal_oex = ($a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '10') {
+                            $sal_oex = ($a['saldo10d'] + $a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c'] + $a['saldo10c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '11') {
+                            $sal_oex = ($a['saldo11d'] + $a['saldo10d'] + $a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c'] + $a['saldo10c'] + $a['saldo11c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        } else if ($bln == '12') {
+                            $sal_oex = ($a['saldo12d'] + $a['saldo11d'] + $a['saldo10d'] + $a['saldo09d'] + $a['saldo08d'] + $a['saldo07d'] + $a['saldo06d'] + $a['saldo05d'] + $a['saldo04d'] + $a['saldo03d'] + $a['saldo02d'] + $a['saldo01d']) - ($a['saldo01c'] + $a['saldo02c'] + $a['saldo03c'] + $a['saldo04c'] + $a['saldo05c'] + $a['saldo06c'] + $a['saldo07c'] + $a['saldo08c'] + $a['saldo09c'] + $a['saldo10c'] + $a['saldo11c'] + $a['saldo12c']);
+                            echo number_format($sal_oex, 0);
+                            $tot_oex += $sal_oex;
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php
             }
-        }else if($bln == '05'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
-            }
-        }else if($bln == '06'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
-            }
-        }else if($bln == '07'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
-            }
-        }else if($bln == '08'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
-            }
-        }else if($bln == '09'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
-            }
-        }else if($bln == '10'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo10d']+$a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']+$a['saldo10c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
-            }
-        }else if($bln == '11'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo11d']+$a['saldo10d']+$a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']+$a['saldo10c']+$a['saldo11c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
-            }
-        }else if($bln == '12'){
-            if($a['general'] == $coa_general){
-                $sal_re = ($a['saldo12d']+$a['saldo11d']+$a['saldo10d']+$a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']+$a['saldo10c']+$a['saldo11c']+$a['saldo12c']);
-                echo number_format($sal_re, 0);
-                $tot_re +=$sal_re;
-            }
-        }
-        
-    }
-    ?>
-    </td>
-</tr>
-<?php 
-}
-?>
-<tr>
-    <td style="font-weight:bold;height: 20px">&nbsp; <i>JUMLAH PENDAPATAN</i> </td>
-    <td align="right">&nbsp;
-        <?php 
-            echo '<b>'.number_format($tot_re,0).'</b>';
-        ?>
-    </td>
-</tr>
-<!-- START PENDAPATAN -->
+            ?>
+            <tr>
+                <td style="font-weight:bold;height: 20px">&nbsp; <i>JUMLAH PENDAPATAN LAINNYA</i> </td>
+                <td align="right">&nbsp;
+                    <?php
+                    echo '<b>' . number_format($tot_oex, 0) . '</b>';
+                    ?>
+                </td>
+            </tr>
+            <!-- END PENDAPATAN LAINNYA -->
 
 
 
 
+            <tr>
+            <tr>
+                <td style="font-weight:bold;height: 30px;font-size: 13px">&nbsp;
+                    LABA RUGI SEBELUM PAJAK
+                    <!-- Other Expenses -->
+                </td>
+                <td>&nbsp;&nbsp; </td>
+            </tr>
 
-<!-- START HARGA POKOK PENJUALAN -->    
-<tr>
-    <td style="font-weight:bold;height: 30px;font-size:15px">&nbsp;
-        HARGA POKOK PENJUALAN<!-- Revenue -->
-    </td>
-    <td>&nbsp;&nbsp; </td>
-</tr>
-<?php 
-$tot_xe;
-foreach ($ic_expenses as $a){
-?>
-<tr>
-    <td><div style="padding-left:<?php echo $a['level'];?>0px"><?php echo $a['nama'];?></div></td>
-    <td align="right">
-    <?php 
-        if($bln == '01'){
-            $sal_ex = ($a['saldo01c']-$a['saldo01d']);
-            echo number_format($sal_ex, 0);
-            $tot_xe +=$sal_ex; 
-        }else if($bln == '02'){
-            $sal_ex = ($a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }else if($bln == '03'){
-            $sal_ex = ($a['saldo03d']+$a['saldo02d']+$a['saldo01d'])+($a['saldo01c']+$a['saldo02c']+$a['saldo03c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }else if($bln == '04'){
-            $sal_ex = ($a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }else if($bln == '05'){
-            $sal_ex = ($a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }else if($bln == '06'){
-           $sal_ex = ($a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']);
-           echo number_format($sal_ex, 0);
-           $tot_ex +=$sal_ex;
-        }else if($bln == '07'){
-            $sal_ex = ($a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }else if($bln == '08'){
-            $sal_ex = ($a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }else if($bln == '09'){
-            $sal_ex = ($a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }else if($bln == '10'){
-            $sal_ex = ($a['saldo10d']+$a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']+$a['saldo10c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }else if($bln == '11'){
-            $sal_ex = ($a['saldo11d']+$a['saldo10d']+$a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']+$a['saldo10c']+$a['saldo11c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }else if($bln == '12'){
-            $sal_ex = ($a['saldo12d']+$a['saldo11d']+$a['saldo10d']+$a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']+$a['saldo10c']+$a['saldo11c']+$a['saldo12c']);
-            echo number_format($sal_ex, 0);
-            $tot_ex +=$sal_ex;
-        }
-    ?>
-    </td>
-</tr>
-<?php 
-}
-?>
-<tr>
-    <td style="font-weight:bold;height: 20px">&nbsp; <i>JUMLAH HARGA POKOK PENJUALAN</i> </td>
-    <td align="right">&nbsp;
-        <?php 
-            echo '<b>'.number_format($tot_ex,0).'</b>';
-        ?>
-    </td>
-</tr>
-<!-- END HARGA POKOK PENJUALAN -->
-
-
-<tr>
-    <td style="font-weight:bold;height: 30px;font-size: 17px">&nbsp;
-        LABA KOTOR <!-- Other Expenses -->
-    </td>
-    <td>&nbsp;&nbsp; </td>
-</tr>
-
-
-<!-- START BIAYA LAINNYA -->    
-<tr>
-    <td style="font-weight:bold;height: 30px">&nbsp;
-        BIAYA LAINNYA <!-- Other Expenses -->
-    </td>
-    <td>&nbsp;&nbsp; </td>
-</tr>
-<?php 
-$tot_or;
-foreach ($ic_other_revenue as $a){
-?>
-<tr>
-    <td><div style="padding-left:<?php echo $a['level'];?>0px"><?php echo $a['nama'];?></div></td>
-    <td align="right">&nbsp;
-    <?php 
-        if($bln == '01'){
-            $sal_or = ($a['saldo01c']-$a['saldo01d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or; 
-        }else if($bln == '02'){
-            $sal_or = ($a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }else if($bln == '03'){
-            $sal_or = ($a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }else if($bln == '04'){
-            $sal_or = ($a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }else if($bln == '05'){
-            $sal_or = ($a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }else if($bln == '06'){
-           $sal_or = ($a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d'])*-1;
-           echo number_format($sal_or, 0);
-           $tot_or +=$sal_or;
-        }else if($bln == '07'){
-            $sal_or = ($a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }else if($bln == '08'){
-            $sal_or = ($a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }else if($bln == '09'){
-            $sal_or = ($a['saldo09c']+$a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d']+$a['saldo09d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }else if($bln == '10'){
-            $sal_or = ($a['saldo10c']+$a['saldo09c']+$a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d']+$a['saldo09d']+$a['saldo10d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }else if($bln == '11'){
-            $sal_or = ($a['saldo11c']+$a['saldo10c']+$a['saldo09c']+$a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d']+$a['saldo09d']+$a['saldo10d']+$a['saldo11d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }else if($bln == '12'){
-            $sal_or = ($a['saldo12c']+$a['saldo11c']+$a['saldo10c']+$a['saldo09c']+$a['saldo08c']+$a['saldo07c']+$a['saldo06c']+$a['saldo05c']+$a['saldo04c']+$a['saldo03c']+$a['saldo02c']+$a['saldo01c'])+($a['saldo01d']+$a['saldo02d']+$a['saldo03d']+$a['saldo04d']+$a['saldo05d']+$a['saldo06d']+$a['saldo07d']+$a['saldo08d']+$a['saldo09d']+$a['saldo10d']+$a['saldo11d']+$a['saldo12d'])*-1;
-            echo number_format($sal_or, 0);
-            $tot_or +=$sal_or;
-        }
-    ?>
-    </td>
-</tr>
-<?php 
-}
-?>
-<tr>
-    <td style="font-weight:bold;height: 20px">&nbsp; <i>JUMLAH BIAYA LAINNYA</i> </td>
-    <td align="right">&nbsp;
-        <?php 
-            echo '<b>'.number_format($tot_or,0).'</b>';
-        ?>
-    </td>
-</tr>
-<!-- END BIAYA LAINNYA -->
-
-
-
-
-<!-- START PENDAPATAN LAINNYA -->    
-<tr>
-    <td style="font-weight:bold;height: 30px">&nbsp;
-        HARGA POKOK PENJUALAN <!-- Other Revenue -->
-    </td>
-    <td>&nbsp;&nbsp; </td>
-</tr>
-<?php 
-$tot_oex;
-foreach ($ic_other_expenses as $a){
-?>
-<tr>
-    <td><div style="padding-left:<?php echo $a['level'];?>0px"><?php echo $a['nama'];?></div></td>
-    <td align="right">&nbsp;
-    <?php 
-        if($bln == '01'){
-            $sal_oex = ($a['saldo01c']-$a['saldo01d']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex; 
-        }else if($bln == '02'){
-            $sal_oex = ($a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }else if($bln == '03'){
-            $sal_oex = ($a['saldo03d']+$a['saldo02d']+$a['saldo01d'])+($a['saldo01c']+$a['saldo02c']+$a['saldo03c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }else if($bln == '04'){
-            $sal_oex = ($a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }else if($bln == '05'){
-            $sal_oex = ($a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }else if($bln == '06'){
-           $sal_oex = ($a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']);
-           echo number_format($sal_oex, 0);
-           $tot_oex +=$sal_oex;
-        }else if($bln == '07'){
-            $sal_oex = ($a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }else if($bln == '08'){
-            $sal_oex = ($a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }else if($bln == '09'){
-            $sal_oex = ($a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }else if($bln == '10'){
-            $sal_oex = ($a['saldo10d']+$a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']+$a['saldo10c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }else if($bln == '11'){
-            $sal_oex = ($a['saldo11d']+$a['saldo10d']+$a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']+$a['saldo10c']+$a['saldo11c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }else if($bln == '12'){
-            $sal_oex = ($a['saldo12d']+$a['saldo11d']+$a['saldo10d']+$a['saldo09d']+$a['saldo08d']+$a['saldo07d']+$a['saldo06d']+$a['saldo05d']+$a['saldo04d']+$a['saldo03d']+$a['saldo02d']+$a['saldo01d'])-($a['saldo01c']+$a['saldo02c']+$a['saldo03c']+$a['saldo04c']+$a['saldo05c']+$a['saldo06c']+$a['saldo07c']+$a['saldo08c']+$a['saldo09c']+$a['saldo10c']+$a['saldo11c']+$a['saldo12c']);
-            echo number_format($sal_oex, 0);
-            $tot_oex +=$sal_oex;
-        }
-    ?>
-    </td>
-</tr>
-<?php 
-}
-?>
-<tr>
-    <td style="font-weight:bold;height: 20px">&nbsp; <i>JUMLAH PENDAPATAN LAINNYA</i> </td>
-    <td align="right">&nbsp;
-        <?php 
-            echo '<b>'.number_format($tot_oex,0).'</b>';
-        ?>
-    </td>
-</tr>
-<!-- END PENDAPATAN LAINNYA -->
-
-
-
-
-<tr>
-<tr>
-    <td style="font-weight:bold;height: 30px;font-size: 13px">&nbsp;
-        LABA RUGI SEBELUM PAJAK <!-- Other Expenses -->
-    </td>
-    <td>&nbsp;&nbsp; </td>
-</tr>
-
-<tr>
-    <td style="font-weight:bold;height: 30px;font-size: 17px">&nbsp;
-        LABA(RUGI) BERSIH <!-- Other Expenses -->
-    </td>
-    <td>&nbsp;&nbsp; </td>
-</tr>
-</tbody>
-</table>
+            <tr>
+                <td style="font-weight:bold;height: 30px;font-size: 17px">&nbsp;
+                    LABA(RUGI) BERSIH
+                    <!-- Other Expenses -->
+                </td>
+                <td>&nbsp;&nbsp; </td>
+            </tr>
+        </tbody>
+    </table>
 
 </div>
-                     
