@@ -861,7 +861,7 @@ OR saldo12c <> 0 OR saldo12d <> 0) ORDER BY noac ASC";
     {
 
         $filters_null = $this->set_filter_year();
-        $sql = "SELECT * FROM noac WHERE `level` <= '$level' AND SUBSTR(noac,1,2) = '60'  ORDER BY noac ASC";
+        $sql = "SELECT * FROM noac WHERE `group` = 'Revenue' AND `level` <= '$level' AND SUBSTR(noac,1,2) = '60'  ORDER BY noac ASC";
         return $this->mips_gl->query($sql);
     }
 
