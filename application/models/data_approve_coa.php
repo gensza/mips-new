@@ -5,7 +5,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class data_approve_coa extends CI_Model
 {
 
-    var $table = 'item_ppo_tmp'; //nama tabel dari database
+    var $table = 'item_ppo'; //nama tabel dari database
     var $column_order = array(null, 'id', 'noreftxt', 'kodebar', 'nabar', 'sat', 'qty', 'STOK', 'ket'); //field yang ada di table supplier  
     var $column_search = array('id', 'noreftxt', 'kodebar', 'nabar', 'sat', 'qty', 'STOK', 'ket'); //field yang diizin untuk pencarian 
     var $order = array('id' => 'ASC'); // default order 
@@ -24,7 +24,7 @@ class data_approve_coa extends CI_Model
 
 
         $this->mips_logistik->from($this->table);
-        $this->mips_logistik->where('grup !=', '0');
+        $this->mips_logistik->where('status2', '12');
 
         $i = 0;
 

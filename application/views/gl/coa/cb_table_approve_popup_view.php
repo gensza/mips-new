@@ -83,9 +83,9 @@
                     async: 'false',
                     success: function(result) {
                         console.log(result);
-                        if (result.hasilitemppo == true) {
+                        if (result == true) {
                             loadingPannel.hide();
-
+                            update_ppo_tmp(id)
 
                             // swal("Good job!", "You clicked the button!", "success");
                             Command: toastr["success"]("COA berhasil dibuatkan", "Berhasil");
@@ -104,6 +104,27 @@
                 });
                 /* end noac */
             });
+    }
+
+
+    function update_ppo_tmp(id) {
+        $.ajax({
+            type: "POST",
+            url: "<?php echo site_url('coa/update_ppo_tmp'); ?>",
+            dataType: "JSON",
+            beforeSend: function() {},
+            cache: false,
+            data: {
+                id: id
+            },
+            success: function(data) {
+                var kode = $('#hidden_id_ppo').val();
+                spp_approval_noCoa(kode)
+            },
+            error: function(request) {
+                console.log(request.responseText);
+            }
+        });
     }
 
 

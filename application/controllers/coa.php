@@ -153,6 +153,14 @@ class coa extends CI_Controller
 
         echo json_encode($dt);
     }
+
+    function update_ppo_tmp()
+    {
+        $id = $this->input->post('id');
+
+        $data = $this->get_coa_approved->update_ppo_tmp($id);
+        echo json_encode($data);
+    }
 }
 
 /* End of file coa.php */
