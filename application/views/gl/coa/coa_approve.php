@@ -94,8 +94,7 @@
                         <th style="width: 5%; font-size: 12px; padding:10px">No</th>
                         <th style="width: 5%; font-size: 12px; padding:10px">Sbu</th>
                         <th style="width: 10%; font-size: 12px; padding:10px">Dept</th>
-                        <th style="width: 40%; font-size: 12px; padding:10px">Nama Barang</th>
-                        <th style="width: 40%; font-size: 12px; padding:10px">Group</th>
+                        <th style="width: 10%; font-size: 12px; padding:10px">Noref</th>
                         <th style="width: 5%; font-size: 12px; padding:10px">Approve</th>
                     </tr>
                 </thead>

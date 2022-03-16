@@ -26,7 +26,7 @@ class get_coa_approved extends CI_Model
 
 
         $this->mips_logistik->from($this->table);
-        $this->mips_logistik->where('id', $id);
+        $this->mips_logistik->where(['noreftxt' => $id, 'status2' => '12']);
 
         $i = 0;
 
@@ -77,7 +77,7 @@ class get_coa_approved extends CI_Model
     public function count_all($id)
     {
         $this->mips_logistik->from($this->table);
-        $this->mips_logistik->where('id', $id);
+        $this->mips_logistik->where('noreftxt', $id);
         return $this->mips_logistik->count_all_results();
     }
 
@@ -218,6 +218,28 @@ class get_coa_approved extends CI_Model
         $hasil = $this->mips_gl->insert('noac', $dt);   //insert noac
 
         return $hasil;
+    }
+
+    public function delete_itemppo_tmp($id, $kodebar)
+    {
+        $d = $this->mips_logistik->query("SELECT noreftxt FROM item_ppo WHERE id='$id'")->row();
+        $noref = $d->noreftxt;
+        $this->mips_logistik->delete('item_ppo_tmp', array('noreftxt' => $noref, 'kodebar' => $kodebar));
+        return TRUE;
+    }
+
+    public function delete_ppo_tmp($id)
+    {
+        $d = $this->mips_logistik->query("SELECT noreftxt FROM item_ppo WHERE id='$id'")->row();
+        $noref = $d->noreftxt;
+        # code...
+        $this->mips_logistik->delete('ppo_tmp', array('noreftxt' => $noref));
+        return TRUE;
+    }
+    public function get_noref($id)
+    {
+        $d = $this->mips_logistik->query("SELECT noreftxt FROM ppo WHERE id='$id'")->row();
+        return $d->noreftxt;
     }
 }
 

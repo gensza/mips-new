@@ -7,7 +7,14 @@
 
         loading_coa();
 
+        data_spp();
 
+
+
+    });
+
+    function data_spp() {
+        var id = '<?php echo $id_row; ?>';
         $('#tabel_approved').DataTable().destroy();
         $('#tabel_approved').DataTable({
 
@@ -25,7 +32,7 @@
                 "type": "POST",
                 data: {
                     <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
-                    id: id_row
+                    id: id
                 },
                 dataType: "json",
             },
@@ -41,8 +48,11 @@
             },
         });
 
-
-    });
+        var rel = setInterval(function() {
+            $('#tabel_approved').DataTable().ajax.reload();
+            clearInterval(rel);
+        }, 100)
+    }
 
     function inputtest(id) {
         // $(this).val($(this).val().toUpperCase());
@@ -53,7 +63,7 @@
     }
 
 
-    function pilih_setujui(id) {
+    function pilih_setujui(id, kodebar) {
         swal({
                 title: "Apakah anda yakin ?",
                 text: "Pastikan data sudah benar !",
@@ -67,7 +77,8 @@
                 /* post to noac */
                 // console.log('hello world');
                 swal.close();
-                $('#' + '<?php echo $id_modal; ?>').modal('hide');
+                // $('#' + '<?php echo $id_modal; ?>').modal('hide');
+
                 loadingPannel.show();
 
                 $.ajax({
@@ -75,6 +86,7 @@
                     type: "post",
                     data: {
                         id: id,
+                        kodebar: kodebar,
                         nama: $('#nama_' + id).val(),
                         grp: $('#grp_coa_' + id).val(),
                         <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
@@ -90,6 +102,7 @@
                             // swal("Good job!", "You clicked the button!", "success");
                             Command: toastr["success"]("COA berhasil dibuatkan", "Berhasil");
                             data_coa()
+                            data_spp()
                         } else {
 
                         }
@@ -119,7 +132,7 @@
             },
             success: function(data) {
                 var kode = $('#hidden_id_ppo').val();
-                spp_approval_noCoa(kode)
+                // spp_approval_noCoa(kode)
             },
             error: function(request) {
                 console.log(request.responseText);

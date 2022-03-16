@@ -5,7 +5,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class data_approve_coa extends CI_Model
 {
 
-    var $table = 'item_ppo'; //nama tabel dari database
+    var $table = 'ppo'; //nama tabel dari database
     var $column_order = array(null, 'id', 'noreftxt', 'kodebar', 'nabar', 'sat', 'qty', 'STOK', 'ket'); //field yang ada di table supplier  
     var $column_search = array('id', 'noreftxt', 'kodebar', 'nabar', 'sat', 'qty', 'STOK', 'ket'); //field yang diizin untuk pencarian 
     var $order = array('id' => 'ASC'); // default order 
