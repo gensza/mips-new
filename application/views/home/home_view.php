@@ -1,3 +1,6 @@
+<script type="text/javascript">
+
+</script>
 <?php
 if ($this->session->userdata('sess_level') == 1) {
 ?>
@@ -74,27 +77,24 @@ if ($this->session->userdata('sess_level') == 1) {
               <li><a href="javascript:void(0)" style="background-image: url(img/gCons/chat-.png)"><span class="label label-important">26</span> Comments</a></li>
             </ul>
           </div> -->
+        <?php } elseif ($this->session->userdata('sess_level') == 2) { ?>
+          <div class="span12">
+            <ul class="dshb_icoNav tac">
+              <li><a href="javascript:void(0)" onclick="getcontents('coa/approve_coa', '<?php echo $tokens; ?>')" style="background-image: url(assets/img/gCons/edit.png)"><?php if ($count_data != 0) { ?>
+                    <span class="label label-important"><?= $count_data ?></span>
+                  <?php } ?>
+                  Approval COA</a></li>
+              <li><a href="javascript:void(0)">-</a></li>
+              <li><a href="javascript:void(0)">-</a></li>
+              <li><a href="javascript:void(0)">-</a></li>
+              <li><a href="javascript:void(0)">-</a></li>
+              <li><a href="javascript:void(0)">-</a></li>
+              <li><a href="javascript:void(0)">-</a></li>
+              <li><a href="javascript:void(0)">-</a></li>
+              <li><a href="javascript:void(0)">-</a></li>
+            </ul>
+          </div>
         <?php } ?>
-        <!--<br>
-            <br>
-
-              <ul class="dshb_icoNav tac" style="padding: 0px">
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/multi-agents.png'); ?>"><span class="label label-info">+10</span> Pengguna</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/world.png'); ?>)">Map</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/configuration.png'); ?>)">Settings</a></li>
-    
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/van.png'); ?>)"><span class="label label-success">$2851</span> Delivery</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/pie-chart.png'); ?>)">Charts</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/edit.png'); ?>)">Add New Article</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/add-item.png'); ?>)"> Add New Page</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/chat-.png'); ?>)"><span class="label label-important">26</span> Comments</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/add-item.png'); ?>)"> Add New Page</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/chat-.png'); ?>)"><span class="label label-important">26</span> Comments</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/add-item.png'); ?>)"> Add New Page</a></li>
-                <li><a href="javascript:void(0)" style="background-image: url(<?php echo base_url('assets/theme/adm2/img/gCons/chat-.png'); ?>)"><span class="label label-important">26</span> Comments</a></li>
-              </ul>
-
-          -->
 
       </div>
     </div>

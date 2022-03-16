@@ -8,6 +8,8 @@ class Main_model extends CI_Model
     {
         parent::__construct();
         //$this->dps = $this->load->database('dps', TRUE);
+        $db_pt = check_db_pt();
+        $this->mips_logistik  = $this->load->database('mips_logistik_' . $db_pt, TRUE);
         $this->mips_center  = $this->load->database('mips_center', TRUE);
     }
 
@@ -85,5 +87,13 @@ class Main_model extends CI_Model
         $this->db->set('txtperiode', $periode);
         $this->db->update('tb_setup');
         return TRUE;
+    }
+
+    public function count_data()
+    {
+        $this->mips_logistik->from('ppo_tmp');
+        $this->mips_logistik->where('status2', '12');
+        $count_spp_no_coa = $this->mips_logistik->count_all_results();
+        return $count_spp_no_coa;
     }
 }
