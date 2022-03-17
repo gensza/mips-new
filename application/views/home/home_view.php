@@ -64,20 +64,24 @@ if ($this->session->userdata('sess_level') == 1) {
       </div>
       <?php if ($this->session->userdata('sess_level') == 3) { ?>
 
-        <!-- <div class="span12">
-            <ul class="dshb_icoNav tac">
-              <li><a href="javascript:void(0)" style="background-image: url(img/gCons/multi-agents.png)"><span class="label label-info">+10</span> Users</a></li>
-              <li><a href="javascript:void(0)" style="background-image: url(img/gCons/world.png)">Map</a></li>
-              <li><a href="javascript:void(0)" style="background-image: url(img/gCons/configuration.png)">Settings</a></li>
-              <li><a href="javascript:void(0)" style="background-image: url(img/gCons/lab.png)">Lab</a>
-              </li>
-              <li><a href="javascript:void(0)" style="background-image: url(img/gCons/van.png)"><span class="label label-success">$2851</span> Delivery</a></li>
-              <li><a href="javascript:void(0)" style="background-image: url(img/gCons/pie-chart.png)">Charts</a></li>
-              <li><a href="javascript:void(0)" style="background-image: url(img/gCons/edit.png)">Add New Article</a></li>
-              <li><a href="javascript:void(0)" style="background-image: url(img/gCons/add-item.png)"> Add New Page</a></li>
-              <li><a href="javascript:void(0)" style="background-image: url(img/gCons/chat-.png)"><span class="label label-important">26</span> Comments</a></li>
+        <div class="row">
+          <div class="col-sm-12">
+            <ul class="dshb_icoNav clearfix">
+              <li><a href="javascript:void(0)" onclick="getcontents('cash_bank/saldo_awal', '<?php echo $tokens; ?>')" style="background-image: url(assets/img/gCons/dollar.png" )">
+                  Saldo Awal</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/edit.png)" onclick="getcontents('cash_bank/input_voucher', '<?php echo $tokens; ?>')">Input Voucher</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/next-item.png)" onclick="getcontents('cash_bank/posting_harian', '<?php echo $tokens; ?>')">Posting harian</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/download.png)" onclick="getcontents('cash_bank/posting_ke_gl', '<?php echo $tokens; ?>')">Transfer Ke GL</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/bookmark.png)" onclick="getcontents('cash_bank/monthly_closing', '<?php echo $tokens; ?>')">Monthly Closing</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/configuration.png)" onclick="getcontents('cash_bank/configurasi', '<?php echo $tokens; ?>')">Konfigurasi</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('cash_bank/laporan_vouc_register', '<?php echo $tokens; ?>')">Laporan Register</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('cash_bank/laporan_vouc_journal', '<?php echo $tokens; ?>')">Laporan Journal</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('cash_bank/laporan_aktifitas_account', '<?php echo $tokens; ?>')">Aktifitas Account</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('cash_bank/saldo_akhir', '<?php echo $tokens; ?>')">Saldo Akhir</a></li>
+
             </ul>
-          </div> -->
+          </div>
+        </div>
       <?php } elseif ($this->session->userdata('sess_level') == 2) { ?>
 
 
