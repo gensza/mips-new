@@ -61,9 +61,10 @@ if ($this->session->userdata('sess_level') == 1) {
         <!-- <input type="text" name="" id="" value="<?= $this->session->userdata('sess_level') ?>"> -->
         <br>
         <br>
-        <?php if ($this->session->userdata('sess_level') == 3) { ?>
+      </div>
+      <?php if ($this->session->userdata('sess_level') == 3) { ?>
 
-          <!-- <div class="span12">
+        <!-- <div class="span12">
             <ul class="dshb_icoNav tac">
               <li><a href="javascript:void(0)" style="background-image: url(img/gCons/multi-agents.png)"><span class="label label-info">+10</span> Users</a></li>
               <li><a href="javascript:void(0)" style="background-image: url(img/gCons/world.png)">Map</a></li>
@@ -77,26 +78,33 @@ if ($this->session->userdata('sess_level') == 1) {
               <li><a href="javascript:void(0)" style="background-image: url(img/gCons/chat-.png)"><span class="label label-important">26</span> Comments</a></li>
             </ul>
           </div> -->
-        <?php } elseif ($this->session->userdata('sess_level') == 2) { ?>
-          <div class="span12">
-            <ul class="dshb_icoNav tac">
-              <li><a href="javascript:void(0)" onclick="getcontents('coa/approve_coa', '<?php echo $tokens; ?>')" style="background-image: url(assets/img/gCons/edit.png)"><?php if ($count_data != 0) { ?>
+      <?php } elseif ($this->session->userdata('sess_level') == 2) { ?>
+
+
+        <div class="row">
+          <div class="col-sm-12">
+            <ul class="dshb_icoNav clearfix">
+              <li><a href="javascript:void(0)" onclick="getcontents('coa/approve_coa', '<?php echo $tokens; ?>')" style="background-image: url(assets/img/gCons/email.png)"><?php if ($count_data != 0) { ?>
                     <span class="label label-important"><?= $count_data ?></span>
                   <?php } ?>
                   Approval COA</a></li>
-              <li><a href="javascript:void(0)">-</a></li>
-              <li><a href="javascript:void(0)">-</a></li>
-              <li><a href="javascript:void(0)">-</a></li>
-              <li><a href="javascript:void(0)">-</a></li>
-              <li><a href="javascript:void(0)">-</a></li>
-              <li><a href="javascript:void(0)">-</a></li>
-              <li><a href="javascript:void(0)">-</a></li>
-              <li><a href="javascript:void(0)">-</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/edit.png)" onclick="getcontents('gl/master_input', '<?php echo $tokens; ?>')">Input COA</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/addressbook.png)" onclick="getcontents('gl/master_tabel', '<?php echo $tokens; ?>')">Daftar COA</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/calculator.png)" onclick="getcontents('gl/saldo_awal', '<?php echo $tokens; ?>')">Saldo Awal</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/bar-chart.png)" onclick="getcontents('gl/transaksi_input', '<?php echo $tokens; ?>')">Transaksi Jurnal</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/bookmark.png)">Tutup Buku Tahunan</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/next-item.png)" onclick="getcontents('gl/posting_harian', '<?php echo $tokens; ?>')">Posting harian</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_jurnal', '<?php echo $tokens; ?>')">Laporan Jurnal</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_buku_besar', '<?php echo $tokens; ?>')">Laporan Buku Besar</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_trialbalance', '<?php echo $tokens; ?>')">Laporan Trial Balance</a></li>
+              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_balance', '<?php echo $tokens; ?>')">Laporan Neraca</a></li>
+
             </ul>
           </div>
-        <?php } ?>
+        </div>
+      <?php } ?>
 
-      </div>
+
     </div>
   </div>
 
