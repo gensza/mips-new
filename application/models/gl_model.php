@@ -7,7 +7,9 @@ class Gl_model extends CI_Model
         parent::__construct();
         //$this->load->database();
         $db_pt = check_db_pt();
-        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
+
+        $this->mips_center  = $this->load->database('mips_center', TRUE);
+
         //$this->mstcode = $this->load->database('mstcode', TRUE);
 
     }
@@ -197,7 +199,7 @@ class Gl_model extends CI_Model
                     `level`,
                     general
                 FROM noac WHERE noac = '$noacc'";
-        $dt = $this->mips_gl->query($sqls)->row_array();
+        $dt = $this->mips_center->query($sqls)->row_array();
 
         if ($data['dc'] == 'C') {
             $nominal_dr = '0';
@@ -878,7 +880,7 @@ class Gl_model extends CI_Model
 
         $sql = "SELECT noid,noac,nama FROM noac where noid = '$acct_id' and noac = '$acct_no'";
 
-        return $this->mips_gl->query($sql);
+        return $this->mips_center->query($sql);
         //return $this->mstcode->query($sql);
     }
 
@@ -2235,7 +2237,7 @@ class Gl_model extends CI_Model
     function get_nama_acct($acct)
     {
         $sqls = "SELECT nama FROM noac WHERE noac LIKE $acct";
-        return $this->mips_gl->query($sqls);
+        return $this->mips_center->query($sqls);
     }
 
     function get_coa_assets($thn, $bln)

@@ -7,9 +7,7 @@ class Gl_lap_model extends CI_Model
         parent::__construct();
         //$this->load->database();
         $db_pt = check_db_pt();
-        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
         //$this->mstcode = $this->load->database('mstcode', TRUE);
-
     }
 
     function get_id_lokasi()

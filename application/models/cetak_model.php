@@ -8,7 +8,7 @@ class Cetak_model extends CI_Model
     {
         parent::__construct();
         $db_pt = check_db_pt();
-        $this->mips_gl  = $this->load->database('mips_gl_' . $db_pt, TRUE);
+
         $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
     }
 

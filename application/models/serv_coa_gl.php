@@ -13,7 +13,7 @@ class serv_coa_gl extends CI_Model
     var $column_search = array('nama', 'lokasi', 'noac'); //field yang diizin untuk pencarian 
     var $order = array('noac' => 'asc'); // default order
 
-    /* DISINI SAYA UBAH UNTUK EXPOSE KE PKS DARI MIPS_GL KE MIPS_CABA */
+    /* DISINI SAYA UBAH UNTUK EXPOSE KE PKS DARI MIPS_GL KE MIPS_Center */
 
 
     function __construct()
@@ -22,19 +22,17 @@ class serv_coa_gl extends CI_Model
         //$this->mstcode = $this->load->database('mstcode', TRUE);
 
         $db_pt = check_db_pt();
-        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
-        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
     }
 
     private function _get_datatables_query()
     {
 
-        $this->mips_caba->from($this->table);
+        $this->mips_center->from($this->table);
         // if ($divisi != 0) {
-        //     $this->mips_caba->where('sbu', $divisi);
+        //     $this->mips_center->where('sbu', $divisi);
         //     # code...
         // }
-        $this->mips_caba->where('type !=', 'G');
+        $this->mips_center->where('type !=', 'G');
 
 
         $i = 0;
@@ -47,9 +45,9 @@ class serv_coa_gl extends CI_Model
                 if ($i === 0) // looping awal
                 {
                     //$this->db->group_start(); 
-                    $this->mips_caba->like($item, $_POST['search']['value']);
+                    $this->mips_center->like($item, $_POST['search']['value']);
                 } else {
-                    $this->mips_caba->or_like($item, $_POST['search']['value']);
+                    $this->mips_center->or_like($item, $_POST['search']['value']);
                 }
 
                 if (count($this->column_search) - 1 == $i) {
@@ -60,10 +58,10 @@ class serv_coa_gl extends CI_Model
         }
 
         if (isset($_POST['order'])) {
-            $this->mips_caba->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+            $this->mips_center->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
         } else if (isset($this->order)) {
             $order = $this->order;
-            $this->mips_caba->order_by(key($order), $order[key($order)]);
+            $this->mips_center->order_by(key($order), $order[key($order)]);
         }
     }
 
@@ -71,22 +69,22 @@ class serv_coa_gl extends CI_Model
     {
         $this->_get_datatables_query();
         if ($_POST['length'] != -1)
-            $this->mips_caba->limit($_POST['length'], $_POST['start']);
-        $query = $this->mips_caba->get();
+            $this->mips_center->limit($_POST['length'], $_POST['start']);
+        $query = $this->mips_center->get();
         return $query->result();
     }
 
     function count_filtered()
     {
         $this->_get_datatables_query();
-        $query = $this->mips_caba->get();
+        $query = $this->mips_center->get();
         return $query->num_rows();
     }
 
     public function count_all()
     {
-        $this->mips_caba->from($this->table);
-        return $this->mips_caba->count_all_results();
+        $this->mips_center->from($this->table);
+        return $this->mips_center->count_all_results();
     }
 }
 

@@ -876,6 +876,8 @@
         async: 'false',
         success: function(result) {
 
+          console.log(result);
+
           var myStr = $("#jumlah").val();
           var newStr = myStr.replace(/,/g, '');
 

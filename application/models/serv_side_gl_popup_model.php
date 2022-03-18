@@ -17,7 +17,6 @@ class Serv_side_gl_popup_model extends CI_Model
         //$this->mstcode = $this->load->database('mstcode', TRUE);
 
         $db_pt = check_db_pt();
-        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
     }
 
     private function _get_datatables_query()

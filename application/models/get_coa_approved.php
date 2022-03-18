@@ -18,7 +18,6 @@ class get_coa_approved extends CI_Model
         $db_pt = check_db_pt();
         $this->mips_logistik  = $this->load->database('mips_logistik_' . $db_pt, TRUE);
         $this->mips_center  = $this->load->database('mips_center', TRUE);
-        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
     }
 
     private function _get_datatables_query($id)
@@ -91,8 +90,8 @@ class get_coa_approved extends CI_Model
 
     public function get_kode_barang($grp)
     {
-        $cari_general = $this->mips_gl->query("SELECT * FROM noac WHERE nama LIKE '$grp' ")->row();
-        $cari_last_noac = $this->mips_gl->query("SELECT * FROM noac WHERE general='$cari_general->noac' ORDER BY NOID DESC LIMIT 1")->row();
+        $cari_general = $this->mips_center->query("SELECT * FROM noac WHERE nama LIKE '$grp' ")->row();
+        $cari_last_noac = $this->mips_center->query("SELECT * FROM noac WHERE general='$cari_general->noac' ORDER BY NOID DESC LIMIT 1")->row();
         return $cari_last_noac->noac;
     }
 
@@ -172,8 +171,8 @@ class get_coa_approved extends CI_Model
     {
         $item_ppo = $this->mips_logistik->query("SELECT * FROM item_ppo WHERE id = '$id'")->row();
         /* cari general di noac */
-        $noac1 = $this->mips_gl->query("SELECT * FROM noac WHERE nama LIKE '$grp' ")->row();
-        $noac2 = $this->mips_gl->query("SELECT * FROM noac WHERE general='$noac1->noac' ORDER BY NOID DESC LIMIT 1")->row();
+        $noac1 = $this->mips_center->query("SELECT * FROM noac WHERE nama LIKE '$grp' ")->row();
+        $noac2 = $this->mips_center->query("SELECT * FROM noac WHERE general='$noac1->noac' ORDER BY NOID DESC LIMIT 1")->row();
 
         $dt['noac'] = $kodebar;
         $dt['nama'] = $item_ppo->nabar;
@@ -215,7 +214,7 @@ class get_coa_approved extends CI_Model
         $dt['yearc'] = 0;
         $dt['TGLINPUT'] = date('Y-m-d H:i:s');
 
-        $hasil = $this->mips_gl->insert('noac', $dt);   //insert noac
+        $hasil = $this->mips_center->insert('noac', $dt);   //insert noac
 
         return $hasil;
     }

@@ -19,12 +19,22 @@ class Gl extends CI_Controller
         $this->load->model('serv_side_list_acc');
         $this->load->model('serv_side_list_acc_saldo');
 
-
-
         $db_pt = check_db_pt();
 
+        if ($this->session->userdata('sess_id_lokasi') == '01') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE); //HO
+        } elseif ($this->session->userdata('sess_id_lokasi') == '02') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_ro', TRUE); //RO
+        } elseif ($this->session->userdata('sess_id_lokasi') == '03') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_pks', TRUE); //PKS
+        } else {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_site', TRUE); //SITE
+        }
+
+        // DB center coa
+        $this->mips_center = $this->load->database('mips_center', TRUE);
+
         $this->db_personalia = $this->load->database('db_personalia_' . $db_pt, TRUE);
-        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
 
         date_default_timezone_set('Asia/Jakarta');
     }
@@ -163,13 +173,16 @@ class Gl extends CI_Controller
         $data['totaldr']        = $this->input->post('totaldr_normal', TRUE);
 
         $result = $this->gl_model->transaksi_simpan_all($data);
-        $posting_harian = $this->gl_model->trx_to_posting_harian($data);
-        $posting_harian_general = $this->gl_model->trx_to_posting_harian_general($data);
+
+
+        //function untuk posting otomatis, tapi jadi lama boss!!!
+        // $posting_harian = $this->gl_model->trx_to_posting_harian($data);
+        // $posting_harian_general = $this->gl_model->trx_to_posting_harian_general($data);
 
         $output = [
             'result' => $result,
-            'posting_harian' => $posting_harian,
-            'posting_harian_general' => $posting_harian_general,
+            // 'posting_harian' => $posting_harian,
+            // 'posting_harian_general' => $posting_harian_general,
         ];
         echo json_encode($output);
     }

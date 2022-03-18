@@ -15,6 +15,16 @@ class Cetak extends CI_Controller
 
         $db_pt = check_db_pt();
         $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
+
+        if ($this->session->userdata('sess_id_lokasi') == '01') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE); //HO
+        } elseif ($this->session->userdata('sess_id_lokasi') == '02') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_ro', TRUE); //RO
+        } elseif ($this->session->userdata('sess_id_lokasi') == '03') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_pks', TRUE); //PKS
+        } else {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_site', TRUE); //SITE
+        }
     }
 
     public function cb_laporan_voucher_register_view()
@@ -830,13 +840,13 @@ class Cetak extends CI_Controller
         }
 
         if ($cetakan == 'pdf') {
-            ini_set('memory_limit', '200M');
-            ini_set('upload_max_filesize', '200M');
-            ini_set('post_max_size', '200M');
-            ini_set('max_input_time', 3600);
-            ini_set('max_execution_time', 3600);
+            // ini_set('memory_limit', '200M');
+            // ini_set('upload_max_filesize', '200M');
+            // ini_set('post_max_size', '200M');
+            // ini_set('max_input_time', 3600);
+            // ini_set('max_execution_time', 3600);
 
-            ini_set("memory_limit", "512M");
+            // ini_set("memory_limit", "512M");
 
             // Tentukan path yang tepat ke mPDF
             $this->load->library('mpdf/mpdf');

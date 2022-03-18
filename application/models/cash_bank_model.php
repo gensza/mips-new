@@ -14,7 +14,10 @@ class Cash_bank_model extends CI_Model
         parent::__construct();
         // $this->mips_caba = $this->load->database('mips_caba', TRUE);
         $db_pt = check_db_pt();
-        $this->mips_gl  = $this->load->database('mips_gl_' . $db_pt, TRUE);
+
+        // db center noac
+        $this->mips_center  = $this->load->database('mips_center', TRUE);
+
         $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
         $this->mstcode = $this->load->database('mstcode', TRUE);
         $this->mips_logistik = $this->load->database('mips_logistik_' . $db_pt, TRUE);
@@ -26,7 +29,7 @@ class Cash_bank_model extends CI_Model
         /* selama expose ke pks saya ubah mips caba */
         $sql = "SELECT noid,noac,nama FROM noac where noid = '$acct_id' and noac = '$acct_no'";
 
-        return $this->mips_caba->query($sql);
+        return $this->mips_center->query($sql);
         //return $this->mstcode->query($sql);
     }
 
@@ -64,13 +67,13 @@ class Cash_bank_model extends CI_Model
     {
         /* sementar di ubah selama expose ke pks */
         $sql = "SELECT * FROM noac ORDER BY NOID ASC";
-        return $this->mips_gl->query($sql);
+        return $this->mips_center->query($sql);
     }
 
     function get_data_noac()
     {
         $sql = "SELECT * FROM noac ORDER BY NOID ASC";
-        return $this->mips_gl->query($sql);
+        return $this->mips_center->query($sql);
     }
 
     function simpan_voucher_header($data)
@@ -152,10 +155,10 @@ class Cash_bank_model extends CI_Model
 
         //ini untuk insert noac
         $noacs = "SELECT general FROM noac WHERE noac = '$value_one_bank'";
-        $ks = $this->mips_gl->query($noacs)->row_array();
+        $ks = $this->mips_center->query($noacs)->row_array();
 
         $noacsa = "SELECT nama FROM noac WHERE noac = '$ks[general]'";
-        $kss = $this->mips_gl->query($noacsa)->row_array();
+        $kss = $this->mips_center->query($noacsa)->row_array();
         $namageneral = str_replace("_", " ", $kss['nama']);
 
 
@@ -6408,7 +6411,7 @@ class Cash_bank_model extends CI_Model
 
             $coax = $a['ACCTNO'];
             $jk = "SELECT  `type`,`level`,`group`,general FROM noac WHERE noac = '$coax'";
-            $as = $this->mips_gl->query($jk)->row_array();
+            $as = $this->mips_center->query($jk)->row_array();
             $noac_type    = $as['type'];
             $noac_level   = $as['level'];
             $noac_group   = $as['group'];
@@ -6535,7 +6538,7 @@ class Cash_bank_model extends CI_Model
 
             $coax = $a['ACCTNO'];
             $jk = "SELECT  `type`,`level`,`group`,general FROM noac WHERE noac = '$coax'";
-            $as = $this->mips_gl->query($jk)->row_array();
+            $as = $this->mips_center->query($jk)->row_array();
             $noac_type    = $as['type'];
             $noac_level   = $as['level'];
             $noac_group   = $as['group'];

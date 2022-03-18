@@ -16,30 +16,29 @@ class Serv_side_coa_by_kategori_popup_model extends CI_Model
         $this->load->database();
 
         //$this->mstcode = $this->load->database('mstcode', TRUE);
-        // $this->mips_gl = $this->load->database('mips_gl', TRUE);
     }
 
     private function _get_datatables_query($code_filter, $divisi)
     {
 
-        // $this->mips_gl->select('NOID,noac,nama,sbu,group,type');
-        // $this->mips_gl->from('noac');
+        // $this->mips_center->select('NOID,noac,nama,sbu,group,type');
+        // $this->mips_center->from('noac');
         // if ($kategori == 'TBM') {
-        //     $this->mips_gl->where("substr(noac,1,6) = '$code_filter'");
+        //     $this->mips_center->where("substr(noac,1,6) = '$code_filter'");
         // } else if ($kategori == 'LAND_CLEARING') {
-        //     $this->mips_gl->where("substr(noac,1,4) = '$code_filter' AND SUBSTR(noac,5,2) <> '00'");
+        //     $this->mips_center->where("substr(noac,1,4) = '$code_filter' AND SUBSTR(noac,5,2) <> '00'");
         // } else if ($kategori == 'PEMBIBITAN') {
-        //     $this->mips_gl->where("substr(noac,1,6) = '$code_filter'");
+        //     $this->mips_center->where("substr(noac,1,6) = '$code_filter'");
         // } else if ($kategori == 'TM') {
-        //     $this->mips_gl->where("SUBSTR(noac,1,6) = '$code_filter' AND SUBSTR(noac,7,8) <> '0000'");
+        //     $this->mips_center->where("SUBSTR(noac,1,6) = '$code_filter' AND SUBSTR(noac,7,8) <> '0000'");
         // }
         // $dev_int = (int)($divisi);
-        $this->mips_gl->where('level !=', 1);
-        $this->mips_gl->where('type !=', 'G');
-        $this->mips_gl->like('sbu', (int)($divisi), 'both');
-        $this->mips_gl->like('noac', $code_filter, 'both');
-        $this->mips_gl->order_by('sbu', 'asc');
-        $this->mips_gl->from($this->table);
+        $this->mips_center->where('level !=', 1);
+        $this->mips_center->where('type !=', 'G');
+        $this->mips_center->like('sbu', (int)($divisi), 'both');
+        $this->mips_center->like('noac', $code_filter, 'both');
+        $this->mips_center->order_by('sbu', 'asc');
+        $this->mips_center->from($this->table);
 
         $i = 0;
 
@@ -50,24 +49,24 @@ class Serv_side_coa_by_kategori_popup_model extends CI_Model
 
                 if ($i === 0) // looping awal
                 {
-                    // $this->mips_gl->group_start();
-                    $this->mips_gl->like($item, $_POST['search']['value']);
+                    // $this->mips_center->group_start();
+                    $this->mips_center->like($item, $_POST['search']['value']);
                 } else {
-                    $this->mips_gl->or_like($item, $_POST['search']['value']);
+                    $this->mips_center->or_like($item, $_POST['search']['value']);
                 }
 
                 if (count($this->column_search) - 1 == $i) {
-                    // $this->mips_gl->group_end();
+                    // $this->mips_center->group_end();
                 }
             }
             $i++;
         }
 
         if (isset($_POST['order'])) {
-            $this->mips_gl->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+            $this->mips_center->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
         } else if (isset($this->order)) {
             $order = $this->order;
-            $this->mips_gl->order_by(key($order), $order[key($order)]);
+            $this->mips_center->order_by(key($order), $order[key($order)]);
         }
     }
 
@@ -75,23 +74,23 @@ class Serv_side_coa_by_kategori_popup_model extends CI_Model
     {
         $this->_get_datatables_query($code_filter, $divisi);
         if ($_POST['length'] != -1)
-            $this->mips_gl->limit($_POST['length'], $_POST['start']);
-        $query = $this->mips_gl->get();
+            $this->mips_center->limit($_POST['length'], $_POST['start']);
+        $query = $this->mips_center->get();
         return $query->result();
     }
 
     function count_filtered($code_filter, $divisi)
     {
         $this->_get_datatables_query($code_filter, $divisi);
-        $query = $this->mips_gl->get();
+        $query = $this->mips_center->get();
         return $query->num_rows();
     }
 
     public function count_all($code_filter, $divisi)
     {
-        $this->mips_gl->where('level !=', 1);
-        $this->mips_gl->like('noac', $code_filter, 'both');
-        $this->mips_gl->from($this->table);
-        return $this->mips_gl->count_all_results();
+        $this->mips_center->where('level !=', 1);
+        $this->mips_center->like('noac', $code_filter, 'both');
+        $this->mips_center->from($this->table);
+        return $this->mips_center->count_all_results();
     }
 }

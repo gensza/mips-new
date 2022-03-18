@@ -18,6 +18,20 @@ class Cash_bank extends CI_Controller
         // $this->mips_caba = $this->load->database('mips_caba', TRUE);
         $db_pt = check_db_pt();
         $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
+
+        // db center noac
+        $this->mips_center = $this->load->database('mips_center', TRUE);
+
+        if ($this->session->userdata('sess_id_lokasi') == '01') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE); //HO
+        } elseif ($this->session->userdata('sess_id_lokasi') == '02') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_ro', TRUE); //RO
+        } elseif ($this->session->userdata('sess_id_lokasi') == '03') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_pks', TRUE); //PKS
+        } else {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_site', TRUE); //SITE
+        }
+
         // $db_pt = check_db_pt();
         // $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
     }

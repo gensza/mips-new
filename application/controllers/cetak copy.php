@@ -10,6 +10,18 @@ class Cetak extends CI_Controller
         $this->load->model('cetak_model');
         $this->load->model('gl_model');
         $this->load->model('main_model');
+
+        $db_pt = check_db_pt();
+
+        if ($this->session->userdata('sess_id_lokasi') == '01') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE); //HO
+        } elseif ($this->session->userdata('sess_id_lokasi') == '02') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_ro', TRUE); //RO
+        } elseif ($this->session->userdata('sess_id_lokasi') == '03') {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_pks', TRUE); //PKS
+        } else {
+            $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_site', TRUE); //SITE
+        }
     }
 
     public function cb_laporan_voucher_register_view()
