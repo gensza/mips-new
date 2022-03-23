@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  function data_coa() {
+  function data_coa(data) {
     $('#coa_approve').DataTable().destroy();
     $('#coa_approve').DataTable({
 
@@ -14,7 +14,11 @@
 
       "ajax": {
         "url": "<?php echo site_url('coa/data_approve_coa') ?>",
-        "type": "POST"
+        "type": "POST",
+        "data": {
+          <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
+          data: data,
+        },
       },
 
       "columnDefs": [{
@@ -35,12 +39,23 @@
     }, 100);
   }
 
+  function pilih_approved(id, noref, pt, alias) {
+
+    getpopup_coa_approve('coa/modal_approve_coa', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', id, noref, pt, alias);
+  }
+
   $(document).ready(function() {
     var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
 
     // loading();
-
-    data_coa()
+    $('#filter_spp').change(function() {
+      var dt = this.value;
+      // console.log(data);
+      // dataSppFilter(data);
+      data_coa(dt)
+    });
+    var filter = "SEMUA";
+    data_coa(filter)
 
 
     loading();
@@ -157,11 +172,24 @@ if ($this->session->userdata('sess_level') == 1) {
           <div class="span12">
             <div class="heading clearfix">
               <h3 class="pull-left">Approval COA</h3>
-              <span class="pull-right label label-important">5 COA</span>
+              <div class="pull-right">
+
+                <select class="form-control form-control-sm" id="filter_spp" name="filter_spp">
+                  <option value="SEMUA" selected>TAMPILKAN SEMUA</option>
+                  <?php
+                  foreach ($pt as $d) : {
+                  ?>
+                      <option value="<?= $d['alias']; ?>"><?= $d['nama_pt']; ?></option>
+                  <?php
+                    }
+                  endforeach;
+                  ?>
+                </select>
+              </div>
             </div>
             <div class="mediaTableWrapper">
               <div class="table-responsive">
-                <table class="table table-striped table-bordered mediaTable activeMediaTable" id="coa_approve">
+                <table class="table table-striped table-bordered mediaTable activeMediaTable" id="coa_approve" style="width: 100%">
                   <thead>
 
                     <tr>

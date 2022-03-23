@@ -3,18 +3,21 @@
         var id_modal = '<?php echo $id_modal; ?>';
         var tokens = '<?php echo $tokens; ?>';
         var id_row = '<?php echo $id_row; ?>';
+        var noref = '<?php echo $noref; ?>';
+        var pt = '<?php echo $pt; ?>';
+        var alias = '<?php echo $alias; ?>';
 
+        console.log(id_modal);
 
         loading_coa();
 
-        data_spp();
+        data_spp(id_row, pt, alias);
 
 
 
     });
 
-    function data_spp() {
-        var id = '<?php echo $id_row; ?>';
+    function data_spp(id_row, pt, alias) {
         $('#tabel_approved').DataTable().destroy();
         $('#tabel_approved').DataTable({
 
@@ -32,7 +35,9 @@
                 "type": "POST",
                 data: {
                     <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
-                    id: id
+                    id: id_row,
+                    pt: pt,
+                    alias: alias,
                 },
                 dataType: "json",
             },
@@ -45,6 +50,7 @@
                 searchPlaceholder: 'Cari',
                 sSearch: '',
                 lengthMenu: '_MENU_',
+                infoFiltered: ""
             },
         });
 
@@ -52,6 +58,7 @@
             $('#tabel_approved').DataTable().ajax.reload();
             clearInterval(rel);
         }, 100)
+
     }
 
     function inputtest(id) {
@@ -63,7 +70,7 @@
     }
 
 
-    function pilih_setujui(id, kodebar) {
+    function pilih_setujui(id, kodebar, alias) {
         swal({
                 title: "Apakah anda yakin ?",
                 text: "Pastikan data sudah benar !",
@@ -87,6 +94,7 @@
                     data: {
                         id: id,
                         kodebar: kodebar,
+                        alias: alias,
                         nama: $('#nama_' + id).val(),
                         grp: $('#grp_coa_' + id).val(),
                         <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
@@ -97,12 +105,13 @@
                         console.log(result);
                         if (result == true) {
                             loadingPannel.hide();
-                            update_ppo_tmp(id)
+                            update_ppo_tmp(id, alias)
 
                             // swal("Good job!", "You clicked the button!", "success");
                             Command: toastr["success"]("COA berhasil dibuatkan", "Berhasil");
-                            data_coa()
-                            data_spp()
+                            var filter = "SEMUA";
+                            data_coa(filter)
+                            data_spp('<?php echo $id_row; ?>', '<?php echo $pt; ?>', alias)
                         } else {
 
                         }
@@ -120,7 +129,7 @@
     }
 
 
-    function update_ppo_tmp(id) {
+    function update_ppo_tmp(id, alias) {
         $.ajax({
             type: "POST",
             url: "<?php echo site_url('coa/update_ppo_tmp'); ?>",
@@ -128,7 +137,8 @@
             beforeSend: function() {},
             cache: false,
             data: {
-                id: id
+                id: id,
+                alias: alias,
             },
             success: function(data) {
                 var kode = $('#hidden_id_ppo').val();

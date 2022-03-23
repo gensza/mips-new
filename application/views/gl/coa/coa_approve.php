@@ -55,9 +55,9 @@
         }, 100);
     }
 
-    function pilih_approved(id) {
-        // console.log(id);
-        getpopup('coa/modal_approve_coa', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', id);
+    function pilih_approved(id, noref, pt, alias) {
+
+        getpopup_coa_approve('coa/modal_approve_coa', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', id, noref, pt, alias);
     }
 </script>
 

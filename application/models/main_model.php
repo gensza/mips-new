@@ -91,9 +91,9 @@ class Main_model extends CI_Model
 
     public function count_data()
     {
-        $this->mips_logistik->from('ppo_tmp');
-        $this->mips_logistik->where('status2', '12');
-        $count_spp_no_coa = $this->mips_logistik->count_all_results();
+        $this->mips_center->from('ppo_tmp');
+        $this->mips_center->where('status2', '12');
+        $count_spp_no_coa = $this->mips_center->count_all_results();
         return $count_spp_no_coa;
     }
 }

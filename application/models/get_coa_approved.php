@@ -15,13 +15,17 @@ class get_coa_approved extends CI_Model
         parent::__construct();
         $this->load->database();
 
-        $db_pt = check_db_pt();
-        $this->mips_logistik  = $this->load->database('mips_logistik_' . $db_pt, TRUE);
         $this->mips_center  = $this->load->database('mips_center', TRUE);
     }
 
-    private function _get_datatables_query($id)
+    public function getWhere($alias)
     {
+        $this->mips_logistik = $this->load->database('mips_logistik_' . $alias, TRUE);
+    }
+
+    private function _get_datatables_query($id, $pt)
+    {
+
 
 
         $this->mips_logistik->from($this->table);
@@ -57,23 +61,23 @@ class get_coa_approved extends CI_Model
         }
     }
 
-    function get_datatables($id)
+    function get_datatables($id, $pt)
     {
-        $this->_get_datatables_query($id);
+        $this->_get_datatables_query($id, $pt);
         if ($_POST['length'] != -1)
             $this->mips_logistik->limit($_POST['length'], $_POST['start']);
         $query = $this->mips_logistik->get();
         return $query->result();
     }
 
-    function count_filtered($id)
+    function count_filtered($id, $pt)
     {
-        $this->_get_datatables_query($id);
+        $this->_get_datatables_query($id, $pt);
         $query = $this->mips_logistik->get();
         return $query->num_rows();
     }
 
-    public function count_all($id)
+    public function count_all($id, $pt)
     {
         $this->mips_logistik->from($this->table);
         $this->mips_logistik->where('noreftxt', $id);
@@ -95,16 +99,17 @@ class get_coa_approved extends CI_Model
         return $cari_last_noac->noac;
     }
 
-    public function update_kodebar($id, $kodebar)
+    public function update_kodebar($id, $kodebar, $alias)
     {
         // $id = $this->input->post('id');
         // $kodebar = $this->input->post('kodebar');
-        $this->mips_logistik->where('id', $id);
-        $this->mips_logistik->update('item_ppo', ['kodebar' => $kodebar, 'kodebartxt' => $kodebar]);
+        $this->db_logistik = $this->load->database('mips_logistik_' . $alias, TRUE);
+        $this->db_logistik->where('id', $id);
+        $this->db_logistik->update('item_ppo', ['kodebar' => $kodebar, 'kodebartxt' => $kodebar]);
         return true;
     }
 
-    public function cut_data_ppo_tmp($id)
+    public function update_item_spp($id, $alias)
     {
         // $item_ppo = $this->mips_logistik->query("SELECT * FROM item_ppo WHERE id = '$id'")->row();
         // $ppo = $this->mips_logistik->query("SELECT * FROM ppo WHERE noreftxt = '$item_ppo->noreftxt'")->row();
@@ -116,9 +121,9 @@ class get_coa_approved extends CI_Model
         // $update_ppo = $this->mips_logistik->update('ppo', ['status' => 'DALAM PROSES', 'status2' => 0]);
         // $deleteppo = $this->mips_logistik->delete('ppo_tmp', ['noreftxt' => $item_ppo->noreftxt]);
 
-
-        $this->mips_logistik->where('id', $id);
-        $update_item = $this->mips_logistik->update('item_ppo', ['status' => 'DALAM PROSES', 'status2' => 0]);
+        $this->db_logistik = $this->load->database('mips_logistik_' . $alias, TRUE);
+        $this->db_logistik->where('id', $id);
+        $update_item = $this->db_logistik->update('item_ppo', ['status' => 'DALAM PROSES', 'status2' => 0]);
         // $deleteitemppo = $this->mips_logistik->delete('item_ppo_tmp', ['id ' => $item_ppo->id]);
         /* end insert item_ppo */
 
@@ -127,28 +132,31 @@ class get_coa_approved extends CI_Model
         return $update_item;
     }
 
-    public function update_ppo_tmp($id)
+    public function update_ppo_tmp($id, $alias)
     {
-        $d = $this->mips_logistik->query("SELECT * FROM item_ppo WHERE id='$id'")->row();
+        $this->db_logistik = $this->load->database('mips_logistik_' . $alias, TRUE);
+        $d = $this->db_logistik->query("SELECT * FROM item_ppo WHERE id='$id'")->row();
         $noref = $d->noreftxt;
-        $item1 = $this->mips_logistik->query("SELECT * FROM item_ppo WHERE noreftxt='$noref'")->num_rows();
-        $item2 = $this->mips_logistik->query("SELECT * FROM item_ppo WHERE noreftxt='$noref' AND status2='0'")->num_rows();
+        $item1 = $this->db_logistik->query("SELECT * FROM item_ppo WHERE noreftxt='$noref'")->num_rows();
+        $item2 = $this->db_logistik->query("SELECT * FROM item_ppo WHERE noreftxt='$noref' AND status2='0'")->num_rows();
 
         if ($item1 == $item2) {
             $data = array('status' => 'DALAM PROSES', 'status2' => '0');
-            $yy = $this->mips_logistik->update('ppo', $data, array('noreftxt' => $noref));
+            $yy = $this->db_logistik->update('ppo', $data, array('noreftxt' => $noref));
+            $this->mips_center->delete('ppo_tmp', array('noreftxt' => $noref));
         } else {
             $data = array('status' => 'SEBAGIAN', 'status2' => '11');
-            $yy = $this->mips_logistik->update('ppo', $data, array('noreftxt' => $noref));
+            $yy = $this->db_logistik->update('ppo', $data, array('noreftxt' => $noref));
         }
 
         return $yy;
     }
 
-    public function save_kode_barang($id, $kodebar, $grp)
+    public function save_kode_barang($id, $kodebar, $grp, $alias)
     {
+        $this->db_logistik = $this->load->database('mips_logistik_' . $alias, TRUE);
 
-        $item_ppo = $this->mips_logistik->query("SELECT nabar FROM item_ppo WHERE id = '$id'")->row();
+        $item_ppo = $this->db_logistik->query("SELECT nabar FROM item_ppo WHERE id = '$id'")->row();
         # code...
         $data['kodebar'] = $kodebar;
         $data['kodebartxt'] = $kodebar;
@@ -167,9 +175,10 @@ class get_coa_approved extends CI_Model
         return $hasil;
     }
 
-    function save_coa_baru($id, $kodebar, $grp)
+    function save_coa_baru($id, $kodebar, $grp, $alias)
     {
-        $item_ppo = $this->mips_logistik->query("SELECT * FROM item_ppo WHERE id = '$id'")->row();
+        $this->db_logistik = $this->load->database('mips_logistik_' . $alias, TRUE);
+        $item_ppo = $this->db_logistik->query("SELECT nabar, kode_dev, kodedept, LOKASI FROM item_ppo WHERE id = '$id'")->row();
         /* cari general di noac */
         $noac1 = $this->mips_center->query("SELECT * FROM noac WHERE nama LIKE '$grp' ")->row();
         $noac2 = $this->mips_center->query("SELECT * FROM noac WHERE general='$noac1->noac' ORDER BY NOID DESC LIMIT 1")->row();
@@ -181,7 +190,7 @@ class get_coa_approved extends CI_Model
         $dt['type'] = 'D';
         $dt['level'] = $noac2->level;
         $dt['general'] = $noac1->noac;
-        $dt['costcenter'] = $noac1->noac;
+        $dt['costcenter'] = 0;
         $dt['depart'] = $item_ppo->kodedept;
         $dt['LOKASI'] = $item_ppo->LOKASI;
         $dt['balancedr'] = 0;
@@ -219,25 +228,19 @@ class get_coa_approved extends CI_Model
         return $hasil;
     }
 
-    public function delete_itemppo_tmp($id, $kodebar)
+    public function delete_itemppo_tmp($id, $kodebar, $alias)
     {
-        $d = $this->mips_logistik->query("SELECT noreftxt FROM item_ppo WHERE id='$id'")->row();
+        $this->db_logistik = $this->load->database('mips_logistik_' . $alias, TRUE);
+        $d = $this->db_logistik->query("SELECT noreftxt FROM item_ppo WHERE id='$id'")->row();
         $noref = $d->noreftxt;
-        $this->mips_logistik->delete('item_ppo_tmp', array('noreftxt' => $noref, 'kodebar' => $kodebar));
+        $this->mips_center->delete('item_ppo_tmp', array('noreftxt' => $noref, 'kodebar' => $kodebar));
         return TRUE;
     }
 
-    public function delete_ppo_tmp($id)
-    {
-        $d = $this->mips_logistik->query("SELECT noreftxt FROM item_ppo WHERE id='$id'")->row();
-        $noref = $d->noreftxt;
-        # code...
-        $this->mips_logistik->delete('ppo_tmp', array('noreftxt' => $noref));
-        return TRUE;
-    }
+
     public function get_noref($id)
     {
-        $d = $this->mips_logistik->query("SELECT noreftxt FROM ppo WHERE id='$id'")->row();
+        $d = $this->mips_center->query("SELECT noreftxt FROM ppo_tmp WHERE id='$id'")->row();
         return $d->noreftxt;
     }
 }

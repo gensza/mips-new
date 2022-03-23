@@ -6,8 +6,8 @@ class data_approve_coa extends CI_Model
 {
 
     var $table = 'ppo_tmp'; //nama tabel dari database
-    var $column_order = array(null, 'id', 'noreftxt', 'kodebar', 'nabar', 'sat', 'qty', 'ket', 'namadept', 'pt'); //field yang ada di table supplier  
-    var $column_search = array('namadept', 'noreftxt', 'kodebar', 'nabar', 'sat', 'qty', 'STOK', 'ket'); //field yang diizin untuk pencarian 
+    var $column_order = array(null, 'id', 'noreftxt', 'pt', 'kode_dev', 'namadept', 'pt', 'alias'); //field yang ada di table supplier  
+    var $column_search = array('namadept', 'noreftxt', 'pt'); //field yang diizin untuk pencarian 
     var $order = array('id' => 'ASC'); // default order 
 
     function __construct()
@@ -17,15 +17,21 @@ class data_approve_coa extends CI_Model
 
         // $db_pt = check_db_pt();
         // $this->mips_logistik  = $this->load->database('mips_logistik_' . $db_pt, TRUE);
-        $this->mips_center  = $this->load->database('mips_center');
+        $this->mips_center  = $this->load->database('mips_center', TRUE);
     }
 
-    private function _get_datatables_query()
+    private function _get_datatables_query($filter)
     {
 
 
         $this->mips_center->from($this->table);
-        $this->mips_center->where('status2', '12');
+        if ($filter == "SEMUA") {
+            # code...
+            $this->mips_center->where('status2', '12');
+        } else {
+            # code...
+            $this->mips_center->where(['status2' => '12', 'alias' => $filter]);
+        }
 
         $i = 0;
 
@@ -57,25 +63,32 @@ class data_approve_coa extends CI_Model
         }
     }
 
-    function get_datatables()
+    function get_datatables($filter)
     {
-        $this->_get_datatables_query();
+        $this->_get_datatables_query($filter);
         if ($_POST['length'] != -1)
             $this->mips_center->limit($_POST['length'], $_POST['start']);
         $query = $this->mips_center->get();
         return $query->result();
     }
 
-    function count_filtered()
+    function count_filtered($filter)
     {
-        $this->_get_datatables_query();
+        $this->_get_datatables_query($filter);
         $query = $this->mips_center->get();
         return $query->num_rows();
     }
 
-    public function count_all()
+    public function count_all($filter)
     {
         $this->mips_center->from($this->table);
+        if ($filter == "SEMUA") {
+            # code...
+            $this->mips_center->where('status2', '12');
+        } else {
+            # code...
+            $this->mips_center->where(['status2' => '12', 'alias' => $filter]);
+        }
         return $this->mips_center->count_all_results();
     }
 }

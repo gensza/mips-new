@@ -272,6 +272,32 @@
         http.send(params);
     }
 
+    function getpopup_coa_approve(controller, tokens, id_modal, id_row, noref, pt, alias) {
+        var base_url = '<?php echo base_url(); ?>';
+
+        var http = new XMLHttpRequest();
+        var url = base_url + controller;
+        var params = '<?php echo $this->security->get_csrf_token_name(); ?>=<?php echo $this->security->get_csrf_hash(); ?>&tokens=' + tokens + '&id_modal=' + id_modal + '&id_row=' + id_row + '&noref=' + noref + '&pt=' + pt + '&alias=' + alias + '';
+        http.open('POST', url, true);
+        http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        http.onreadystatechange = function() { //Call a function when the state changes.
+            if (http.readyState == 4 && http.status == 200) {
+                //$('#content-popup').html("");
+                document.getElementById('content-modals').innerHTML = "";
+                $('#content-modals').html(http.responseText);
+                $('#' + id_modal).modal({
+                    backdrop: 'static',
+                    keyboard: true,
+                    show: true,
+                    refresh: true
+                });
+            } else {
+                //loadErrorPage();
+            }
+        }
+        http.send(params);
+    }
+
     function modals(id_modal) {
         $('#' + id_modal).modal('show');
     }

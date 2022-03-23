@@ -25,6 +25,8 @@ class coa extends CI_Controller
         } else {
             $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_site', TRUE); //SITE
         }
+
+        $this->mips_center  = $this->load->database('mips_center', TRUE);
     }
 
 
@@ -47,15 +49,22 @@ class coa extends CI_Controller
     public function data_approve_coa()
     {
 
-
-        $list = $this->data_approve_coa->get_datatables();
+        $filter = $this->input->post('data');
+        $list = $this->data_approve_coa->get_datatables($filter);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $d) {;
 
+            $norefspp = "'" . $d->noreftxt . "'";
+            $pt = "'" . $d->pt . "'";
+            $alias = "'" . $d->alias . "'";
+
             $no++;
             $row = array();
-            $row[] = "<button class='btn btn-primary btn-sm' onclick=pilih_approved(" . $d->id . ") title=' Pilih- " . $d->noreftxt . "'>Approved</button>";
+            $row[] = '<a href="javascript:;" id="spp_appproval">
+            <button class="btn btn-info btn-xs" id="detail_spp_approval" name="detail_spp_approval" data-toggle="tooltip" data-placement="top" title="Approval" onClick="pilih_approved(' . $d->id . ',' . $norefspp . ',' . $pt . ',' . $alias . ')" > Approval
+            </button>
+        </a>';
             $row[] = $no;
             $row[] = $d->kode_dev;
             $row[] = $d->noreftxt;
@@ -68,8 +77,8 @@ class coa extends CI_Controller
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->data_approve_coa->count_all(),
-            "recordsFiltered" => $this->data_approve_coa->count_filtered(),
+            "recordsTotal" => $this->data_approve_coa->count_all($filter),
+            "recordsFiltered" => $this->data_approve_coa->count_filtered($filter),
             "data" => $data,
         );
         //output to json format
@@ -79,12 +88,16 @@ class coa extends CI_Controller
     public function get_coa_approved()
     {
 
-        $id = $this->input->post('id', TRUE);
+        $id = $this->input->post('id');
+        $pt = $this->input->post('pt');
+        $alias = strtolower($this->input->post('alias'));
+        $this->get_coa_approved->getWhere($alias);
         $get_noref = $this->get_coa_approved->get_noref($id);
-        $list = $this->get_coa_approved->get_datatables($get_noref);
+        $list = $this->get_coa_approved->get_datatables($get_noref, $pt);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $d) {
+            $pt = "'" . $alias . "'";
 
             $nabar = '<a href="javascript:;" id="namabarang">
             <input type="text" class="form-control form-control-sm" onkeyup="inputtest(' . $d->id . ')" id="nama_' . $d->id . '" value="' . $d->nabar . '">
@@ -100,8 +113,8 @@ class coa extends CI_Controller
 
             $row[] = $nabar;
             $row[] = $grp;
-            $row[] = "<a href='javascript:void(0)' onclick=pilih_setujui(" . $d->id . "," . $d->kodebar . ") title=' Approve - " .  $d->nabar . "'><i class='splashy-check'></i></a>&nbsp;
-            <a href='javascript:void(0)' onclick=pilih_approved(" . $d->id . ") title=' No Approve - " .  $d->nabar . "'><i class='splashy-remove'></i></a>
+            $row[] = "<a href='javascript:void(0)' onClick=pilih_setujui(" . $d->id . "," . $d->kodebar . "," . $pt . ") title=' Approve - " .  $d->nabar . "'><i class='splashy-check'></i></a>&nbsp;
+            <a href='javascript:void(0)' onClick=pilih_approved(" . $d->id . ") title=' No Approve - " .  $d->nabar . "'><i class='splashy-remove'></i></a>
             ";
 
 
@@ -110,8 +123,8 @@ class coa extends CI_Controller
 
         $output = array(
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->get_coa_approved->count_all($get_noref),
-            "recordsFiltered" => $this->get_coa_approved->count_filtered($get_noref),
+            "recordsTotal" => $this->get_coa_approved->count_all($get_noref, $pt),
+            "recordsFiltered" => $this->get_coa_approved->count_filtered($get_noref, $pt),
             "data" => $data,
         );
         //output to json format
@@ -129,10 +142,17 @@ class coa extends CI_Controller
         $tokens   = $this->input->post('tokens', TRUE);
         $id_modal = $this->input->post('id_modal', TRUE);
         $id_row = $this->input->post('id_row', TRUE);
+        $noref = $this->input->post('noref', TRUE);
+        $pt = $this->input->post('pt', TRUE);
+        $alias = $this->input->post('alias', TRUE);
+
         $result = $this->main_model->check_token($tokens);
         $data['tokens']     = $tokens;
         $data['id_modal']   = $id_modal;
         $data['id_row']     = $id_row;
+        $data['noref']     = $noref;
+        $data['pt']     = $pt;
+        $data['alias']     = $alias;
 
         if ($result == '1') {
             $this->load->view('gl/coa/cb_table_approve_popup_view', $data);
@@ -147,23 +167,24 @@ class coa extends CI_Controller
         // $nabar = $this->input->post('nabar', TRUE);
         $grp = $this->input->post('grp', TRUE);
         $kodebar = $this->input->post('kodebar', TRUE);
+        $alias = $this->input->post('alias', TRUE);
 
-        $this->get_coa_approved->delete_itemppo_tmp($id, $kodebar);
+        $this->get_coa_approved->delete_itemppo_tmp($id, $kodebar, $alias);
 
         /* ambil kode barang */
         $kode_barang = $this->get_coa_approved->get_kode_barang($grp);
         $kodebar = $kode_barang + 1;
         /* update kodebar di item_ppo_tmp */
-        $hasil = $this->get_coa_approved->update_kodebar($id, $kodebar);
+        $hasil = $this->get_coa_approved->update_kodebar($id, $kodebar, $alias);
         /* end */
 
         /* insert coa baru */
-        $kodebarang = $this->get_coa_approved->save_kode_barang($id, $kodebar, $grp);
-        $noac = $this->get_coa_approved->save_coa_baru($id, $kodebar, $grp);
+        $kodebarang = $this->get_coa_approved->save_kode_barang($id, $kodebar, $grp, $alias);
+        $noac = $this->get_coa_approved->save_coa_baru($id, $kodebar, $grp, $alias);
         /* end insert coa baru */
 
         /* proses pindah ppo_tmp dan item_ppo_tmp */
-        $dt = $this->get_coa_approved->cut_data_ppo_tmp($id);
+        $dt = $this->get_coa_approved->update_item_spp($id, $alias);
         /* end */
 
 
@@ -173,10 +194,10 @@ class coa extends CI_Controller
     function update_ppo_tmp()
     {
         $id = $this->input->post('id');
+        $alias = $this->input->post('alias');
 
-        $this->get_coa_approved->delete_ppo_tmp($id);
 
-        $data = $this->get_coa_approved->update_ppo_tmp($id);
+        $data = $this->get_coa_approved->update_ppo_tmp($id, $alias);
         echo json_encode($data);
     }
 }
