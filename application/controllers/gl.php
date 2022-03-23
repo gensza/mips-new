@@ -160,6 +160,7 @@ class Gl extends CI_Controller
         $data['tanggal']        = $this->input->post('tanggal', TRUE);
         $data['divisi_v']       = $this->input->post('divisi_v', TRUE);
         $data['tm_tbm']         = $this->input->post('tm_tbm', TRUE);
+
         $data['adf_unit']       = $this->input->post('adf_unit', TRUE);
         $data['tahun_tanam']    = $this->input->post('tahun_tanam', TRUE);
         $data['acctno']         = $this->input->post('acctno', TRUE);
@@ -172,8 +173,169 @@ class Gl extends CI_Controller
         $data['totalcr']        = $this->input->post('totalcr_normal', TRUE);
         $data['totaldr']        = $this->input->post('totaldr_normal', TRUE);
 
+        //  cek jumlah data di entry temp
+        $jumlah_data = $this->gl_model->jumlah_data_entry_temp($data['no_ref']);
+        foreach ($jumlah_data as $jumlah) {
+
+            // cek, jika coa type D ada lakukan update, else insert D
+            $cek_coa = $this->gl_model->cek_coa($jumlah['noac']);
+
+            // noac Type D
+            if ($cek_coa == '0') {
+                $coa = $this->gl_model->simpan_coa($jumlah['noac']);
+            } else {
+                // $this->gl_model->update_coa($data);
+            }
+
+            $cek_general = $this->gl_model->cek_general($jumlah['general']);
+
+            if ($cek_general['data_coa_num'] == 0) {
+                //create general
+                $general1 = $this->gl_model->simpan_general($cek_general['data_coa_row']); //satu
+
+                if ($general1 == '*') {
+                    //stop
+                } else {
+
+                    $cek_general2 = $this->gl_model->cek_general($general1);
+
+                    if ($cek_general2['data_coa_sum'] == 0) {
+                        //create general
+                        $general2 = $this->gl_model->simpan_general($cek_general2['data_coa_row']); //dua
+
+                        if ($general2 == '*') {
+                            //stop
+                        } else {
+                            $cek_general3 = $this->gl_model->cek_general($general2);
+
+                            if ($cek_general3['data_coa_sum'] == 0) {
+                                //create general
+                                $general3 = $this->gl_model->simpan_general($cek_general3['data_coa_row']); //tiga
+
+                                if ($general3 == '*') {
+                                    //stop
+                                } else {
+                                    $cek_general4 = $this->gl_model->cek_general($general3);
+
+                                    if ($cek_general4['data_coa_sum'] == 0) {
+                                        //create general
+                                        $general4 = $this->gl_model->simpan_general($cek_general4['data_coa_row']); //empat
+
+                                        if ($general4 == '*') {
+                                            //stop
+                                        } else {
+                                            $cek_general5 = $this->gl_model->cek_general($general4);
+
+                                            if ($cek_general5['data_coa_sum'] == 0) {
+                                                //create general
+                                                $general5 = $this->gl_model->simpan_general($cek_general5['data_coa_row']); //lima
+
+                                                if ($general5 == '*') {
+                                                    //stop
+                                                } else {
+                                                    $cek_general6 = $this->gl_model->cek_general($general5);
+
+                                                    if ($cek_general6['data_coa_sum'] == 0) {
+                                                        //create general
+                                                        $general6 = $this->gl_model->simpan_general($cek_general6['data_coa_row']); //enam
+                                                    } else {
+                                                        //update general
+                                                    }
+                                                }
+                                            } else {
+                                                //update general
+                                            }
+                                        }
+                                    } else {
+                                        //update general
+                                    }
+                                }
+                            } else {
+                                //update general
+                            }
+                        }
+                    } else {
+                        //update general
+                    }
+                }
+            } else {
+                //update general
+                // $general = $this->gl_model->update_general($jumlah['general']);
+            }
+        }
+
         $result = $this->gl_model->transaksi_simpan_all($data);
 
+        //function untuk posting otomatis, tapi jadi lama boss!!!
+        $posting_harian = $this->gl_model->trx_to_posting_harian($data);
+        $posting_harian_general = $this->gl_model->trx_to_posting_harian_general($data);
+
+        $output = [
+            'result' => $result,
+            'cek_general' => $cek_general,
+            'coa_pertama' => $jumlah['general'],
+            'jumlahdata' => $jumlah_data,
+            // 'posting_harian' => $posting_harian,
+            // 'posting_harian_general' => $posting_harian_general,
+        ];
+        echo json_encode($output);
+    }
+
+    public function transaksi_simpan_all_by_si_boss()
+    {
+
+        $data['kode_sementara'] = $this->input->post('kode_sementara', TRUE);
+        $data['no_ref']          = $this->input->post('no_ref', TRUE);
+        $data['tanggal']        = $this->input->post('tanggal', TRUE);
+        $data['divisi_v']       = $this->input->post('divisi_v', TRUE);
+        $data['tm_tbm']         = $this->input->post('tm_tbm', TRUE);
+
+        $data['adf_unit']       = $this->input->post('adf_unit', TRUE);
+        $data['tahun_tanam']    = $this->input->post('tahun_tanam', TRUE);
+        $data['acctno']         = $this->input->post('acctno', TRUE);
+        $data['acctname']       = $this->input->post('acctname', TRUE);
+        $data['deskripsi']      = $this->input->post('deskripsi', TRUE);
+        $data['dc']             = $this->input->post('dc', TRUE);
+        $data['dc_kurs']        = $this->input->post('dc_kurs', TRUE);
+        $data['dc_nominal']     = $this->input->post('dc_nominal', TRUE);
+
+        $data['totalcr']        = $this->input->post('totalcr_normal', TRUE);
+        $data['totaldr']        = $this->input->post('totaldr_normal', TRUE);
+
+        //  cek jumlah data di entry temp
+        $jumlah_data = $this->gl_model->jumlah_data_entry_temp($data['no_ref']);
+        foreach ($jumlah_data as $jumlah) {
+
+            // cek, jika coa type D ada lakukan update, else insert D
+            $cek_coa = $this->gl_model->cek_coa($jumlah['noac']);
+
+            // noac Type D
+            if ($cek_coa == '0') {
+                $coa = $this->gl_model->simpan_coa($jumlah['noac']);
+            } else {
+                // $this->gl_model->update_coa($data);
+            }
+
+            $get_noac_all = $this->gl_model->get_noac_all();
+
+            $found = 'stop';
+            $total = $get_noac_all['data_coa_num'];
+
+            for ($i = 1; $i <= $total; $i++) {
+
+                // select
+                $noac_g = $this->gl_model->get_noac_g($jumlah['general']);
+
+                if ($noac_g['data_coa_num'] > 0) {
+
+                    $general = $noac_g['data_coa']['noac'];
+
+                    $this->gl_model->simpan_coa_g();
+                }
+            }
+        }
+
+        $result = $this->gl_model->transaksi_simpan_all($data);
 
         //function untuk posting otomatis, tapi jadi lama boss!!!
         // $posting_harian = $this->gl_model->trx_to_posting_harian($data);
@@ -181,6 +343,82 @@ class Gl extends CI_Controller
 
         $output = [
             'result' => $result,
+            'cek_coa' => $cek_coa,
+            'coa' => $coa,
+            'noref' => $data['no_ref'],
+            'jumlah_data' => $jumlah_data,
+            // 'posting_harian' => $posting_harian,
+            // 'posting_harian_general' => $posting_harian_general,
+        ];
+        echo json_encode($output);
+    }
+
+    public function transaksi_simpan_all_ori()
+    {
+
+        $data['kode_sementara'] = $this->input->post('kode_sementara', TRUE);
+        $data['no_ref']          = $this->input->post('no_ref', TRUE);
+        $data['tanggal']        = $this->input->post('tanggal', TRUE);
+        $data['divisi_v']       = $this->input->post('divisi_v', TRUE);
+        $data['tm_tbm']         = $this->input->post('tm_tbm', TRUE);
+
+        $data['adf_unit']       = $this->input->post('adf_unit', TRUE);
+        $data['tahun_tanam']    = $this->input->post('tahun_tanam', TRUE);
+        $data['acctno']         = $this->input->post('acctno', TRUE);
+        $data['acctname']       = $this->input->post('acctname', TRUE);
+        $data['deskripsi']      = $this->input->post('deskripsi', TRUE);
+        $data['dc']             = $this->input->post('dc', TRUE);
+        $data['dc_kurs']        = $this->input->post('dc_kurs', TRUE);
+        $data['dc_nominal']     = $this->input->post('dc_nominal', TRUE);
+
+        $data['totalcr']        = $this->input->post('totalcr_normal', TRUE);
+        $data['totaldr']        = $this->input->post('totaldr_normal', TRUE);
+
+        //  cek jumlah data di entry temp
+        $jumlah_data = $this->gl_model->jumlah_data_entry_temp($data['no_ref']);
+        foreach ($jumlah_data as $jumlah) {
+
+            // cek, jika coa type D ada lakukan update, else insert D
+            $cek_coa = $this->gl_model->cek_coa($jumlah['noac']);
+
+            // noac Type D
+            if ($cek_coa == '0') {
+                $coa = $this->gl_model->simpan_coa($jumlah['noac']);
+            } else {
+                // $this->gl_model->update_coa($data);
+            }
+
+            // cek, jika coa type G ada lakukan update, else insert
+            // cek ke noac center atas general yg di entry
+            $cek_coa_g = $this->gl_model->cek_coa_g($jumlah['general'], $jumlah['group'], $jumlah['noac']);
+            foreach ($cek_coa_g as $ceco) {
+
+                //cek ke noac PT atas general yg di entry
+                //problem nya waktu di cek di function ini, padahal data nya ada tapi query return nya tidak ada
+                $cek_coa_g_level = $this->gl_model->cek_coa_g_level($ceco['general']);
+
+                if ($cek_coa_g_level == 0) {
+                    $coa_g = $this->gl_model->simpan_coa_g($ceco);
+                } else {
+                    // $this->gl_model->update_coa_g($data);
+                }
+            }
+        }
+
+        $result = $this->gl_model->transaksi_simpan_all($data);
+
+        //function untuk posting otomatis, tapi jadi lama boss!!!
+        // $posting_harian = $this->gl_model->trx_to_posting_harian($data);
+        // $posting_harian_general = $this->gl_model->trx_to_posting_harian_general($data);
+
+        $output = [
+            'result' => $result,
+            'cek_coa' => $cek_coa,
+            'coa' => $coa,
+            'noref' => $data['no_ref'],
+            'jumlah_data' => $jumlah_data,
+            'data_coa_g' => $cek_coa_g,
+            'data_coa_g_level' => $cek_coa_g_level,
             // 'posting_harian' => $posting_harian,
             // 'posting_harian_general' => $posting_harian_general,
         ];

@@ -3180,4 +3180,236 @@ class Gl_model extends CI_Model
 
 
     }
+
+    function jumlah_data_entry_temp($ref)
+    {
+        $user_login = $this->session->userdata('sess_nama');
+        $sql = "SELECT noac, `general`, `level`, `group` FROM entry_temp WHERE ref = '$ref' and USER = '$user_login'";
+        $query = $this->mips_gl->query($sql)->result_array();
+        return $query;
+    }
+
+    function cek_coa($noac)
+    {
+        $sql = "SELECT noac FROM noac WHERE noac = '$noac'";
+        $sql_entry = $this->mips_gl->query($sql)->num_rows();
+        return $sql_entry;
+    }
+
+    function simpan_coa($noac)
+    {
+        $query = "SELECT noac,nama,sbu,`group`,`type`,`level`,`general` FROM noac WHERE noac = '$noac'";
+        $get_coa = $this->mips_center->query($query)->row_array();
+
+        $insert_noac['noac'] = $get_coa['noac'];
+        $insert_noac['nama'] = $get_coa['nama'];
+        $insert_noac['sbu'] = $get_coa['sbu'];
+        $insert_noac['group'] = $get_coa['group'];
+        $insert_noac['type'] = $get_coa['type'];
+        $insert_noac['level'] = $get_coa['level'];
+        $insert_noac['general'] = $get_coa['general'];
+        $insert_noac['costcenter'] = 0;
+        $insert_noac['depart'] = 0;
+        $insert_noac['LOKASI'] = $this->session->userdata('sess_nama_lokasi');
+        $insert_noac['balancedr'] = 0;
+        $insert_noac['balancecr'] = 0;
+        $insert_noac['saldo01d'] = 0;
+        $insert_noac['saldo01c'] = 0;
+        $insert_noac['saldo02d'] = 0;
+        $insert_noac['saldo02c'] = 0;
+        $insert_noac['saldo03d'] = 0;
+        $insert_noac['saldo03c'] = 0;
+        $insert_noac['saldo04d'] = 0;
+        $insert_noac['saldo04c'] = 0;
+        $insert_noac['saldo05d'] = 0;
+        $insert_noac['saldo05c'] = 0;
+        $insert_noac['saldo06d'] = 0;
+        $insert_noac['saldo06c'] = 0;
+        $insert_noac['saldo07d'] = 0;
+        $insert_noac['saldo07c'] = 0;
+        $insert_noac['saldo08d'] = 0;
+        $insert_noac['saldo08c'] = 0;
+        $insert_noac['saldo09d'] = 0;
+        $insert_noac['saldo09c'] = 0;
+        $insert_noac['saldo10d'] = 0;
+        $insert_noac['saldo10c'] = 0;
+        $insert_noac['saldo11d'] = 0;
+        $insert_noac['saldo11c'] = 0;
+        $insert_noac['saldo12d'] = 0;
+        $insert_noac['yeard'] = 0;
+        $insert_noac['yearc'] = 0;
+        $insert_noac['TGLINPUT'] = date('Y-m-d');
+
+        $this->mips_gl->insert('noac', $insert_noac);
+    }
+
+    function cek_coa_g($general, $group, $noac)
+    {
+        $sql = "SELECT noac, nama, `general`, `level`, `group`, `type` FROM noac WHERE noac <= '$general' AND `type` = 'G' AND `group` = '$group' ORDER BY noac ASC";
+        $sql_entry = $this->mips_center->query($sql)->result_array();
+
+        return $sql_entry;
+    }
+
+    function simpan_coa_g($data_coa)
+    {
+        // $query = "SELECT noac,nama,sbu,`group`,`type`,`level`,`general` FROM noac WHERE noac = '$general' AND 'type' = 'G'";
+        // $get_coa = $this->mips_center->query($query)->row_array();
+
+        $insert_noac['noac'] = $data_coa['noac'];
+        $insert_noac['nama'] = $data_coa['nama'];
+        $insert_noac['sbu'] = $data_coa['sbu'];
+        $insert_noac['group'] = $data_coa['group'];
+        $insert_noac['type'] = $data_coa['type'];
+        $insert_noac['level'] = $data_coa['level'];
+        $insert_noac['general'] = $data_coa['general'];
+        $insert_noac['costcenter'] = 0;
+        $insert_noac['depart'] = 0;
+        $insert_noac['LOKASI'] = $this->session->userdata('sess_nama_lokasi');
+        $insert_noac['balancedr'] = 0;
+        $insert_noac['balancecr'] = 0;
+        $insert_noac['saldo01d'] = 0;
+        $insert_noac['saldo01c'] = 0;
+        $insert_noac['saldo02d'] = 0;
+        $insert_noac['saldo02c'] = 0;
+        $insert_noac['saldo03d'] = 0;
+        $insert_noac['saldo03c'] = 0;
+        $insert_noac['saldo04d'] = 0;
+        $insert_noac['saldo04c'] = 0;
+        $insert_noac['saldo05d'] = 0;
+        $insert_noac['saldo05c'] = 0;
+        $insert_noac['saldo06d'] = 0;
+        $insert_noac['saldo06c'] = 0;
+        $insert_noac['saldo07d'] = 0;
+        $insert_noac['saldo07c'] = 0;
+        $insert_noac['saldo08d'] = 0;
+        $insert_noac['saldo08c'] = 0;
+        $insert_noac['saldo09d'] = 0;
+        $insert_noac['saldo09c'] = 0;
+        $insert_noac['saldo10d'] = 0;
+        $insert_noac['saldo10c'] = 0;
+        $insert_noac['saldo11d'] = 0;
+        $insert_noac['saldo11c'] = 0;
+        $insert_noac['saldo12d'] = 0;
+        $insert_noac['yeard'] = 0;
+        $insert_noac['yearc'] = 0;
+        $insert_noac['TGLINPUT'] = date('Y-m-d');
+
+        $this->mips_gl->insert('noac', $insert_noac);
+    }
+
+    function cek_coa_g_level($general)
+    {
+        $sql = "SELECT noac FROM noac WHERE noac = '$general'";
+        $sql_entry = $this->mips_gl->query($sql)->num_rows();
+
+        return $sql_entry;
+    }
+
+    // versi si boss
+
+    // function get_noac_all()
+    // {
+    //     $sql = "SELECT noac, nama, `general`, `level`, `group`, `type` FROM noac ORDER BY noac DESC";
+    //     $sql_entry = $this->mips_center->query($sql)->result_array();
+    //     $sql_entry_num = $this->mips_center->query($sql)->num_rows();
+
+    //     $result = [
+    //         'data_coa' => $sql_entry,
+    //         'data_coa_num' => $sql_entry_num
+    //     ];
+
+    //     return $result;
+    // }
+
+    // function get_noac_g($general)
+    // {
+    //     $sql = "SELECT noac, nama, `general`, `level`, `group`, `type` FROM noac WHERE noac = '$general'";
+    //     $sql_entry = $this->mips_center->query($sql)->result_array();
+    //     $sql_entry_num = $this->mips_center->query($sql)->num_rows();
+
+    //     $result = [
+    //         'data_coa' => $sql_entry,
+    //         'data_coa_num' => $sql_entry_num
+    //     ];
+
+    //     return $result;
+    // }
+
+
+    // ide sore gege
+
+    //cari general berdasarkan noac
+    function cek_general($general)
+    {
+        $sql = "SELECT noac, general FROM noac WHERE noac = '$general'";
+        $sql_entry_num = $this->mips_gl->query($sql)->num_rows();
+        $sql_entry_row = $this->mips_center->query($sql)->row_array();
+
+        $result = [
+            'data_coa_num' => $sql_entry_num,
+            'data_coa_row' => $sql_entry_row
+        ];
+
+        return $result;
+    }
+
+    function simpan_general($general)
+    {
+        $gen = $general['noac'];
+        $sql = "SELECT noac, nama, sbu, `group`, `type`, `level`, general FROM noac WHERE noac = '$gen'";
+        $data_coa = $this->mips_center->query($sql)->row_array();
+
+        $insert_noac['noac'] = $data_coa['noac'];
+        $insert_noac['nama'] = $data_coa['nama'];
+        $insert_noac['sbu'] = $data_coa['sbu'];
+        $insert_noac['group'] = $data_coa['group'];
+        $insert_noac['type'] = $data_coa['type'];
+        $insert_noac['level'] = $data_coa['level'];
+        $insert_noac['general'] = $data_coa['general'];
+        $insert_noac['costcenter'] = 0;
+        $insert_noac['depart'] = 0;
+        $insert_noac['LOKASI'] = $this->session->userdata('sess_nama_lokasi');
+        $insert_noac['balancedr'] = 0;
+        $insert_noac['balancecr'] = 0;
+        $insert_noac['saldo01d'] = 0;
+        $insert_noac['saldo01c'] = 0;
+        $insert_noac['saldo02d'] = 0;
+        $insert_noac['saldo02c'] = 0;
+        $insert_noac['saldo03d'] = 0;
+        $insert_noac['saldo03c'] = 0;
+        $insert_noac['saldo04d'] = 0;
+        $insert_noac['saldo04c'] = 0;
+        $insert_noac['saldo05d'] = 0;
+        $insert_noac['saldo05c'] = 0;
+        $insert_noac['saldo06d'] = 0;
+        $insert_noac['saldo06c'] = 0;
+        $insert_noac['saldo07d'] = 0;
+        $insert_noac['saldo07c'] = 0;
+        $insert_noac['saldo08d'] = 0;
+        $insert_noac['saldo08c'] = 0;
+        $insert_noac['saldo09d'] = 0;
+        $insert_noac['saldo09c'] = 0;
+        $insert_noac['saldo10d'] = 0;
+        $insert_noac['saldo10c'] = 0;
+        $insert_noac['saldo11d'] = 0;
+        $insert_noac['saldo11c'] = 0;
+        $insert_noac['saldo12d'] = 0;
+        $insert_noac['yeard'] = 0;
+        $insert_noac['yearc'] = 0;
+        $insert_noac['TGLINPUT'] = date('Y-m-d');
+
+        if ($data_coa['noac'] != NULL || $data_coa['general'] != NULL) {
+
+            //cek coa sekali lagi
+            $sql_cek_coa = "SELECT noac FROM noac WHERE noac = '$gen'";
+            $cek_lagi = $this->mips_gl->query($sql_cek_coa)->num_rows();
+            if ($cek_lagi == 0) {
+                $this->mips_gl->insert('noac', $insert_noac);
+            }
+        }
+
+        // disini masih ragu dah
+        return $general['general'];
+    }
 }

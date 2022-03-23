@@ -690,6 +690,9 @@
 
                 Command: toastr["error"]("Silahkan gunakan nomor ref yang lain, nomor ini " + $("#no_ref").val() + " sudah terdaftar di database !", "No.Ref Sudah Terdaftar !");
 
+                loadingPannel.hide();
+                // document.getElementById('no_ref').readOnly = true;
+
               }
 
             }
