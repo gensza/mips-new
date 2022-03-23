@@ -93,11 +93,12 @@
             <table id="approve_coa" class="table table-hover table-striped table-responsive table-bordered" style="width: 100%">
                 <thead>
                     <tr>
-                        <th style="width: 5%; font-size: 12px; padding:10px">No</th>
-                        <th style="width: 5%; font-size: 12px; padding:10px">Sbu</th>
-                        <th style="width: 10%; font-size: 12px; padding:10px">Dept</th>
-                        <th style="width: 10%; font-size: 12px; padding:10px">Noref</th>
-                        <th style="width: 5%; font-size: 12px; padding:10px">Approve</th>
+                        <th width="5%" style="font-size: 12px; padding:10px">Approval</th>
+                        <th width="4%" style="font-size: 12px; padding:10px">No</th>
+                        <th width="5%" style="font-size: 12px; padding:10px">Sbu</th>
+                        <th width="16%" style="font-size: 12px; padding:10px">No. Ref. SPP</th>
+                        <th width="18%" style="font-size: 12px; padding:10px">PT</th>
+                        <th width="9%" style="font-size: 12px; padding:10px">Dept</th>
                     </tr>
                 </thead>
                 <tbody>

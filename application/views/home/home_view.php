@@ -1,5 +1,50 @@
 <script type="text/javascript">
+  function data_coa() {
+    $('#coa_approve').DataTable().destroy();
+    $('#coa_approve').DataTable({
 
+      "fixedColumns": true,
+      "fixedHeader": true,
+      // "scrollY": 400,
+      "scrollX": true,
+
+      "processing": true,
+      "serverSide": true,
+      "order": [],
+
+      "ajax": {
+        "url": "<?php echo site_url('coa/data_approve_coa') ?>",
+        "type": "POST"
+      },
+
+      "columnDefs": [{
+        "targets": [0],
+        "orderable": false,
+      }, ],
+      "language": {
+        searchPlaceholder: 'Cari',
+        sSearch: '',
+        lengthMenu: '_MENU_',
+        "infoFiltered": ""
+      },
+    });
+
+    var rel = setInterval(function() {
+      $('#coa_approve').DataTable().ajax.reload();
+      clearInterval(rel);
+    }, 100);
+  }
+
+  $(document).ready(function() {
+    var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
+
+    // loading();
+
+    data_coa()
+
+
+    loading();
+  });
 </script>
 <?php
 if ($this->session->userdata('sess_level') == 1) {
@@ -42,10 +87,10 @@ if ($this->session->userdata('sess_level') == 1) {
 <?php
 } else {
 ?>
-  <div class="span2">
+  <div class="span1">
     <span style="color:white">&nbsp;</span>
   </div>
-  <div class="span8">
+  <div class="span11">
     <div class="section-wrapper">
       <h3 class="heading">Hi, <?php echo $ses_nama; ?> &nbsp; <b>
           <?php
@@ -64,7 +109,7 @@ if ($this->session->userdata('sess_level') == 1) {
       </div>
       <?php if ($this->session->userdata('sess_level') == 3) { ?>
 
-        <div class="row">
+        <div class="row-fluid">
           <div class="col-sm-12">
             <ul class="dshb_icoNav clearfix">
               <li><a href="javascript:void(0)" onclick="getcontents('cash_bank/saldo_awal', '<?php echo $tokens; ?>')" style="background-image: url(assets/img/gCons/dollar.png" )">
@@ -85,8 +130,8 @@ if ($this->session->userdata('sess_level') == 1) {
       <?php } elseif ($this->session->userdata('sess_level') == 2) { ?>
 
 
-        <div class="row">
-          <div class="col-sm-12">
+        <div class="row-fluid">
+          <div class="span12">
             <ul class="dshb_icoNav clearfix">
               <li><a href="javascript:void(0)" onclick="getcontents('coa/approve_coa', '<?php echo $tokens; ?>')" style="background-image: url(assets/img/gCons/email.png)"><?php if ($count_data != 0) { ?>
                     <span class="label label-important"><?= $count_data ?></span>
@@ -104,6 +149,38 @@ if ($this->session->userdata('sess_level') == 1) {
               <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_balance', '<?php echo $tokens; ?>')">Laporan Neraca</a></li>
 
             </ul>
+          </div>
+        </div>
+
+        <div class="row-fluid">
+
+          <div class="span12">
+            <div class="heading clearfix">
+              <h3 class="pull-left">Approval COA</h3>
+              <span class="pull-right label label-important">5 COA</span>
+            </div>
+            <div class="mediaTableWrapper">
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered mediaTable activeMediaTable" id="coa_approve">
+                  <thead>
+
+                    <tr>
+                      <th width="5%" style="font-size: 12px; padding:10px">Approval</th>
+                      <th width="3%" style="font-size: 12px; padding:10px">No</th>
+                      <th width="5%" style="font-size: 12px; padding:10px">Sbu</th>
+                      <th width="16%" style="font-size: 12px; padding:10px">No. Ref. SPP</th>
+                      <th width="18%" style="font-size: 12px; padding:10px">PT</th>
+                      <th width="9%" style="font-size: 12px; padding:10px">Dept</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       <?php } ?>
