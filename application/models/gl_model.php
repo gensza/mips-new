@@ -3236,6 +3236,7 @@ class Gl_model extends CI_Model
         $insert_noac['saldo11d'] = 0;
         $insert_noac['saldo11c'] = 0;
         $insert_noac['saldo12d'] = 0;
+        $insert_noac['saldo12c'] = 0;
         $insert_noac['yeard'] = 0;
         $insert_noac['yearc'] = 0;
         $insert_noac['TGLINPUT'] = date('Y-m-d');
@@ -3291,6 +3292,7 @@ class Gl_model extends CI_Model
         $insert_noac['saldo11d'] = 0;
         $insert_noac['saldo11c'] = 0;
         $insert_noac['saldo12d'] = 0;
+        $insert_noac['saldo12c'] = 0;
         $insert_noac['yeard'] = 0;
         $insert_noac['yearc'] = 0;
         $insert_noac['TGLINPUT'] = date('Y-m-d');
@@ -3395,6 +3397,7 @@ class Gl_model extends CI_Model
         $insert_noac['saldo11d'] = 0;
         $insert_noac['saldo11c'] = 0;
         $insert_noac['saldo12d'] = 0;
+        $insert_noac['saldo12c'] = 0;
         $insert_noac['yeard'] = 0;
         $insert_noac['yearc'] = 0;
         $insert_noac['TGLINPUT'] = date('Y-m-d');
