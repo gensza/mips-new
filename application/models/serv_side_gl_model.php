@@ -3,11 +3,11 @@ class Serv_side_gl_model extends CI_Model
 {
 
     //nama tabel dari database
-    var $mst_code;
-    var $mips_gl;
+    // var $mst_code;
+    // var $mips_gl;
     //var $table = 'noac';
-    var $column_order = array(null, 'VOUCNO', 'FROM', 'txtperiode', 'AMOUNT');
-    var $column_search = array('nama', 'noac'); //field yang diizin untuk pencarian 
+    var $column_order = array(null, 'NOID', 'noac', 'general', 'level', 'type', 'nama', 'group');
+    var $column_search = array('NOID', 'noac', 'general', 'level', 'type', 'nama', 'group'); //field yang diizin untuk pencarian 
     var $order = array('noac' => 'asc'); // default order
 
 
@@ -15,7 +15,7 @@ class Serv_side_gl_model extends CI_Model
     {
 
         parent::__construct();
-        $this->mst_code = $this->load->database('mstcode', TRUE);
+        // $this->mst_code = $this->load->database('mstcode', TRUE);
 
         $db_pt = check_db_pt();
     }

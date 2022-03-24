@@ -5,9 +5,9 @@ class Serv_side_gl_transaksi_model extends CI_Model
     //nama tabel dari database
     var $table = 'header_entry';
     //field yang ada di table user
-    var $column_order = array(null, 'VOUCNO', 'FROM', 'txtperiode', 'AMOUNT');
-    var $column_search = array('ref', 'lokasi'); //field yang diizin untuk pencarian 
-    var $order = array('noid' => 'desc'); // default order
+    var $column_order = array(null, 'NOID', 'ref', 'date', 'periodetxt', 'totaldr', 'totalcr', 'amount_d', 'lokasi');
+    var $column_search = array('NOID', 'ref', 'date', 'periodetxt', 'totaldr', 'totalcr', 'amount_d', 'lokasi'); //field yang diizin untuk pencarian 
+    var $order = array('NOID' => 'desc'); // default order
 
 
 
