@@ -7,7 +7,7 @@
         var pt = '<?php echo $pt; ?>';
         var alias = '<?php echo $alias; ?>';
 
-        console.log(id_modal);
+        // console.log(id_modal);
 
         loading_coa();
 
@@ -102,18 +102,17 @@
                     dataType: "json",
                     async: 'false',
                     success: function(result) {
-                        console.log(result);
+                        // console.log(result);
                         if (result == true) {
                             loadingPannel.hide();
                             update_ppo_tmp(id, alias)
 
-                            // swal("Good job!", "You clicked the button!", "success");
                             Command: toastr["success"]("COA berhasil dibuatkan", "Berhasil");
-                            var filter = "SEMUA";
-                            data_coa(filter)
-                            data_spp('<?php echo $id_row; ?>', '<?php echo $pt; ?>', alias)
-                        } else {
 
+
+
+                        } else {
+                            alert('Ada Kesalahan!');
                         }
                     },
                     beforeSend: function() {
@@ -142,6 +141,18 @@
             },
             success: function(data) {
                 var kode = $('#hidden_id_ppo').val();
+                console.log(data);
+                if (data.delete == true) {
+                    data_spp('<?php echo $id_row; ?>', '<?php echo $pt; ?>', alias)
+                    $('#popupedit').modal('hide');
+                    getpopup_new_coa('coa/modal_new_coa', '<?php echo $this->session->userdata('sess_token'); ?>', 'detail_newcoa', '<?php echo $noref; ?>', alias);
+                    var filter = "SEMUA";
+                    data_coa(filter);
+                } else {
+                    data_spp('<?php echo $id_row; ?>', '<?php echo $pt; ?>', alias)
+                    var filter = "SEMUA";
+                    data_coa(filter);
+                }
                 // spp_approval_noCoa(kode)
             },
             error: function(request) {
@@ -149,6 +160,7 @@
             }
         });
     }
+
 
 
     function get_grub(id) {
@@ -205,7 +217,8 @@
                 <thead>
                     <tr>
                         <th style="width: 5%; padding:10px">No</th>
-                        <th style="width: 20%; padding:10px">Nama&nbsp;Barang </th>
+                        <th style="width: 20%; padding:10px">Noac&nbsp;Sementara</th>
+                        <th style="width: 30%; padding:10px">Nama&nbsp;Barang</th>
                         <th style="width: 20%; padding:10px">Grup</th>
                         <th style="width: 5%; padding:10px">Pilih</th>
                     </tr>

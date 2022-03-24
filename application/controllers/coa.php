@@ -13,6 +13,7 @@ class coa extends CI_Controller
         $this->load->model('main_model');
         $this->load->model('data_approve_coa');
         $this->load->model('get_coa_approved');
+        $this->load->model('get_new_coa');
 
         $db_pt = check_db_pt();
 
@@ -111,6 +112,7 @@ class coa extends CI_Controller
             $row = array();
             $row[] = $no;
 
+            $row[] = $d->kodebar;
             $row[] = $nabar;
             $row[] = $grp;
             $row[] = "<a href='javascript:void(0)' onClick=pilih_setujui(" . $d->id . "," . $d->kodebar . "," . $pt . ") title=' Approve - " .  $d->nabar . "'><i class='splashy-check'></i></a>&nbsp;
@@ -159,6 +161,61 @@ class coa extends CI_Controller
         } else {
             echo "<script> window.location = 'main/logout' </script>";
         }
+    }
+    public function modal_new_coa()
+    {
+        $tokens   = $this->input->post('tokens', TRUE);
+        $id_modal = $this->input->post('id_modal', TRUE);
+        $noref = $this->input->post('noref', TRUE);
+        $alias = $this->input->post('alias', TRUE);
+
+
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens']     = $tokens;
+        $data['id_modal']   = $id_modal;
+        $data['noref']     = $noref;
+        $data['alias']     = $alias;
+
+        if ($result == '1') {
+            $this->load->view('gl/coa/popup_coa_baru', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
+    public function get_new_coa()
+    {
+        $id = $this->input->post('id');
+        $alias = strtolower($this->input->post('alias'));
+        $this->get_new_coa->getWhere($alias);
+
+        $list = $this->get_new_coa->get_datatables($id);
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $d) {
+
+
+            $no++;
+            $row = array();
+            $row[] = $no;
+            $row[] = $d->kodept;
+            $row[] = $d->kodebar;
+            $row[] = $d->nabar;
+            $row[] = $d->grup;
+
+
+
+            $data[] = $row;
+        }
+
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->get_new_coa->count_all($id),
+            "recordsFiltered" => $this->get_new_coa->count_filtered($id),
+            "data" => $data,
+        );
+        //output to json format
+        echo json_encode($output);
     }
 
     function approved_coa()

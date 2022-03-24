@@ -14,7 +14,8 @@ class get_coa_approved extends CI_Model
     {
         parent::__construct();
         $this->load->database();
-
+        $db_pt = check_db_pt();
+        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
         $this->mips_center  = $this->load->database('mips_center', TRUE);
     }
 
@@ -142,14 +143,18 @@ class get_coa_approved extends CI_Model
 
         if ($item1 == $item2) {
             $data = array('status' => 'DALAM PROSES', 'status2' => '0');
-            $yy = $this->db_logistik->update('ppo', $data, array('noreftxt' => $noref));
-            $this->mips_center->delete('ppo_tmp', array('noreftxt' => $noref));
+            $update = $this->db_logistik->update('ppo', $data, array('noreftxt' => $noref));
+            $delete = $this->mips_center->delete('ppo_tmp', array('noreftxt' => $noref));
         } else {
             $data = array('status' => 'SEBAGIAN', 'status2' => '11');
-            $yy = $this->db_logistik->update('ppo', $data, array('noreftxt' => $noref));
+            $update = $this->db_logistik->update('ppo', $data, array('noreftxt' => $noref));
+            $delete = false;
         }
-
-        return $yy;
+        $data = [
+            'update' => $update,
+            'delete' => $delete,
+        ];
+        return $data;
     }
 
     public function save_kode_barang($id, $kodebar, $grp, $alias)
@@ -183,6 +188,8 @@ class get_coa_approved extends CI_Model
         $noac1 = $this->mips_center->query("SELECT * FROM noac WHERE nama LIKE '$grp' ")->row();
         $noac2 = $this->mips_center->query("SELECT * FROM noac WHERE general='$noac1->noac' ORDER BY NOID DESC LIMIT 1")->row();
 
+        $lokasi = $item_ppo->LOKASI;
+
         $dt['noac'] = $kodebar;
         $dt['nama'] = $item_ppo->nabar;
         $dt['sbu'] = $item_ppo->kode_dev;
@@ -192,7 +199,7 @@ class get_coa_approved extends CI_Model
         $dt['general'] = $noac1->noac;
         $dt['costcenter'] = 0;
         $dt['depart'] = $item_ppo->kodedept;
-        $dt['LOKASI'] = $item_ppo->LOKASI;
+        $dt['LOKASI'] = $lokasi;
         $dt['balancedr'] = 0;
         $dt['balancecr'] = 0;
         $dt['saldo01d'] = 0;
@@ -224,6 +231,14 @@ class get_coa_approved extends CI_Model
         $dt['TGLINPUT'] = date('Y-m-d H:i:s');
 
         $hasil = $this->mips_center->insert('noac', $dt);   //insert noac
+        $lok = strtolower($lokasi);
+        // mips_gl_msal_site
+        $this->gl = $this->load->database('mips_gl_' . $alias . '_' . $lok, TRUE);
+        if ($lokasi != 'HO') {
+            # code...
+            $this->gl->insert('noac', $dt);
+        }
+        $this->mips_gl->insert('noac', $dt);
 
         return $hasil;
     }
