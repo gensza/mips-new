@@ -13,34 +13,45 @@ class Login extends CI_Controller
         $this->load->library('cipasswordhash');
         $this->load->model('main_model');
         $this->load->helper('captcha');
+        $this->mips_center  = $this->load->database('mips_center', TRUE);
     }
 
     public function index()
     {
+        if ($this->session->userdata('sess_id') != 0) {
+            # code...
+            $id = $this->session->userdata('sess_id');
+            $result = $this->db->query("SELECT * FROM users WHERE id = '$id'")->row();
+            $token = $result->token;
+            $id_users = $result->id;
+            $aktif = $result->aktif;
+            redirect(base_url("index.aspx?TokEn=$token&IdUs=$id_users&AkTif=$aktif"));
+        } else {
+            # code...
+            $rand = random_string('numeric', 6);
 
-        $rand = random_string('numeric', 6);
+            // Captcha configuration
+            $config = array(
+                'img_path'      => 'captcha_images/',
+                'img_url'       => base_url() . 'captcha_images/',
+                'img_width'     => '150',
+                'img_height'    => 50,
+                'word_length'   => 8,
+                'font_size'     => 30,
+                'word'         => $rand,
+            );
+            $captcha = create_captcha($config);
 
-        // Captcha configuration
-        $config = array(
-            'img_path'      => 'captcha_images/',
-            'img_url'       => base_url() . 'captcha_images/',
-            'img_width'     => '150',
-            'img_height'    => 50,
-            'word_length'   => 8,
-            'font_size'     => 30,
-            'word'         => $rand,
-        );
-        $captcha = create_captcha($config);
+            // Unset previous captcha and store new captcha word
+            $this->session->unset_userdata('captchaCode');
+            $this->session->set_userdata('captchaCode', $captcha['word']);
 
-        // Unset previous captcha and store new captcha word
-        $this->session->unset_userdata('captchaCode');
-        $this->session->set_userdata('captchaCode', $captcha['word']);
+            // Send captcha image to view
+            $data['captchaImg'] = $captcha['image'];
+            $data['num'] = $rand;
 
-        // Send captcha image to view
-        $data['captchaImg'] = $captcha['image'];
-        $data['num'] = $rand;
-
-        $this->load->view('login/login_view', $data);
+            $this->load->view('login/login_view', $data);
+        }
     }
 
     public function ubah_password()
@@ -106,7 +117,7 @@ class Login extends CI_Controller
             $result_data = $this->login_model->authlogin($where)->row_array();
 
             $lok = $this->db->query("SELECT nama as nama_lokasi FROM codegroup WHERE value='$result_data[id_lokasi]' AND group_n='LOKASI_USERS'")->row_array();
-            $getpt = $this->db->query("SELECT nama_pt, logo, alias FROM tb_pt WHERE kode_pt='$pt'")->row_array();
+            $getpt = $this->mips_center->query("SELECT nama_pt, logo, alias FROM tb_pt WHERE kode_pt='$pt'")->row_array();
             $setup = $this->db->query("SELECT txtperiode FROM tb_setup WHERE id_modul='$result_data[id_module_role]' AND id_pt='$pt' AND lokasi='$result_data[id_lokasi]'")->row_array();
             // var_dump($result_data) . die();
             //ini fungsi cek query, jika ada

@@ -56,10 +56,16 @@ class Login_model extends CI_Model
 
     }
 
+    function get_token($id)
+    {
+        $sql = "SELECT * FROM users WHERE id = '$id'";
+        return $this->db->query($sql)->row();
+    }
+
     function update_token($sf_id, $sf_token)
     {
 
-        $sql = "UPDATE users SET token = '$sf_token', login_lst = NOW(), login_exp = DATE_ADD(NOW(), INTERVAL 4 HOUR) WHERE id = '$sf_id' and is_deleted = '0' and aktif = '1'";
+        $sql = "UPDATE users SET token = '$sf_token', login_lst = NOW(), login_exp = DATE_ADD(NOW(), INTERVAL 10 HOUR) WHERE id = '$sf_id' and is_deleted = '0' and aktif = '1'";
 
         return $this->db->query($sql);
     }

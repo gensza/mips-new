@@ -167,50 +167,54 @@ if ($this->session->userdata('sess_level') == 1) {
           </div>
         </div>
 
-        <div class="row-fluid">
+        <?php if ($this->session->userdata('sess_nama_lokasi') == 'HO') { ?>
 
-          <div class="span12">
-            <div class="heading clearfix">
-              <h3 class="pull-left">Approval COA</h3>
-              <div class="pull-right">
+          <div class="row-fluid">
 
-                <select class="form-control form-control-sm" id="filter_spp" name="filter_spp">
-                  <option value="SEMUA" selected>TAMPILKAN SEMUA</option>
-                  <?php
-                  foreach ($pt as $d) : {
-                  ?>
-                      <option value="<?= $d['alias']; ?>"><?= $d['nama_pt']; ?></option>
-                  <?php
-                    }
-                  endforeach;
-                  ?>
-                </select>
+            <div class="span12">
+              <div class="heading clearfix">
+                <h3 class="pull-left">Approval COA</h3>
+                <div class="pull-right">
+
+                  <select class="form-control form-control-sm" id="filter_spp" name="filter_spp">
+                    <option value="SEMUA" selected>TAMPILKAN SEMUA</option>
+                    <?php
+                    foreach ($pt as $d) : {
+                    ?>
+                        <option value="<?= $d['alias']; ?>"><?= $d['nama_pt']; ?></option>
+                    <?php
+                      }
+                    endforeach;
+                    ?>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="mediaTableWrapper">
-              <div class="table-responsive">
-                <table class="table table-striped table-bordered mediaTable activeMediaTable" id="coa_approve" style="width: 100%">
-                  <thead>
+              <div class="mediaTableWrapper">
+                <div class="table-responsive">
+                  <table class="table table-striped table-bordered mediaTable activeMediaTable" id="coa_approve" style="width: 100%">
+                    <thead>
 
-                    <tr>
-                      <th width="5%" style="font-size: 12px; padding:10px">Approval</th>
-                      <th width="3%" style="font-size: 12px; padding:10px">No</th>
-                      <th width="5%" style="font-size: 12px; padding:10px">Sbu</th>
-                      <th width="16%" style="font-size: 12px; padding:10px">No. Ref. SPP</th>
-                      <th width="18%" style="font-size: 12px; padding:10px">PT</th>
-                      <th width="9%" style="font-size: 12px; padding:10px">Dept</th>
+                      <tr>
+                        <th width="5%" style="font-size: 12px; padding:10px">Approval</th>
+                        <th width="3%" style="font-size: 12px; padding:10px">No</th>
+                        <th width="5%" style="font-size: 12px; padding:10px">Sbu</th>
+                        <th width="16%" style="font-size: 12px; padding:10px">No. Ref. SPP</th>
+                        <th width="18%" style="font-size: 12px; padding:10px">PT</th>
+                        <th width="9%" style="font-size: 12px; padding:10px">Dept</th>
 
-                    </tr>
-                  </thead>
-                  <tbody>
+                      </tr>
+                    </thead>
+                    <tbody>
 
 
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        <?php } ?>
+
       <?php } ?>
 
 

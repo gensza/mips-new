@@ -66,7 +66,6 @@ $login_failed = $this->session->flashdata('usersnotfound');
 
             <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" style="display: none">
 
-
             <?php echo $login_failed; ?>
 
             <div style="text-align: center;padding:10px">
