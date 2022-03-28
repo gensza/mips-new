@@ -10,7 +10,12 @@ class get_new_coa extends CI_Model
     var $column_search = array('id', 'noreftxt', 'kodebar', 'nabar', 'sat', 'qty', 'STOK', 'ket'); //field yang diizin untuk pencarian 
     var $order = array('id' => 'ASC'); // default order 
 
-
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->database();
+        $this->mips_center  = $this->load->database('mips_center', TRUE);
+    }
 
     public function getWhere($alias)
     {
@@ -76,6 +81,17 @@ class get_new_coa extends CI_Model
         $this->mips_logistik->from($this->table);
         $this->mips_logistik->where('noreftxt', $id);
         return $this->mips_logistik->count_all_results();
+    }
+
+
+    function simpan_upload($excel)
+    {
+        $data = array(
+            'file' => $excel
+        );
+
+        $hasil = $this->mips_center->insert('tb_file_coa', $data);
+        return $hasil;
     }
 }
 

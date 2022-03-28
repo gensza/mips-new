@@ -155,6 +155,7 @@ class Module extends CI_Controller
         $data['id_module']          = $this->input->post('id_module', TRUE);
 
         $result = $this->module_model->module_sub_simpan($data);
+        // $this->module_model->simpan_module_permission($data);
         echo json_encode($result);
     }
 

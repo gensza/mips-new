@@ -152,6 +152,15 @@ class Module_model extends CI_Model
         return $this->db->query($sql);
     }
 
+    function simpan_module_permission($data)
+    {
+        $get_module = $this->db->query("SELECT id FROM module WHERE `controller` LIKE '$data[nama_controller]'")->row();
+        $isi = array(
+            'id_module_role' => $get_module->id,
+            'id_module' => $data['id_module'],
+        );
+    }
+
 
     /* position 3 */
     function module_sub_simpan_sub($data)

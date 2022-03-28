@@ -94,6 +94,6 @@
     <div class="modal-footer">
         <!-- <button type="button" class="btn btn-default" style="background:white"><img src="<?php echo base_url('assets/img-gif.gif'); ?>" style="width:23px"></button> -->
         <!-- <button type="button" class="btn btn-success" id="btn_selesai_po"><i class="fa fa-refresh"></i> Selesai dan Simpan</button> -->
-        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-refresh"></i> Close</button>
+        <button type="button" class="btn btn-danger"><i class="fa fa-refresh" onclick="closeModal()"></i> Close</button>
     </div>
 </div>

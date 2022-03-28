@@ -5,7 +5,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class coa extends CI_Controller
 {
 
-
     public function __construct()
     {
         parent::__construct();
@@ -14,6 +13,7 @@ class coa extends CI_Controller
         $this->load->model('data_approve_coa');
         $this->load->model('get_coa_approved');
         $this->load->model('get_new_coa');
+        // $this->load->library(array('excel', 'session'));
 
         $db_pt = check_db_pt();
 
@@ -33,6 +33,70 @@ class coa extends CI_Controller
 
     public function index()
     {
+    }
+
+    public function upload()
+    {
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        if ($result == '1') {
+            $this->load->view('gl/coa/coa_upload_view', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
+    function upload_coa()
+    {
+        //phpexcel to mysql database
+        if (isset($_FILES["file_coa"]["name"])) {
+            // upload
+            $file_tmp = $_FILES['file_coa']['tmp_name'];
+            $file_name = $_FILES['file']['name'];
+            $file_size = $_FILES['file']['size'];
+            $file_type = $_FILES['file']['type'];
+            // move_uploaded_file($file_tmp,"uploads/".$file_name); // simpan filenya di folder uploads
+
+            $object = PHPExcel_IOFactory::load($file_tmp);
+
+            foreach ($object->getWorksheetIterator() as $worksheet) {
+
+                $highestRow = $worksheet->getHighestRow();
+                $highestColumn = $worksheet->getHighestColumn();
+
+                for ($row = 5; $row <= $highestRow; $row++) {
+
+                    $noac = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
+                    $nama = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+                    $sbu = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+                    $group = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+                    $type = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+                    $level = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+                    $general = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
+                    $tgl = $worksheet->getCellByColumnAndRow(7, $row)->getValue();
+
+                    $date = DateTime::createFromFormat('d/m/Y', $tgl);
+                    $data[] = array(
+                        'noac'          => $noac,
+                        'nama'          => $nama,
+                        'sbu'         => $sbu,
+                        'group'         => $group,
+                        'type'         => $type,
+                        'level'         => $level,
+                        'general'         => $general,
+                        'TGLINPUT'         => $date->format('Y-m-d H:i:s'),
+                    );
+                }
+            }
+
+            $data = $this->mips_center->insert_batch('noac', $data);
+
+            echo json_encode($data);
+        } else {
+            $data = false;
+            echo json_encode($data);
+        }
     }
 
     public function approve_coa()

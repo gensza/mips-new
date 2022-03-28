@@ -144,7 +144,7 @@
                 console.log(data);
                 if (data.delete == true) {
                     data_spp('<?php echo $id_row; ?>', '<?php echo $pt; ?>', alias)
-                    $('#popupedit').modal('hide');
+                    $('#' + '<?php echo $id_modal; ?>').modal('hide');
                     getpopup_new_coa('coa/modal_new_coa', '<?php echo $this->session->userdata('sess_token'); ?>', 'detail_newcoa', '<?php echo $noref; ?>', alias);
                     var filter = "SEMUA";
                     data_coa(filter);
