@@ -123,15 +123,16 @@
                         type: "info",
                         showCancelButton: true,
                         closeOnConfirm: false,
-                        showLoaderOnConfirm: true,
+                        // showLoaderOnConfirm: true,
                         confirmButtonText: "Simpan",
                         //confirmButtonColor: "#E73D4A"
                         confirmButtonColor: "#286090"
                     },
                     function() {
 
+                        //cek_is_exist_coa();
                         $.ajax({
-                            url: base_url + 'gl/master_simpan',
+                            url: base_url + 'gl/cek_is_exist_coa',
                             type: "POST",
                             dataType: 'json',
                             mimeType: 'multipart/form-data',
@@ -140,12 +141,35 @@
                             cache: false,
                             processData: false,
                             success: function(response) {
-                                if (response == true) {
-                                    swal.close();
-                                    Command: toastr["success"]("COA Baru berhasil disimpan kedalam database", "Berhasil");
-                                    getcontents('gl/master_tabel', '<?php echo $tokens; ?>');
+                                console.log(response);
+                                if (response == 0) {
+                                    $.ajax({
+                                        url: base_url + 'gl/master_simpan',
+                                        type: "POST",
+                                        dataType: 'json',
+                                        mimeType: 'multipart/form-data',
+                                        data: form_data,
+                                        contentType: false,
+                                        cache: false,
+                                        processData: false,
+                                        success: function(response) {
+                                            if (response == true) {
+                                                swal.close();
+                                                Command: toastr["success"]("COA Baru berhasil disimpan kedalam database", "Berhasil");
+                                                getcontents('gl/master_tabel', '<?php echo $tokens; ?>');
+                                            } else {
+                                                Command: toastr["error"]("Simpan error, data tidak berhasil disimpan", "Error");
+                                            }
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            Command: toastr["error"]("Opps..Maaf terjadi kesahalan pada saat simpan data! Data Belum tersimpan.", "Error");
+                                        }
+
+                                    });
+
                                 } else {
-                                    Command: toastr["error"]("Simpan error, data tidak berhasil disimpan", "Error");
+                                    Command: toastr["error"]("Coa Sudah ada, data tidak berhasil disimpan", "Error");
+                                    // hide sweetalert
                                 }
                             },
                             error: function(jqXHR, textStatus, errorThrown) {
@@ -155,10 +179,7 @@
                         });
 
                     });
-
             }
-
-
         });
 
 

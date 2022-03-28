@@ -1938,4 +1938,15 @@ class Gl extends CI_Controller
         //output dalam format JSON
         echo json_encode($output);
     }
+
+    function cek_is_exist_coa()
+    {
+        $noac = $this->input->post('noacc', TRUE);
+
+        $noac_rpc = str_replace('.', '', $noac);
+
+
+        $result = $this->gl_model->cek_is_exist_coa($noac_rpc);
+        echo json_encode($result);
+    }
 }

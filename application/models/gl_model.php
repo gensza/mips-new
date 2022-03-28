@@ -802,16 +802,48 @@ class Gl_model extends CI_Model
         $acc_general    = str_replace(".", "", $data['acc_general']);
         $acc_balance    = str_replace(",", "", $data['acc_balance']);
 
-        $d['noac15'] = $noacc;
+        $d['noac'] = $noacc;
         $d['nama'] = $data['nama'];
         $d['group'] = "0";
         $d['type'] = $data['g_d'];
         $d['level'] = $data['level'];
         $d['general'] = $acc_general;
-        $d['yeard'] = "0";
-        $d['yearc'] = "0";
+        $d['costcenter'] = 0;
+        $d['depart'] = 0;
+        $d['LOKASI'] = $this->session->userdata('sess_nama_lokasi');
+        $d['balancedr'] = 0;
+        $d['balancecr'] = 0;
+        $d['saldo01d'] = 0;
+        $d['saldo01c'] = 0;
+        $d['saldo02d'] = 0;
+        $d['saldo02c'] = 0;
+        $d['saldo03d'] = 0;
+        $d['saldo03c'] = 0;
+        $d['saldo04d'] = 0;
+        $d['saldo04c'] = 0;
+        $d['saldo05d'] = 0;
+        $d['saldo05c'] = 0;
+        $d['saldo06d'] = 0;
+        $d['saldo06c'] = 0;
+        $d['saldo07d'] = 0;
+        $d['saldo07c'] = 0;
+        $d['saldo08d'] = 0;
+        $d['saldo08c'] = 0;
+        $d['saldo09d'] = 0;
+        $d['saldo09c'] = 0;
+        $d['saldo10d'] = 0;
+        $d['saldo10c'] = 0;
+        $d['saldo11d'] = 0;
+        $d['saldo11c'] = 0;
+        $d['saldo12d'] = 0;
+        $d['saldo12c'] = 0;
+        $d['yeard'] = 0;
+        $d['yearc'] = 0;
+        $d['TGLINPUT'] = date('Y-m-d');
 
 
+        //insert ke noac center
+        $this->mips_center->insert('noac', $d);
 
         if ($data['d_c'] == 'D') {
             $this->mips_gl->insert('noac', $d);
@@ -933,9 +965,9 @@ class Gl_model extends CI_Model
                                     `level`     = '$data[level]',
                                     general     = '$acc_general',
                                     yearc       = 0,
-                                    yeard       = '$acc_balance', 
-                                    updated_at  = NOW(),
-                                    updated_by  = '$user_id'
+                                    yeard       = '$acc_balance' 
+                                    -- updated_at  = NOW(),
+                                    -- updated_by  = '$user_id'
                                 WHERE NOID = '$data[noid_acc]'";
 
             return $this->mips_gl->query($sql);
@@ -951,9 +983,9 @@ class Gl_model extends CI_Model
                                     `level`     = '$data[level]',
                                     general     = '$acc_general',
                                     yearc       = '$acc_balance',
-                                    yeard       = 0,
-                                    updated_at  = NOW(),
-                                    updated_by  = '$user_id' 
+                                    yeard       = 0
+                                    -- updated_at  = NOW(),
+                                    -- updated_by  = '$user_id' 
                                 WHERE NOID = '$data[noid_acc]'";
 
             // return $this->mstcode->query($sql);
@@ -3414,5 +3446,13 @@ class Gl_model extends CI_Model
 
         // disini masih ragu dah
         return $general['general'];
+    }
+
+    function cek_is_exist_coa($noac)
+    {
+        $sql = "SELECT noac FROM noac WHERE noac = '$noac'";
+        $sql_entry_num = $this->mips_center->query($sql)->num_rows();
+
+        return $sql_entry_num;
     }
 }
