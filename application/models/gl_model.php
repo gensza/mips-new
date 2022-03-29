@@ -3465,6 +3465,15 @@ class Gl_model extends CI_Model
         $bln  = substr($periode, 4, 6);
 
         $periode_nya = $tahun . '-' . $bln . '-' . '01';
+        if ($lok == 'ESTATE') {
+            $unit_nya = 'site';
+        } elseif ($lok == 'PKS') {
+            $unit_nya = 'pks';
+        } elseif ($lok == 'RO') {
+            $unit_nya = 'ro';
+        } else {
+            $unit_nya = '';
+        }
 
         // delete entry yang sudah ada di gl ho
         $del = "DELETE FROM db_mips_gl_msal.entry WHERE periode = '$periode_nya' AND lokasi = '$lok'";
@@ -3475,11 +3484,11 @@ class Gl_model extends CI_Model
         $this->mips_gl->query($del_header);
 
         //insert entry copy dari gl unit ke GL HO
-        $query = "INSERT INTO db_mips_gl_msal.entry SELECT * FROM db_mips_gl_msal_site.entry WHERE periode = '$periode_nya'";
+        $query = "INSERT INTO db_mips_gl_msal.entry SELECT * FROM db_mips_gl_msal_" . $unit_nya . ".entry WHERE periode = '$periode_nya'";
         $this->mips_gl->query($query);
 
         //insert header entry copy dari gl unit ke GL HO
-        $query_header = "INSERT INTO db_mips_gl_msal.header_entry SELECT * FROM db_mips_gl_msal_site.header_entry WHERE periode = '$periode_nya'";
+        $query_header = "INSERT INTO db_mips_gl_msal.header_entry SELECT * FROM db_mips_gl_msal_" . $unit_nya . ".header_entry WHERE periode = '$periode_nya'";
         $this->mips_gl->query($query_header);
 
         return true;
