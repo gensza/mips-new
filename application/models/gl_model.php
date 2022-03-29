@@ -431,9 +431,10 @@ class Gl_model extends CI_Model
         $sess_lokasi = $this->get_nama_lokasi();
 
         $tgl_ymd = date('Y-m-d', strtotime($data['tanggal']));
+        $periodes = substr($this->session->userdata('sess_periode'), 0, 4) . '-' . substr($this->session->userdata('sess_periode'), 4, 6) . '-01';
 
         $header_entry["date"] = $tgl_ymd;
-        $header_entry["periode"] = $tgl_ymd;
+        $header_entry["periode"] = $periodes;
         $header_entry["ref"] = $data['no_ref'];
         $header_entry["totaldr"] = $data['totaldr'];
         $header_entry["totalcr"] = $data['totalcr'];
@@ -3454,5 +3455,33 @@ class Gl_model extends CI_Model
         $sql_entry_num = $this->mips_center->query($sql)->num_rows();
 
         return $sql_entry_num;
+    }
+
+    function posting_transfer_trx_to_ho()
+    {
+        $periode = $this->session->userdata('sess_periode');
+        $lok = $this->session->userdata('sess_nama_lokasi');
+        $tahun  = substr($periode, 0, 4);
+        $bln  = substr($periode, 4, 6);
+
+        $periode_nya = $tahun . '-' . $bln . '-' . '01';
+
+        // delete entry yang sudah ada di gl ho
+        $del = "DELETE FROM db_mips_gl_msal.entry WHERE periode = '$periode_nya' AND lokasi = '$lok'";
+        $this->mips_gl->query($del);
+
+        //delete header entry yang saudah ada di gl ho
+        $del_header = "DELETE FROM db_mips_gl_msal.header_entry WHERE periode = '$periode_nya' AND lokasi = '$lok'";
+        $this->mips_gl->query($del_header);
+
+        //insert entry copy dari gl unit ke GL HO
+        $query = "INSERT INTO db_mips_gl_msal.entry SELECT * FROM db_mips_gl_msal_site.entry WHERE periode = '$periode_nya'";
+        $this->mips_gl->query($query);
+
+        //insert header entry copy dari gl unit ke GL HO
+        $query_header = "INSERT INTO db_mips_gl_msal.header_entry SELECT * FROM db_mips_gl_msal_site.header_entry WHERE periode = '$periode_nya'";
+        $this->mips_gl->query($query_header);
+
+        return true;
     }
 }

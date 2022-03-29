@@ -1949,4 +1949,24 @@ class Gl extends CI_Controller
         $result = $this->gl_model->cek_is_exist_coa($noac_rpc);
         echo json_encode($result);
     }
+
+    function tf_trx_to_ho()
+    {
+        // view transfer data transaksi ke HO
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        if ($result == '1') {
+            $this->load->view('gl/posting/transfer_trx_to_ho_view', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+
+    function posting_transfer_trx_to_ho()
+    {
+        $result = $this->gl_model->posting_transfer_trx_to_ho();
+
+        echo json_encode($result);
+    }
 }
