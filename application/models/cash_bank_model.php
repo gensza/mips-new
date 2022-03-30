@@ -5344,7 +5344,7 @@ class Cash_bank_model extends CI_Model
     {
         $period = $this->periode();
         $id = $this->session->userdata('sess_id');
-        $data = $this->mips_caba->query("SELECT * FROM voucher_tmp WHERE id_user='$id' AND txtperiode='$period' AND NO_PO <> NULL ")->num_rows();
+        $data = $this->mips_caba->query("SELECT * FROM voucher_tmp WHERE id_user='$id' AND txtperiode='$period' ")->num_rows();
         return $data;
     }
 
@@ -5697,6 +5697,28 @@ class Cash_bank_model extends CI_Model
 
         return $this->mips_caba->query($sql);
     }
+    function get_balance_edit2($no_vouc)
+    {
+
+        $sql = "SELECT (SUM(debit)+SUM(credit)) AS Total,
+                            FORMAT((SUM(debit)+SUM(credit)), 2) AS total_f,
+                            SUM(debit) tot_debit,
+                            SUM(credit) tot_credit,
+                            (SUM(debit)+SUM(credit)) AS total_detail_trans,
+                            FORMAT((SUM(debit)-SUM(credit)), 2) AS total_detail_trans2
+                            FROM voucher_tmp WHERE id_user = '$no_vouc' 
+                            GROUP BY TRANS";
+
+
+        /*$sql = "SELECT  (SUM(debit)+SUM(credit)) AS Total,
+                            FORMAT((SUM(debit)+SUM(credit)), 2) AS total_f,
+                            SUM(debit) tot_debit,
+                            SUM(credit) tot_credit
+                            FROM voucher WHERE VOUCNO = '$no_vouc' AND txtperiode = '$periode'
+                            GROUP BY VOUCNO";*/
+
+        return $this->mips_caba->query($sql);
+    }
 
     function count_all()
     {
@@ -5798,13 +5820,11 @@ class Cash_bank_model extends CI_Model
     }
     function get_data_head_vouch2($data)
     {
-
-        $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,
-                            SUBSTRING(CHEQNO, 1, 5) REF_PP,
-                            SUBSTRING(CHEQNO, 7, 100) NOMOR_REF_PP,
-                            FORMAT(DEBIT, 2) DEBIT,
-                            DATE_FORMAT(DATE, '%d-%m-%Y') TGLCEK
-                             FROM voucher_tmp where id = '$data[id_vouc]'";
+        // $cek =  $this->mips_caba->query("SELECT DEBIT, CREDIT, JENIS FROM voucher_tmp WHERE id_user='$data[id_user]' AND PAY = ''")->row();
+        // if ($cek->JENIS == "Payment") {
+        // } else {
+        // }
+        $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL, SUBSTRING(CHEQNO, 1, 5) REF_PP, SUBSTRING(CHEQNO, 7, 100) NOMOR_REF_PP, FORMAT(DEBIT, 2) DEBIT, DATE_FORMAT(DATE, '%d-%m-%Y') TGLCEK FROM voucher_tmp where id_user = '$data[id_user]' AND PAY = ''";
         return $this->mips_caba->query($sql);
     }
 
@@ -5816,6 +5836,15 @@ class Cash_bank_model extends CI_Model
                             ,FORMAT(credit, 2) credit_f,
                             ID as id_vouc_tmp 
                         FROM voucher where voucno = '$data[kode_vouch]' AND txtperiode = '$data[kode_periode]'";
+        return $this->mips_caba->query($sql);
+    }
+    function get_list_voucher_detail2($data)
+    {
+
+        $sql = "SELECT *,FORMAT(debit, 2) debit_f
+                            ,FORMAT(credit, 2) credit_f,
+                            ID as id_vouc_tmp 
+                        FROM voucher_tmp where id_user = '$data[id_user]'";
         return $this->mips_caba->query($sql);
     }
 
@@ -5917,6 +5946,7 @@ class Cash_bank_model extends CI_Model
 
 
 
+
     function simpan_voucher_header_update($data)
     {
 
@@ -5985,7 +6015,14 @@ class Cash_bank_model extends CI_Model
     {
 
         $sql = "SELECT *,FORMAT(DEBIT, 2) debit_f
-                            ,FORMAT(CREDIT, 2) credit_f FROM voucher where ID = '$data[id_vouc]' and VOUCNO = '$data[voucno]'";
+                            ,FORMAT(CREDIT, 2) credit_f FROM voucher_tmp where ID = '$data[id_vouc]' and VOUCNO = '$data[voucno]'";
+        return $this->mips_caba->query($sql);
+    }
+    function get_vouc_tmp_detail_edit2($data)
+    {
+
+        $sql = "SELECT *,FORMAT(DEBIT, 2) debit_f
+                            ,FORMAT(CREDIT, 2) credit_f FROM voucher_tmp where ID = '$data[id_vouc]' and VOUCNO = '$data[voucno]'";
         return $this->mips_caba->query($sql);
     }
 

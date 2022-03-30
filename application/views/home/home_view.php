@@ -148,11 +148,13 @@ if ($this->session->userdata('sess_level') == 1) {
         <div class="row-fluid">
           <div class="span12">
             <ul class="dshb_icoNav clearfix">
-              <li><a href="javascript:void(0)" onclick="getcontents('coa/approve_coa', '<?php echo $tokens; ?>')" style="background-image: url(assets/img/gCons/email.png)"><?php if ($count_data != 0) { ?>
-                    <span class="label label-important"><?= $count_data ?></span>
-                  <?php } ?>
-                  Approval COA</a></li>
-              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/edit.png)" onclick="getcontents('gl/master_input', '<?php echo $tokens; ?>')">Input COA</a></li>
+              <?php if ($this->session->userdata('sess_nama_lokasi') == 'HO') { ?>
+                <li><a href="javascript:void(0)" onclick="getcontents('coa/approve_coa', '<?php echo $tokens; ?>')" style="background-image: url(assets/img/gCons/email.png)"><?php if ($count_data != 0) { ?>
+                      <span class="label label-important"><?= $count_data ?></span>
+                    <?php } ?>
+                    Approval COA</a></li>
+                <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/edit.png)" onclick="getcontents('gl/master_input', '<?php echo $tokens; ?>')">Input COA</a></li>
+              <?php } ?>
               <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/addressbook.png)" onclick="getcontents('gl/master_tabel', '<?php echo $tokens; ?>')">Daftar COA</a></li>
               <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/calculator.png)" onclick="getcontents('gl/saldo_awal', '<?php echo $tokens; ?>')">Saldo Awal</a></li>
               <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/bar-chart.png)" onclick="getcontents('gl/transaksi_input', '<?php echo $tokens; ?>')">Transaksi Jurnal</a></li>
@@ -161,7 +163,10 @@ if ($this->session->userdata('sess_level') == 1) {
               <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_jurnal', '<?php echo $tokens; ?>')">Laporan Jurnal</a></li>
               <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_buku_besar', '<?php echo $tokens; ?>')">Laporan Buku Besar</a></li>
               <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_trialbalance', '<?php echo $tokens; ?>')">Laporan Trial Balance</a></li>
-              <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_balance', '<?php echo $tokens; ?>')">Laporan Neraca</a></li>
+              <?php if ($this->session->userdata('sess_nama_lokasi') == 'HO') { ?>
+
+                <li><a href="javascript:void(0)" style="background-image: url(assets/img/gCons/copy-item.png)" onclick="getcontents('gl/report_balance', '<?php echo $tokens; ?>')">Laporan Neraca</a></li>
+              <?php } ?>
 
             </ul>
           </div>

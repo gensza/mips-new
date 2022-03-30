@@ -25,22 +25,22 @@ class serv_side_po_logistik_model extends CI_Model
         // $this->mips_caba->where('status_vou !=', '1');
         $lokasi = $this->session->userdata('sess_nama_lokasi');
         $this->mips_caba->from($this->table);
-        if ($lokasi == 'ESTATE') {
-            $this->mips_caba->where('status_vou = 0');
-            $this->mips_caba->like('ref_po', 'EST', 'both');
-        } else if ($lokasi == 'RO') {
-            # code...
-            $this->mips_caba->where('status_vou = 0');
-            $this->mips_caba->like('ref_po', 'ROM', 'both');
-        } elseif ($lokasi == 'PKS') {
-            # code...
-            $this->mips_caba->where('status_vou = 0');
-            $this->mips_caba->like('ref_po', 'FAC', 'both');
-        } else {
-            $this->mips_caba->where('status_vou = 0');
-            $this->mips_caba->like('ref_po', 'PST', 'both');
-            # code...
-        }
+        $this->mips_caba->where('status_vou = 0');
+        // if ($lokasi == 'ESTATE') {
+        //     $this->mips_caba->like('ref_pp', 'EST', 'both');
+        // } else if ($lokasi == 'RO') {
+        //     # code...
+        //     $this->mips_caba->where('status_vou = 0');
+        //     $this->mips_caba->like('ref_pp', 'ROM', 'both');
+        // } elseif ($lokasi == 'PKS') {
+        //     # code...
+        //     $this->mips_caba->where('status_vou = 0');
+        //     $this->mips_caba->like('ref_pp', 'FAC', 'both');
+        // } else {
+        //     $this->mips_caba->where('status_vou = 0');
+        //     $this->mips_caba->like('ref_pp', 'PST', 'both');
+        //     # code...
+        // }
 
         $i = 0;
 

@@ -89,7 +89,7 @@ class get_coa_approved extends CI_Model
     {
         # code...
         $grp = $this->input->get('grp');
-        $data = $this->mips_center->query("SELECT DISTINCT(grp) FROM `kodebar` WHERE grp LIKE '%$grp%' ORDER BY id DESC")->result();
+        $data = $this->mips_center->query("SELECT DISTINCT(nama) FROM `noac` WHERE nama LIKE '%$grp%' AND `noac` LIKE '%1025%' AND `type` LIKE 'G' ORDER BY NOID DESC")->result();
         return $data;
     }
 

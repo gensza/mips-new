@@ -876,6 +876,8 @@
         async: 'false',
         success: function(result) {
 
+          // console.log();
+
           var myStr = $("#jumlah").val();
           var newStr = myStr.replace(/,/g, '');
 
@@ -1180,7 +1182,13 @@
       dataType: "JSON",
       beforeSend: function() {},
       success: function(response) {
+        // console.log(response);
 
+        if (response == true) {
+
+        } else {
+
+        }
       },
       error: function(request) {
         console.log(request.responseText);
