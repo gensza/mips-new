@@ -5,12 +5,12 @@
 
             loading();
 
-            document.getElementById("acctno").addEventListener("keyup", function(event) {
-                  event.preventDefault();
-                  if (event.keyCode === 13) {
-                        getpopup('gl/master_tabel_coa_popup', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', '1');
-                  }
-            });
+            // document.getElementById("acctno").addEventListener("keyup", function(event) {
+            //       event.preventDefault();
+            //       if (event.keyCode === 13) {
+            //             getpopup('gl/master_tabel_coa_popup', '<?php echo $this->session->userdata('sess_token'); ?>', 'popupedit', '1');
+            //       }
+            // });
 
             $('.maskmoney_money').maskMoney({
                   thousands: ',',
@@ -18,142 +18,142 @@
                   precision: 0,
             });
 
-            $("#btn_simpan").click(function() {
+            // $("#btn_simpan").click(function() {
 
 
-                  if ($("#acctno").val() == '') {
-                        Command: toastr["error"]("No Account tidak boleh kosong !", "Error");
-                        $("#acctno").focus();
-                  }
-                  else if ($("#acctname").val() == '') {
-                        Command: toastr["error"]("Nama Account tidak boleh kosong !", "Error");
-                        $("#acctname").focus();
-                  }
-                  else if ($("#nilai_saldo").val() == '') {
-                        Command: toastr["error"]("Silahkan masukan Nilai Saldo !", "Error");
-                        $("#nilai_saldo").focus();
-                  }
-                  else {
+            //       if ($("#acctno").val() == '') {
+            //             Command: toastr["error"]("No Account tidak boleh kosong !", "Error");
+            //             $("#acctno").focus();
+            //       }
+            //       else if ($("#acctname").val() == '') {
+            //             Command: toastr["error"]("Nama Account tidak boleh kosong !", "Error");
+            //             $("#acctname").focus();
+            //       }
+            //       else if ($("#nilai_saldo").val() == '') {
+            //             Command: toastr["error"]("Silahkan masukan Nilai Saldo !", "Error");
+            //             $("#nilai_saldo").focus();
+            //       }
+            //       else {
 
 
-                        var periodex = "<?php echo $this->session->userdata('sess_periode'); ?>";
-                        var tahun_periode = periodex.substr(0, 4);
-                        var bulan_periode = periodex.substr(4, 2);
+            //             var periodex = "<?php echo $this->session->userdata('sess_periode'); ?>";
+            //             var tahun_periode = periodex.substr(0, 4);
+            //             var bulan_periode = periodex.substr(4, 2);
 
-                        $.ajax({
-                              url: base_url + 'cash_bank/cek_saldo_awal',
-                              type: "post",
-                              data: {
-                                    acctno: $("#acctno").val(),
-                                    tahun: tahun_periode,
-                                    <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
-                              },
-                              dataType: "json",
-                              async: 'false',
-                              success: function(result) {
-                                    if (result == 1) {
+            //             $.ajax({
+            //                   url: base_url + 'cash_bank/cek_saldo_awal',
+            //                   type: "post",
+            //                   data: {
+            //                         acctno: $("#acctno").val(),
+            //                         tahun: tahun_periode,
+            //                         <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+            //                   },
+            //                   dataType: "json",
+            //                   async: 'false',
+            //                   success: function(result) {
+            //                         if (result == 1) {
 
-                                          swal({
-                                                      title: "Data sudah tersedia !",
-                                                      text: "Apakah anda ingin merubah saldo awal ? kalo ya, silahkan klik tombol update.",
-                                                      type: "info",
-                                                      showCancelButton: true,
-                                                      closeOnConfirm: false,
-                                                      showLoaderOnConfirm: true,
-                                                      confirmButtonText: "Update",
-                                                      //confirmButtonColor: "#E73D4A"
-                                                      confirmButtonColor: "#286090"
-                                                },
-                                                function() {
+            //                               swal({
+            //                                           title: "Data sudah tersedia !",
+            //                                           text: "Apakah anda ingin merubah saldo awal ? kalo ya, silahkan klik tombol update.",
+            //                                           type: "info",
+            //                                           showCancelButton: true,
+            //                                           closeOnConfirm: false,
+            //                                           showLoaderOnConfirm: true,
+            //                                           confirmButtonText: "Update",
+            //                                           //confirmButtonColor: "#E73D4A"
+            //                                           confirmButtonColor: "#286090"
+            //                                     },
+            //                                     function() {
 
-                                                      //ini jika ada data noac dan tahun, maka proses update
-                                                      $.ajax({
-                                                            url: base_url + 'cash_bank/update_saldo_awal',
-                                                            type: "post",
-                                                            data: {
-                                                                  acctno: $("#acctno").val(),
-                                                                  tahun: tahun_periode,
-                                                                  bulan: bulan_periode,
-                                                                  acctname: $("#acctname").val(),
-                                                                  saldo: $("#nilai_saldo").val(),
-                                                                  <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
-                                                            },
-                                                            dataType: "json",
-                                                            async: 'false',
-                                                            success: function(result) {
-                                                                  if (result == true) {
-                                                                        swal.close();
-                                                                        Command: toastr["success"]("Saldo awal berhasil di update.", "Berhasil");
-                                                                        getcontents('cash_bank/saldo_awal', '<?php echo $this->session->userdata('sess_token'); ?>');
-                                                                        $("#acctno").val('');
-                                                                        $("#acctname").val('');
-                                                                        $("#nilai_saldo").val('');
-                                                                        data_saldo_awal();
-                                                                  } else {
-                                                                        Command: toastr["success"]("Data belum ke simpan", "Error");
-                                                                  }
-                                                            },
-                                                            beforeSend: function() {
-                                                                  loadingPannel.show();
-                                                            },
-                                                            complete: function() {
-                                                                  loadingPannel.hide();
-                                                            }
-                                                      });
+            //                                           //ini jika ada data noac dan tahun, maka proses update
+            //                                           $.ajax({
+            //                                                 url: base_url + 'cash_bank/update_saldo_awal',
+            //                                                 type: "post",
+            //                                                 data: {
+            //                                                       acctno: $("#acctno").val(),
+            //                                                       tahun: tahun_periode,
+            //                                                       bulan: bulan_periode,
+            //                                                       acctname: $("#acctname").val(),
+            //                                                       saldo: $("#nilai_saldo").val(),
+            //                                                       <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+            //                                                 },
+            //                                                 dataType: "json",
+            //                                                 async: 'false',
+            //                                                 success: function(result) {
+            //                                                       if (result == true) {
+            //                                                             swal.close();
+            //                                                             Command: toastr["success"]("Saldo awal berhasil di update.", "Berhasil");
+            //                                                             getcontents('cash_bank/saldo_awal', '<?php echo $this->session->userdata('sess_token'); ?>');
+            //                                                             $("#acctno").val('');
+            //                                                             $("#acctname").val('');
+            //                                                             $("#nilai_saldo").val('');
+            //                                                             data_saldo_awal();
+            //                                                       } else {
+            //                                                             Command: toastr["success"]("Data belum ke simpan", "Error");
+            //                                                       }
+            //                                                 },
+            //                                                 beforeSend: function() {
+            //                                                       loadingPannel.show();
+            //                                                 },
+            //                                                 complete: function() {
+            //                                                       loadingPannel.hide();
+            //                                                 }
+            //                                           });
 
-                                                });
-
-
-                                    } else {
+            //                                     });
 
 
-                                          $.ajax({
-                                                url: base_url + 'cash_bank/simpan_saldo_awal',
-                                                type: "post",
-                                                data: {
-                                                      acctno: $("#acctno").val(),
-                                                      tahun: tahun_periode,
-                                                      bulan: bulan_periode,
-                                                      acctname: $("#acctname").val(),
-                                                      saldo: $("#nilai_saldo").val(),
-                                                      <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
-                                                },
-                                                dataType: "json",
-                                                async: 'false',
-                                                success: function(result) {
-                                                      if (result.status == true) {
-                                                            swal.close();
-                                                            Command: toastr["success"]("Saldo awal berhasil di simpan.", "Berhasil");
-                                                            getcontents('cash_bank/saldo_awal', '<?php echo $this->session->userdata('sess_token'); ?>');
-                                                            $("#acctno").val('');
-                                                            $("#acctname").val('');
-                                                            $("#nilai_saldo").val('');
-                                                            data_saldo_awal();
-                                                      } else {
-                                                            Command: toastr["success"]("Data belum ke simpan", "Error");
-                                                      }
-                                                },
-                                                beforeSend: function() {
-                                                      loadingPannel.show();
-                                                },
-                                                complete: function() {
-                                                      loadingPannel.hide();
-                                                }
-                                          });
+            //                         } else {
 
-                                    }
-                              },
-                              beforeSend: function() {
-                                    //loadingPannel.show();
-                              },
-                              complete: function() {
-                                    //loadingPannel.hide();
-                              }
-                        });
 
-                  }
+            //                               $.ajax({
+            //                                     url: base_url + 'cash_bank/simpan_saldo_awal',
+            //                                     type: "post",
+            //                                     data: {
+            //                                           acctno: $("#acctno").val(),
+            //                                           tahun: tahun_periode,
+            //                                           bulan: bulan_periode,
+            //                                           acctname: $("#acctname").val(),
+            //                                           saldo: $("#nilai_saldo").val(),
+            //                                           <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+            //                                     },
+            //                                     dataType: "json",
+            //                                     async: 'false',
+            //                                     success: function(result) {
+            //                                           if (result.status == true) {
+            //                                                 swal.close();
+            //                                                 Command: toastr["success"]("Saldo awal berhasil di simpan.", "Berhasil");
+            //                                                 getcontents('cash_bank/saldo_awal', '<?php echo $this->session->userdata('sess_token'); ?>');
+            //                                                 $("#acctno").val('');
+            //                                                 $("#acctname").val('');
+            //                                                 $("#nilai_saldo").val('');
+            //                                                 data_saldo_awal();
+            //                                           } else {
+            //                                                 Command: toastr["success"]("Data belum ke simpan", "Error");
+            //                                           }
+            //                                     },
+            //                                     beforeSend: function() {
+            //                                           loadingPannel.show();
+            //                                     },
+            //                                     complete: function() {
+            //                                           loadingPannel.hide();
+            //                                     }
+            //                               });
 
-            });
+            //                         }
+            //                   },
+            //                   beforeSend: function() {
+            //                         //loadingPannel.show();
+            //                   },
+            //                   complete: function() {
+            //                         //loadingPannel.hide();
+            //                   }
+            //             });
+
+            //       }
+
+            // });
 
             //datatables
             table = $('#tabel_saldo_awal').DataTable({
@@ -208,7 +208,7 @@
             <div class="section-wrapper">
                   <h3 class="heading">Saldo Awal GL</h3>
 
-                  <div class="tabbable tabbable-bordered">
+                  <!-- <div class="tabbable tabbable-bordered">
                         <ul class="nav nav-tabs">
                               <li class="active"><a href="javascript:void(0)" data-toggle="tab" style="color:#870505;"><b>Form Input Saldo Awal</b></a></li>
                         </ul>
@@ -260,7 +260,7 @@
                         </div>
 
 
-                  </div>
+                  </div> -->
             </div>
 
             <!-- footer -->
