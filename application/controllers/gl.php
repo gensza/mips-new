@@ -1965,7 +1965,19 @@ class Gl extends CI_Controller
 
     function posting_transfer_trx_to_ho()
     {
-        $result = $this->gl_model->posting_transfer_trx_to_ho();
+        $pt = $this->session->userdata('sess_pt');
+        $lokasi = $this->session->userdata('sess_id_lokasi');
+        $periode = $this->session->userdata('sess_periode');
+
+        $setup = $this->db->query("SELECT txtperiode FROM tb_setup WHERE id_modul='2' AND id_pt='$pt' AND lokasi='01'")->row();
+        if ($setup->txtperiode == $periode) {
+            # code...
+            $result = $this->gl_model->posting_transfer_trx_to_ho();
+            // $result = true;
+        } else {
+            $result = false;
+            # code...
+        }
 
         echo json_encode($result);
     }

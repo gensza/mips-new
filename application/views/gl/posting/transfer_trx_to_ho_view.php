@@ -51,27 +51,31 @@
                                                 processData: false,
                                                 success: function(data) {
 
-                                                      console.log(data);
+                                                      if (data == true) {
 
-                                                      loadingPannel.hide();
-                                                      then = moment().format('DD/MM/YYYY HH:mm:ss');
+                                                            loadingPannel.hide();
+                                                            then = moment().format('DD/MM/YYYY HH:mm:ss');
 
-                                                      var ms = moment(then, "DD/MM/YYYY HH:mm:ss").diff(moment(now, "DD/MM/YYYY HH:mm:ss"));
-                                                      var d = moment.duration(ms);
+                                                            var ms = moment(then, "DD/MM/YYYY HH:mm:ss").diff(moment(now, "DD/MM/YYYY HH:mm:ss"));
+                                                            var d = moment.duration(ms);
 
-                                                      var formats = d.hours() + ' Jam : ' + d.minutes() + ' Menit : ' + d.seconds() + ' Detik';
+                                                            var formats = d.hours() + ' Jam : ' + d.minutes() + ' Menit : ' + d.seconds() + ' Detik';
 
-                                                      swal("Selesai", "Terima Kasih, Data berhasil di Posting dan tersimpan, Waktu Proses Posting " + formats + "", "success");
+                                                            swal("Selesai", "Terima Kasih, Data berhasil di Posting dan tersimpan, Waktu Proses Posting " + formats + "", "success");
 
-                                                      // getcontents('cash_bank/posting_harian','<?php echo $tokens; ?>');
+                                                            // getcontents('cash_bank/posting_harian','<?php echo $tokens; ?>');
 
-                                                      // if (response == true) {
+                                                            // if (response == true) {
 
-                                                      // } else {
-                                                      //     swal("Posting Error!", "Terjadi kesalahan pada saat posting !", "error");
-                                                      // }
+                                                            // } else {
+                                                            //     swal("Posting Error!", "Terjadi kesalahan pada saat posting !", "error");
+                                                            // }
 
-                                                      //Command: toastr["success"]("Proses posting selesai", "Ok Posting Tersimpan");
+                                                            //Command: toastr["success"]("Proses posting selesai", "Ok Posting Tersimpan");
+                                                      } else {
+                                                            swal("Opps", "Modul GL HO sudah tutup buku, silahkan Hub. Accounting", "error");
+                                                            loadingPannel.hide();
+                                                      }
                                                 },
                                                 beforeSend: function() {
                                                       now = moment().format('DD/MM/YYYY HH:mm:ss');
