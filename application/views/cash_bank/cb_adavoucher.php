@@ -1,10 +1,51 @@
 <script type="text/javascript">
+    function saldo_akhir(coa, jml, py) {
+        $.ajax({
+            url: base_url + 'cash_bank/update_saldo_akhir',
+            type: "post",
+            data: {
+                coa: coa,
+                jml: jml,
+                pay: py,
+                <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+            },
+            dataType: "json",
+            async: 'false',
+            success: function(result) {
+                console.log('oke berhasil', result);
+                // console.log(result);
+
+            },
+            beforeSend: function() {
+                //loadingPannel.show();
+            },
+            complete: function() {
+                //loadingPannel.hide();
+            }
+        });
+    }
     $(document).ready(function() {
 
         var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
-        var lokasi_usr = '<?php echo $this->session->userdata('sess_nama_lokasi'); ?>';
+        var lokasi_usr = '<?php echo $this->session->userdata('sess_id_lokasi'); ?>';
 
+        $("#pay_rec").change(function() {
+            $("#kas_bank").val(0);
+            $("#bank_descript").val(0);
+        });
 
+        $("#kas_bank").change(function() {
+
+            if ($(this).val() == 'Kas') {
+                $('#bank_descript').empty();
+                var $kategori = $('#bank_descript');
+                //$kategori.append('<option value=0>-Pilih Bank-</option>');
+                $kategori.append('<option value="-">-</option>');
+            } else {
+                select_bank();
+            }
+
+        });
 
 
         $.ajax({
@@ -17,7 +58,7 @@
             async: 'false',
             success: function(result) {
 
-                // console.log('ini datanya', result);
+                // console.log('ini datanya', result.DESCRIPT);
 
                 $("#coa_head").val(result.ACCTNO);
                 $("#pay_rec").val(result.JENIS);
@@ -52,9 +93,8 @@
                 $("#sumber_dana_nominal").val(result.sumber);
 
                 //select_bank();
-                select_bank_get(result.BANK);
-                $("#bank_descript").val(result.BANK);
 
+                get_coa_bank();
             },
             beforeSend: function() {
                 //loadingPannel.show();
@@ -63,6 +103,23 @@
                 //loadingPannel.hide();
             }
         });
+
+        get_coa_bank = function() {
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'cash_bank/get_coa_bank',
+                data: {
+                    lokasi: lokasi_usr
+                },
+                dataType: 'json',
+                success: function(data) {
+
+                    console.log();
+                    select_bank_get(data.DESCRIPT);
+                    $("#bank_descript").val(data.DESCRIPT);
+                }
+            });
+        }
 
 
 
@@ -97,7 +154,7 @@
             //2 : ESTATE
             //3 : RO
 
-            if (lokasi_usr == 1) { // INI HO
+            if (lokasi_usr == '01') { // INI HO
 
 
                 if (payrc == 'Payment') {
@@ -110,6 +167,7 @@
                         },
                         dataType: 'json',
                         success: function(data) {
+                            console.log(data);
 
                             var str1 = data.pay_namabank1;
                             var str_1 = data.NOAC_BANK1;
@@ -325,7 +383,7 @@
         select_bank_get = function(bank) {
 
             var payrc = $("#pay_rec").val();
-
+            console.log('nama bank nya adalah', bank);
             //1 : HO
             //2 : ESTATE
             //3 : RO
@@ -344,34 +402,45 @@
                         dataType: 'json',
                         success: function(data) {
 
+
                             var str1 = data.pay_namabank1;
+                            var str_1 = data.NOAC_BANK1;
                             str1 = str1.replace(/\s+/g, '_');
 
                             var str2 = data.pay_namabank2;
+                            var str_2 = data.NOAC_BANK2;
                             str2 = str2.replace(/\s+/g, '_');
 
                             var str3 = data.pay_namabank3;
+                            var str_3 = data.NOAC_BANK3;
                             str3 = str3.replace(/\s+/g, '_');
 
                             var str4 = data.pay_namabank4;
+                            var str_4 = data.NOAC_BANK4;
                             str4 = str4.replace(/\s+/g, '_');
 
                             var str5 = data.pay_namabank5;
+                            var str_5 = data.NOAC_BANK5;
                             str5 = str5.replace(/\s+/g, '_');
 
                             var str6 = data.pay_namabank6;
+                            var str_6 = data.NOAC_BANK6;
                             str6 = str6.replace(/\s+/g, '_');
 
                             var str7 = data.pay_namabank7;
+                            var str_7 = data.NOAC_BANK7;
                             str7 = str7.replace(/\s+/g, '_');
 
                             var str8 = data.pay_namabank8;
+                            var str_8 = data.NOAC_BANK8;
                             str8 = str8.replace(/\s+/g, '_');
 
                             var str9 = data.pay_namabank9;
+                            var str_9 = data.NOAC_BANK9;
                             str9 = str9.replace(/\s+/g, '_');
 
                             var str10 = data.pay_namabank10;
+                            var str_10 = data.NOAC_BANK10;
                             str10 = str10.replace(/\s+/g, '_');
 
                             $('#bank_descript').empty();
@@ -447,17 +516,17 @@
                             } else {
                                 selected_bank_10 = '';
                             }
-
-                            $kategori.append('<option value=' + str1 + '|1 ' + selected_bank_1 + '>' + data.pay_namabank1 + '</option>');
-                            $kategori.append('<option value=' + str2 + '|2 ' + selected_bank_2 + '>' + data.pay_namabank2 + '</option>');
-                            $kategori.append('<option value=' + str3 + '|3 ' + selected_bank_3 + '>' + data.pay_namabank3 + '</option>');
-                            $kategori.append('<option value=' + str4 + '|4 ' + selected_bank_4 + '>' + data.pay_namabank4 + '</option>');
-                            $kategori.append('<option value=' + str5 + '|5 ' + selected_bank_5 + '>' + data.pay_namabank5 + '</option>');
-                            $kategori.append('<option value=' + str6 + '|6 ' + selected_bank_6 + '>' + data.pay_namabank6 + '</option>');
-                            $kategori.append('<option value=' + str7 + '|7 ' + selected_bank_7 + '>' + data.pay_namabank7 + '</option>');
-                            $kategori.append('<option value=' + str8 + '|8 ' + selected_bank_8 + '>' + data.pay_namabank8 + '</option>');
-                            $kategori.append('<option value=' + str9 + '|9 ' + selected_bank_9 + '>' + data.pay_namabank9 + '</option>');
-                            $kategori.append('<option value=' + str10 + '|10 ' + selected_bank_10 + '>' + data.pay_namabank10 + '</option>');
+                            $kategori.append('<option value=0>-Pilih Bank-</option>');
+                            $kategori.append('<option value=' + str_1 + '|' + str1 + '|1 ' + selected_bank_1 + '>' + data.pay_namabank1 + '</option>');
+                            $kategori.append('<option value=' + str_2 + '|' + str2 + '|2 ' + selected_bank_2 + '>' + data.pay_namabank2 + '</option>');
+                            $kategori.append('<option value=' + str_3 + '|' + str3 + '|3 ' + selected_bank_3 + '>' + data.pay_namabank3 + '</option>');
+                            $kategori.append('<option value=' + str_4 + '|' + str4 + '|4 ' + selected_bank_4 + '>' + data.pay_namabank4 + '</option>');
+                            $kategori.append('<option value=' + str_5 + '|' + str5 + '|5 ' + selected_bank_5 + '>' + data.pay_namabank5 + '</option>');
+                            $kategori.append('<option value=' + str_6 + '|' + str6 + '|6 ' + selected_bank_6 + '>' + data.pay_namabank6 + '</option>');
+                            $kategori.append('<option value=' + str_7 + '|' + str7 + '|7 ' + selected_bank_7 + '>' + data.pay_namabank7 + '</option>');
+                            $kategori.append('<option value=' + str_8 + '|' + str8 + '|8 ' + selected_bank_8 + '>' + data.pay_namabank8 + '</option>');
+                            $kategori.append('<option value=' + str_9 + '|' + str9 + '|9 ' + selected_bank_9 + '>' + data.pay_namabank9 + '</option>');
+                            $kategori.append('<option value=' + str_10 + '|' + str10 + '|10 ' + selected_bank_10 + '>' + data.pay_namabank10 + '</option>');
                         }
                     });
 
@@ -578,16 +647,16 @@
                                 selected_bank_10 = '';
                             }
 
-                            $kategori.append('<option value=' + str1 + '|1 ' + selected_bank_1 + '>' + data.rec_namabank1 + '</option>');
-                            $kategori.append('<option value=' + str2 + '|2 ' + selected_bank_2 + '>' + data.rec_namabank2 + '</option>');
-                            $kategori.append('<option value=' + str3 + '|3 ' + selected_bank_3 + '>' + data.rec_namabank3 + '</option>');
-                            $kategori.append('<option value=' + str4 + '|4 ' + selected_bank_4 + '>' + data.rec_namabank4 + '</option>');
-                            $kategori.append('<option value=' + str5 + '|5 ' + selected_bank_5 + '>' + data.rec_namabank5 + '</option>');
-                            $kategori.append('<option value=' + str6 + '|6 ' + selected_bank_6 + '>' + data.rec_namabank6 + '</option>');
-                            $kategori.append('<option value=' + str7 + '|7 ' + selected_bank_7 + '>' + data.rec_namabank7 + '</option>');
-                            $kategori.append('<option value=' + str8 + '|8 ' + selected_bank_8 + '>' + data.rec_namabank8 + '</option>');
-                            $kategori.append('<option value=' + str9 + '|9 ' + selected_bank_9 + '>' + data.rec_namabank9 + '</option>');
-                            $kategori.append('<option value=' + str10 + '|10 ' + selected_bank_10 + '>' + data.rec_namabank10 + '</option>');
+                            $kategori.append('<option value=' + str_1 + '|' + str1 + '|1 ' + selected_bank_1 + '>' + data.rec_namabank1 + '</option>');
+                            $kategori.append('<option value=' + str_2 + '|' + str2 + '|2 ' + selected_bank_2 + '>' + data.rec_namabank2 + '</option>');
+                            $kategori.append('<option value=' + str_3 + '|' + str3 + '|3 ' + selected_bank_3 + '>' + data.rec_namabank3 + '</option>');
+                            $kategori.append('<option value=' + str_4 + '|' + str4 + '|4 ' + selected_bank_4 + '>' + data.rec_namabank4 + '</option>');
+                            $kategori.append('<option value=' + str_5 + '|' + str5 + '|5 ' + selected_bank_5 + '>' + data.rec_namabank5 + '</option>');
+                            $kategori.append('<option value=' + str_6 + '|' + str6 + '|6 ' + selected_bank_6 + '>' + data.rec_namabank6 + '</option>');
+                            $kategori.append('<option value=' + str_7 + '|' + str7 + '|7 ' + selected_bank_7 + '>' + data.rec_namabank7 + '</option>');
+                            $kategori.append('<option value=' + str_8 + '|' + str8 + '|8 ' + selected_bank_8 + '>' + data.rec_namabank8 + '</option>');
+                            $kategori.append('<option value=' + str_9 + '|' + str9 + '|9 ' + selected_bank_9 + '>' + data.rec_namabank9 + '</option>');
+                            $kategori.append('<option value=' + str_10 + '|' + str10 + '|10 ' + selected_bank_10 + '>' + data.rec_namabank10 + '</option>');
                         }
                     });
 
@@ -983,7 +1052,7 @@
             $("#btn_simpan_detail").hide();
 
             // ('#btn_simpan_detail').attr('disabled', true);
-            $('#header_voucher,#voucher_detail').find('input,textarea,select').removeAttr('disabled');
+            $('#header_voucher,#voucher_detail').find('input,textarea,select').removeAttr('readonly');
 
 
 
@@ -1028,7 +1097,7 @@
         update_detail_vouc = function() {
 
             $.ajax({
-                url: base_url + 'cash_bank/update_vouc_tmp_detail_edit',
+                url: base_url + 'cash_bank/update_vouc_tmp_detail',
                 type: "post",
                 data: {
                     acctno: $("#acct").val(),
@@ -1068,6 +1137,42 @@
 
         }
 
+        $('#btn_hapus').click(function() {
+            swal({
+                    title: "Apakah Anda Yakin ?",
+                    text: "Jika ingin dilanjutkan, silahkan klik button delete",
+                    type: "info",
+                    showCancelButton: true,
+                    showLoaderOnConfirm: true,
+                    confirmButtonText: "Delete",
+                    confirmButtonColor: "crimson"
+                },
+                function() {
+
+                    $.ajax({
+                        url: base_url + 'cash_bank/delete_vocher_tmp',
+                        type: "POST",
+                        dataType: 'json',
+                        mimeType: 'multipart/form-data',
+                        data: {},
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function(response) {
+                            swal.close();
+                            Command: toastr["success"]("Transaksi Voucher detail berhasil dihapus", "Berhasil");
+                            getcontents('cash_bank/input_voucher', '<?php echo $this->session->userdata('sess_token'); ?>');
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            Command: toastr["error"]("Opps..Maaf terjadi kesahalan pada saat simpan data! Data Belum tersimpan.", "Error");
+                        }
+
+                    });
+                });
+
+        });
+
 
         $("#btn_simpan").click(function() {
 
@@ -1085,7 +1190,7 @@
                 var form_data = new FormData($('#form_input_transaksi')[0]);
 
                 $.ajax({
-                    url: base_url + 'cash_bank/simpan_voucher_header_update',
+                    url: base_url + 'cash_bank/simpan_voucher_header',
                     type: "POST",
                     dataType: 'json',
                     mimeType: 'multipart/form-data',
@@ -1094,17 +1199,19 @@
                     cache: false,
                     processData: false,
                     success: function(response) {
-
                         console.log(response);
                         var coa = response.head;
+                        var jml = response.jml;
+                        var py = response.pay;
+
                         if (response.status == true) {
                             swal.close();
                             Command: toastr["success"]("Transaksi Voucher detail berhasil disimpan", "Berhasil");
                             $('#divisi_v').val(0);
                             $('.clears').val('');
                             table_caba_detail();
-                            update_saldo_akhir(coa);
-                            getcontents('cash_bank/edit_voucher', '<?php echo $tokens; ?>', id_vouc, no_vouc, tx_periode);
+                            saldo_akhir(coa, jml, py);
+                            getcontents('cash_bank/input_voucher', '<?php echo $this->session->userdata('sess_token'); ?>');
 
                         } else {
                             Command: toastr["error"]("Simpan error, data tidak berhasil disimpan", "Error");
@@ -1199,7 +1306,7 @@
 
 
                     $('#btn_simpan_detail').attr('disabled', true);
-                    $('#header_voucher,#voucher_detail').find('input,textarea,select').attr('disabled', '');
+                    $('#header_voucher,#voucher_detail').find('input,textarea,select').attr('readonly', true);
 
 
                 },
@@ -1365,23 +1472,11 @@
 </style>
 
 
-<?php
-//ini kode random untuk token
-$token = "";
-$codeAlphabet = "8795225885";
-$codeAlphabet .= "6399812567";
-$codeAlphabet .= "0123456789";
 
-$max = strlen($codeAlphabet) - 1;
-for ($i = 0; $i < 6; $i++) {
-    $token .= $codeAlphabet[mt_rand(0, $max)];
-}
-//ini kode random untuk token
-?>
 <form id="form_input_transaksi" method=POST enctype='multipart/form-data'>
     <!-- <input type="text" name="" id="" value="<?= $this->session->userdata('sess_id') ?>"> -->
     <!-- <input type="hidden" name="kode_sementara" id="kode_sementara" value="<?php echo $token; ?>"> -->
-    <input type="hidden" name="kode_sementara" id="kode_sementara" value="<?php echo $token; ?>">
+    <input type="hidden" name="kode_sementara" id="kode_sementara" value="<?php echo $get_vocher_tmp; ?>">
     <input type="hidden" name="lokasi_users" id="lokasi_users" value="<?php echo $lokasi['nama']; ?>">
     <input type='hidden' class='form-control' name='<?php echo $this->security->get_csrf_token_name(); ?>' value="<?php echo $this->security->get_csrf_hash(); ?>">
 
@@ -1414,7 +1509,7 @@ for ($i = 0; $i < 6; $i++) {
                     <a href="#">Cash Bank</a>
                 </li>
                 <li>
-                    <a href="#">Input Voucher</a>
+                    <a href="#">Lanjutkan Input Voucher</a>
                 </li>
             </ul>
         </div>
@@ -1779,9 +1874,8 @@ for ($i = 0; $i < 6; $i++) {
                     <div class="formSep">
 
                     </div>
-                    <button type="button" class="btn btn-warning" id="btn_history"><i class="splashy-zoom"></i> Lihat History Voucher </button>
-                    <button type="button" class="btn btn-default" id="btn_reset"><i class="splashy-refresh"></i> Reset </button>
-                    <button type="button" class="btn btn-danger pull-right" id="btn_simpan"><i class="splashy-check"></i> Simpan </button>
+                    <button type="button" class="btn btn-danger" id="btn_hapus"><i class="splashy-remove"></i> Hapus semua transaksi </button>
+                    <button type="button" class="btn btn-primary pull-right" id="btn_simpan"><i class="splashy-check"></i> Simpan </button>
 
                 </div>
             </div>

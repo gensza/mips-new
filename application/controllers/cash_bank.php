@@ -52,6 +52,7 @@ class Cash_bank extends CI_Controller
 
         $tahun = date('Y');
         $bulan = date('m');
+
         $d = $this->cash_bank_model->cek_voucher();
 
 
@@ -60,12 +61,42 @@ class Cash_bank extends CI_Controller
                 # code...
                 if ($d > 0) {
                     # code...
-                    $this->load->view('cash_bank/cb_adavoucher', $data);
+                    $this->load->view('cash_bank/cb_lanjut_input_vou', $data);
                 } else {
 
                     $this->load->view('cash_bank/cb_input_voucher_view', $data);
                 }
                 // $this->load->view('cash_bank/cb_input_voucher_view', $data);
+            } else {
+                $this->load->view('cash_bank/cb_pw_vouc', $data);
+                # code...
+            }
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
+    public function ada_voucher()
+    {
+
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        $data['lokasi'] = $this->main_model->get_lokasi()->row_array();
+        $period = $this->session->userdata('sess_periode');
+        $data['period']        = $period;
+        $data['period_tahun']  = substr($period, 0, 4);
+        $data['period_bulan']  = substr($period, 4, 6);
+        $data['get_vocher_tmp']  = $this->cash_bank_model->get_vocher_tmp();
+
+        $tahun = date('Y');
+        $bulan = date('m');
+        $d = $this->cash_bank_model->cek_voucher();
+
+
+        if ($result == '1') {
+            if ($tahun == $data['period_tahun'] && $bulan == $data['period_bulan']) {
+                # code...
+                $this->load->view('cash_bank/cb_adavoucher', $data);
             } else {
                 $this->load->view('cash_bank/cb_pw_vouc', $data);
                 # code...
@@ -137,6 +168,13 @@ class Cash_bank extends CI_Controller
         $data['id_vouc_tmp'] = $this->input->post('id_vouc_tmp', TRUE);
         $data['voucno'] = $this->input->post('voucno', TRUE);
         $result = $this->cash_bank_model->hapus_vouc_tmp_detail($data);
+        echo json_encode($result);
+    }
+    public function delete_vocher_tmp()
+    {
+
+        $id_user = $this->session->userdata('sess_id');
+        $result = $this->cash_bank_model->delete_vocher_tmp($id_user);
         echo json_encode($result);
     }
 
@@ -893,6 +931,32 @@ class Cash_bank extends CI_Controller
         $result = $this->cash_bank_model->simpan_voucher_header($data);
         echo json_encode($result);
     }
+    public function simpan_voucher_header_lanjutan()
+    {
+
+        //voucher header
+        $data['kode_sementara']  = $this->input->post('kode_sementara', TRUE);
+        $data['pay_rec']         = $this->input->post('pay_rec', TRUE);
+        $data['kas_bank']        = $this->input->post('kas_bank', TRUE);
+        $data['bank_descript']   = $this->input->post('bank_descript', TRUE);
+        $data['tanggal']         = $this->input->post('tanggal', TRUE);
+        $data['kepada']          = $this->input->post('kepada', TRUE);
+        $data['jumlah']          = $this->input->post('jumlah', TRUE);
+        $data['terbilang']       = $this->input->post('terbilang', TRUE);
+        $data['bank_nama']       = $this->input->post('bank_nama', TRUE);
+        $data['bank_no']         = $this->input->post('bank_no', TRUE);
+        $data['bank_tanggal']    = $this->input->post('bank_tanggal', TRUE);
+        $data['sumber_dana']     = $this->input->post('sumber_dana', TRUE);
+        $data['sumber_dana_nominal'] = $this->input->post('sumber_dana_nominal', TRUE);
+        $data['lokasi_users']    = $this->input->post('lokasi_users', TRUE);
+
+        $data['noref_select']    = $this->input->post('noref_select', TRUE);
+        $data['no_ref']          = $this->input->post('no_ref', TRUE);
+
+
+        $result = $this->cash_bank_model->simpan_voucher_header_lanjutan($data);
+        echo json_encode($result);
+    }
 
     public function update_saldo_akhir()
     {
@@ -901,6 +965,12 @@ class Cash_bank extends CI_Controller
         $pay = $this->input->post('pay');
         $result = $this->cash_bank_model->update_saldo_akhir($coa, $jml, $pay);
         echo json_encode($result);
+    }
+
+    function get_coa_bank()
+    {
+        $data = $this->cash_bank_model->get_coa_bank()->row();
+        echo json_encode($data);
     }
 
     public function simpan_voucher_detail()
