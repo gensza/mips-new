@@ -266,6 +266,10 @@ class coa extends CI_Controller
             $row[] = $d->kodebar;
             $row[] = $d->nabar;
             $row[] = $d->grup;
+            $ambil = $this->mips_center->query("SELECT type, level, general FROM noac WHERE noac='$d->kodebar'")->row();
+            $row[] = $ambil->type;
+            $row[] = $ambil->level;
+            $row[] = $ambil->general;
 
 
 

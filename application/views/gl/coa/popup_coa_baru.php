@@ -84,8 +84,11 @@
                         <th style="width: 5%; padding:10px">No</th>
                         <th style="width: 10%; padding:10px">Sbu</th>
                         <th style="width: 20%; padding:10px">Noac</th>
-                        <th style="width: 25%; padding:10px">Nama</th>
-                        <th style="width: 20%; padding:10px">Grup</th>
+                        <th style="width: 20%; padding:10px">Nama</th>
+                        <th style="width: 15%; padding:10px">Grup</th>
+                        <th style="width: 5%; padding:10px">Type</th>
+                        <th style="width: 5%; padding:10px">Level</th>
+                        <th style="width: 20%; padding:10px">General</th>
                     </tr>
                 </thead>
             </table>
