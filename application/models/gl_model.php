@@ -805,7 +805,8 @@ class Gl_model extends CI_Model
 
         $d['noac'] = $noacc;
         $d['nama'] = $data['nama'];
-        $d['group'] = "0";
+        $d['sbu'] = 0;
+        $d['group'] = $data['grup'];
         $d['type'] = $data['g_d'];
         $d['level'] = $data['level'];
         $d['general'] = $acc_general;
@@ -935,8 +936,8 @@ class Gl_model extends CI_Model
     {
 
         $sql = "SELECT *,type as type_g,
-                            CONCAT(SUBSTR(noac,1,2), '.', SUBSTR(noac,3,2), '.', SUBSTR(noac,5,2), '.', SUBSTR(noac,7,2), '.', SUBSTR(noac,9,2))  AS kode_noac,
-                            CONCAT(SUBSTR(general,1,2), '.', SUBSTR(general,3,2), '.', SUBSTR(general,5,2), '.', SUBSTR(general,7,2), '.', SUBSTR(general,9,2))  AS noac_general,
+                            CONCAT(SUBSTR(noac,1,2), '.', SUBSTR(noac,3,2), '.', SUBSTR(noac,5,2), '.', SUBSTR(noac,7,2), '.', SUBSTR(noac,9,2),'.', SUBSTR(noac,11,2), '.', SUBSTR(noac,13,2), '.', SUBSTR(noac,15,1))  AS kode_noac,
+                            CONCAT(SUBSTR(general,1,2), '.', SUBSTR(general,3,2), '.', SUBSTR(general,5,2), '.', SUBSTR(general,7,2), '.', SUBSTR(general,9,2), '.', SUBSTR(general,11,2), '.', SUBSTR(general,13,2), '.', SUBSTR(general,15,1))  AS noac_general,
                             FORMAT(yearc, 2) AS yearc_f,
                             FORMAT(yeard, 2) AS yeard_f 
                         FROM noac where noid = '$id_coa'";

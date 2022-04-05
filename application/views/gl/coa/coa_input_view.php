@@ -3,7 +3,7 @@
 
         var tokens = '<?php echo $this->session->userdata('sess_token'); ?>';
 
-        $('.maskmoney').mask('00.00.00.00.00', {
+        $('.maskmoney').mask('00.00.00.00.00.00.00.0', {
             reverse: true
         });
 
