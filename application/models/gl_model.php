@@ -3502,4 +3502,12 @@ class Gl_model extends CI_Model
 
         return true;
     }
+
+    function get_data_coa()
+    {
+        $sql = "SELECT noac, nama, sbu, `group`,`type`,general FROM noac";
+        $sql_coa = $this->mips_gl->query($sql);
+
+        return $sql_coa;
+    }
 }

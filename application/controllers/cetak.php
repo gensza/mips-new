@@ -1023,4 +1023,42 @@ class Cetak extends CI_Controller
 
 
     }
+
+    public function cetak_coa_all($cetak)
+    {
+
+        $data['data_coa'] = $this->gl_model->get_data_coa()->result_array();
+
+        if ($cetak == 'pdf') {
+            // ini_set('memory_limit', '200M');
+            // ini_set('upload_max_filesize', '200M');
+            // ini_set('post_max_size', '200M');
+            // ini_set('max_input_time', 3600);
+            // ini_set('max_execution_time', 3600);
+
+            // ini_set("memory_limit", "512M");
+
+            // Tentukan path yang tepat ke mPDF
+            $this->load->library('mpdf/mpdf');
+            //$result['datapiutang'] = $this->piutang_model->data()->result_array();
+
+            // Define a Landscape page size/format by name
+            $mpdf = new mPDF('utf-8', 'A4-L');
+            //Memulai proses untuk menyimpan variabel php dan html
+            ob_start();
+
+            $this->load->view('cetak/gl/gl_coa_pdf', $data);
+
+            //$mpdf->setFooter('{PAGENO}');
+            //penulisan output selesai, sekarang menutup mpdf dan generate kedalam format pdf
+            $html = ob_get_contents(); //Proses untuk mengambil hasil dari OB..
+            ob_end_clean();
+            //Disini dimulai proses convert UTF-8, kalau ingin ISO-8859-1 cukup dengan mengganti $mpdf->WriteHTML($html);
+            $mpdf->WriteHTML(utf8_encode($html));
+            $mpdf->Output('COA' . ".pdf", 'I');
+            exit;
+        } else {
+            $this->load->view('cetak/gl/gl_coa_excel', $data);
+        }
+    }
 }

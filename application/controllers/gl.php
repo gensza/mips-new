@@ -709,6 +709,7 @@ class Gl extends CI_Controller
             $row[] = $customers->sbu;
             $row[] = $customers->group;
             $row[] = $customers->type;
+            $row[] = $customers->general;
             $row[] = "<a href='javascript:void(0)' onclick=getcontents('gl/master_edit','" . $tokensapp . "','" . $customers->NOID . "')><i class='splashy-document_letter_edit' title='Edit COA'></i></a>";
             $data[] = $row;
             //<a href='javascript:void(0)' onclick=getpopup('gl/master_input_saldo','".$tokensapp."','popupedit','".$customers->NOID."') title='Input Saldo - ".$customers->nama."'><i class='splashy-application_windows_edit'></i></a>

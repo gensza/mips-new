@@ -90,6 +90,30 @@
         });
 
     });
+
+    $("#btn_cetak_pdf").click(function() {
+        cetak_journal('pdf');
+    });
+
+    $("#btn_cetak_excel").click(function() {
+        cetak_journal('excel');
+    });
+
+    function cetak_journal(cetak) {
+
+        var url = '<?php echo base_url('cetak/cetak_coa_all/'); ?>';
+
+        if (cetak == 'pdf') {
+            window.open(url + '/' + cetak + '/', '_blank');
+        } else {
+            window.open(url + '/' + cetak + '/');
+        }
+        // if (window.focus) {
+        //   newwindow.focus()
+        // }
+        // return false;
+
+    };
 </script>
 
 <style type="text/css">
@@ -115,6 +139,10 @@
     </ul>
 </div>
 </nav>
+<div>
+    <!-- <button type="button" class="btn btn-danger btn-min-width mr-1 mb-1" id="btn_cetak_pdf"><i class="fa fa-print"></i><i class="splashy-printer"></i> PDF </button> -->
+    <button type="button" class="btn btn-success btn-min-width mr-1 mb-1" id="btn_cetak_excel"><i class="fa fa-print"></i><i class="splashy-printer"></i> Excel</button>
+</div>
 <div class="row-fluid">
     <div class="span12">
 
@@ -129,6 +157,7 @@
                         <th style="width: 5%">Sbu</th>
                         <th style="width: 5%">Group</th>
                         <th style="width: 5%">Type</th>
+                        <th style="width: 5%">General</th>
                         <th style="width: 5%">Link</th>
                     </tr>
                 </thead>
