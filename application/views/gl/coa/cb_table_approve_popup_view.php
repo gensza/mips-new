@@ -180,8 +180,8 @@
                     var results = [];
                     $.each(data, function(index, item) {
                         results.push({
-                            id: item.grp,
-                            text: item.grp
+                            id: item.nama,
+                            text: item.nama
                         });
                     });
                     return {
@@ -229,6 +229,6 @@
     <div class="modal-footer">
         <!-- <button type="button" class="btn btn-default" style="background:white"><img src="<?php echo base_url('assets/img-gif.gif'); ?>" style="width:23px"></button> -->
         <!-- <button type="button" class="btn btn-success" id="btn_selesai_po"><i class="fa fa-refresh"></i> Selesai dan Simpan</button> -->
-        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-refresh"></i> Close</button>
+        <button type="close" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-refresh"></i> Close</button>
     </div>
 </div>
