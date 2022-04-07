@@ -205,7 +205,7 @@
     <div class="modal-body">
         <form id="form_input" method=POST enctype='multipart/form-data'>
             <input type='hidden' class='form-control' name='<?php echo $this->security->get_csrf_token_name(); ?>' value="<?php echo $this->security->get_csrf_hash(); ?>">
-            <input type="hidden" class="form-control" name="idpengguna" id="idpengguna">
+            <input type="hidden" class="form-control" value="<?php echo $id_row; ?>" name="idpengguna" id="idpengguna">
 
             <div class="form-group">
                 <label for="demo-vs-definput" class="control-label">Nama Pengguna</label>

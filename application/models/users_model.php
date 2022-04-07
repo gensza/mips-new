@@ -76,7 +76,6 @@ class Users_model extends CI_Model
                                 id_pt           = '$data[pt_edit]',
                                 id_lokasi           = '$data[lokasi]',
                                 group_modul     = '$data[group_modul]',
-                                updated_by      = '$username',
                                 updated_at      = NOW() WHERE id = '$data[idpengguna]'";
         return $this->db->query($sql);
     }
