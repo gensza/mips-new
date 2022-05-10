@@ -94,25 +94,6 @@ $db['mips_center']['stricton'] = FALSE;
 /* END DB CENTER */
 
 
-/* START-DB-GL */
-// $db['mips_gl']['hostname'] = '192.168.1.231';
-// $db['mips_gl']['username'] = 'mis';
-// $db['mips_gl']['password'] = 'msaljkt@88';
-// $db['mips_gl']['database'] = 'db_mips_gl_' . $inis_db . '';
-// // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db;
-// // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db.'_sblmcoba10digit';
-// $db['mips_gl']['dbdriver'] = 'mysqli';
-// $db['mips_gl']['dbprefix'] = '';
-// $db['mips_gl']['pconnect'] = TRUE;
-// $db['mips_gl']['db_debug'] = TRUE;
-// $db['mips_gl']['cache_on'] = FALSE;
-// $db['mips_gl']['cachedir'] = '';
-// $db['mips_gl']['char_set'] = 'utf8';
-// $db['mips_gl']['dbcollat'] = 'utf8_general_ci';
-// $db['mips_gl']['swap_pre'] = '{PRE}';
-// $db['mips_gl']['autoinit'] = TRUE;
-// $db['mips_gl']['stricton'] = FALSE;
-/* END-DB-GL */
 
 $db['mips_gl_msal'] = array(
 	'dsn'	=> '',
@@ -180,95 +161,7 @@ $db['mips_gl_msal_pks'] = array(
 	'save_queries' => TRUE
 );
 
-// $db['mips_gl_psam'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'db_mips_gl_psam',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
 
-// $db['mips_gl_mapa'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'db_mips_gl_mapa',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-
-// $db['mips_gl_peak'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'db_mips_gl_peak',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-
-// $db['mips_gl_kpp'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'db_mips_gl_kpp',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-
-/* START-DB-CB */
 
 $db['db_mips_cb_msal'] = array(
 	'dsn'	=> '',
@@ -335,94 +228,7 @@ $db['db_mips_cb_msal_pks'] = array(
 	'save_queries' => TRUE
 );
 
-// $db['db_mips_cb_psam'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'db_mips_cb_psam',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
 
-// $db['db_mips_cb_mapa'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'db_mips_cb_mapa',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-
-// $db['db_mips_cb_peak'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'db_mips_cb_peak',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-
-// $db['db_mips_cb_kpp'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'db_mips_cb_kpp',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-/* END-DB-CB */
 
 
 /* START-DB-MASTERCODE */
@@ -442,24 +248,6 @@ $db['mstcode']['swap_pre'] = '{PRE}';
 $db['mstcode']['autoinit'] = TRUE;
 $db['mstcode']['stricton'] = FALSE;
 /* END-DB-MASTERCODE */
-
-
-/* START-DB-GL */
-// $db['mips_logistik']['hostname'] = '192.168.1.231';
-// $db['mips_logistik']['username'] = 'mis';
-// $db['mips_logistik']['password'] = 'msaljkt@88';
-// $db['mips_logistik']['database'] = 'dev_new_logistikmsal_2021';
-// $db['mips_logistik']['dbdriver'] = 'mysqli';
-// $db['mips_logistik']['dbprefix'] = '';
-// $db['mips_logistik']['pconnect'] = TRUE;
-// $db['mips_logistik']['db_debug'] = TRUE;
-// $db['mips_logistik']['cache_on'] = FALSE;
-// $db['mips_logistik']['cachedir'] = '';
-// $db['mips_logistik']['char_set'] = 'utf8';
-// $db['mips_logistik']['dbcollat'] = 'utf8_general_ci';
-// $db['mips_logistik']['swap_pre'] = '{PRE}';
-// $db['mips_logistik']['autoinit'] = TRUE;
-// $db['mips_logistik']['stricton'] = FALSE;
 
 $db['mips_logistik_msal'] = array(
 	'dsn'	=> '',
@@ -483,93 +271,7 @@ $db['mips_logistik_msal'] = array(
 	'save_queries' => TRUE
 );
 
-// $db['mips_logistik_mapa'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'new_logistikmapa_2021',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
 
-// $db['mips_logistik_psam'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'new_logistikpsam_2021',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-
-// $db['mips_logistik_peak'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'new_logistikpeak_2021',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-
-// $db['mips_logistik_kpp'] = array(
-// 	'dsn'	=> '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'new_logistikkpp_2021',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
 
 $db['db_personalia_msal'] = array(
 	'dsn'	=> '',
@@ -596,105 +298,7 @@ $db['db_personalia_msal'] = array(
 	'save_queries' => TRUE
 );
 
-// $db['db_personalia_psam'] = array(
-// 	'dsn'	=> '',
-// 	// 'hostname' => 'localhost',
-// 	// 'username' => 'root',
-// 	// 'password' => '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'msalgrou_personalia_psam',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
 
-// $db['db_personalia_mapa'] = array(
-// 	'dsn'	=> '',
-// 	// 'hostname' => 'localhost',
-// 	// 'username' => 'root',
-// 	// 'password' => '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'msalgrou_personalia_mapa',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-
-// $db['db_personalia_peak'] = array(
-// 	'dsn'	=> '',
-// 	// 'hostname' => 'localhost',
-// 	// 'username' => 'root',
-// 	// 'password' => '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'msalgrou_personalia_peak',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
-
-// $db['db_personalia_kpp'] = array(
-// 	'dsn'	=> '',
-// 	// 'hostname' => 'localhost',
-// 	// 'username' => 'root',
-// 	// 'password' => '',
-// 	'hostname' => '192.168.1.231',
-// 	'username' => 'mis',
-// 	'password' => 'msaljkt@88',
-// 	'database' => 'msalgrou_personalia_kpp',
-// 	'dbdriver' => 'mysqli',
-// 	'dbprefix' => '',
-// 	'pconnect' => FALSE,
-// 	'db_debug' => (ENVIRONMENT !== 'production'),
-// 	'cache_on' => FALSE,
-// 	'cachedir' => '',
-// 	'char_set' => 'utf8',
-// 	'dbcollat' => 'utf8_general_ci',
-// 	'swap_pre' => '',
-// 	'encrypt' => FALSE,
-// 	'compress' => FALSE,
-// 	'stricton' => FALSE,
-// 	'failover' => array(),
-// 	'save_queries' => TRUE
-// );
 
 
 
