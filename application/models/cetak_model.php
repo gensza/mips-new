@@ -1,16 +1,9 @@
 <?php
-class Cetak_model extends CI_Model
+class cetak_model extends CI_Model
 {
 
     //var $dps;
 
-    function __construct()
-    {
-        parent::__construct();
-        $db_pt = check_db_pt();
-
-        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
-    }
 
     function periode()
     {
@@ -46,6 +39,29 @@ class Cetak_model extends CI_Model
             return $this->mips_caba->query($sql);
         }
     }
+    function sum_saldo_register($tgl_start, $tgl_end, $chx_periode)
+    {
+        //start : 01-09-2016
+        //end   : 01-10-2016
+        $lokasi   = $this->lokasi();
+
+
+        if ($chx_periode == 1) {
+            $period   = $this->periode();
+            $tahun    = substr($period, 0, 4);
+            $bulan    = substr($period, 4, 6);
+
+            $sql = $this->mips_caba->query("SELECT SUM(AMOUNT) as jumlah FROM head_voucher WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' and lokasi = '$lokasi' ")->row();
+            $isi = number_format($sql->jumlah, 2, ",", ".");
+            // return $isi;
+            // $isi = "GENZA";
+        } else {
+            $sql = $this->mips_caba->query("SELECT SUM(AMOUNT) as jumlah FROM head_voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') and lokasi = '$lokasi'")->row();
+            $isi = number_format($sql->jumlah, 2, ",", ".");
+        }
+        // $isi = "GENZA";
+        return $isi;
+    }
 
 
     function get_data_vouch_journal($tgl_start, $tgl_end, $chx_periode)
@@ -63,6 +79,30 @@ class Cetak_model extends CI_Model
             $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') and lokasi = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
             return $this->mips_caba->query($sql);
         }
+    }
+
+    function sum_saldo_jurnal($tgl_start, $tgl_end, $chx_periode)
+    {
+        $lokasi   = $this->lokasi();
+        if ($chx_periode == 1) {
+            $period   = $this->periode();
+            $tahun    = substr($period, 0, 4);
+            $bulan    = substr($period, 4, 6);
+
+            $sql = "SELECT SUM(DEBIT) AS debit, SUM(CREDIT) AS credit FROM voucher WHERE MONTH(`date`) = '$bulan' AND YEAR(`date`) = '$tahun' and lokasi = '$lokasi'";
+            $isi = $this->mips_caba->query($sql)->row();
+        } else {
+            $sql = "SELECT SUM(DEBIT) AS debit, SUM(CREDIT) AS credit FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') and lokasi = '$lokasi'";
+            $isi = $this->mips_caba->query($sql)->row();
+        }
+        $data = [
+            'debit' => number_format($isi->debit, 2, ",", "."),
+            'credit' => number_format($isi->credit, 2, ",", ".")
+
+        ];
+
+        return $data;
+        # code...
     }
 
     function get_data_vouch_register_head_2($tgl_start, $tgl_end, $chx_periode)
@@ -337,8 +377,33 @@ class Cetak_model extends CI_Model
             $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
         }
         return $this->mips_caba->query($sql);
+    }
 
-        // $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT CREDIT_F2,DEBIT DEBET_F2,FORMAT(DEBIT, 2) DEBET_F,FORMAT(CREDIT, 2) CREDIT_F FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') and lokasi = '$lokasi' ORDER BY `DATE`,DEBIT DESC";
+    function sum_saldo_accn($accn, $tgl_start, $tgl_end)
+    {
+        $lokasi   = $this->lokasi();
+
+        if ($accn != 0) {
+            # code...
+            $sql = "SELECT SUM(DEBIT) AS debit, SUM(CREDIT) AS credit FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND ACCTNO='$accn'";
+            $isi = $this->mips_caba->query($sql)->row();
+            // $isi = "Hello 1";
+        } else {
+            # code...
+            $sql = "SELECT SUM(DEBIT) AS debit, SUM(CREDIT) AS credit FROM voucher WHERE DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'";
+            // $isi = "Hello 2";
+            $isi = $this->mips_caba->query($sql)->row();
+        }
+
+        $data = [
+            'debit' => number_format($isi->debit, 2, ",", "."),
+            'credit' => number_format($isi->credit, 2, ",", ".")
+
+        ];
+
+        return $data;
+        // return $isi;
+        # code...
     }
 
     function get_data_lpj($sumber, $coa, $tgl_start, $tgl_end)

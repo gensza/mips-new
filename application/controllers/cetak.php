@@ -14,15 +14,17 @@ class Cetak extends CI_Controller
         $this->load->model('rekap_model');
 
         $db_pt = check_db_pt();
-        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
-
         if ($this->session->userdata('sess_id_lokasi') == '01') {
+            $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE); //HO
             $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE); //HO
         } elseif ($this->session->userdata('sess_id_lokasi') == '02') {
+            $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt . '_ro', TRUE); //RO
             $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_ro', TRUE); //RO
         } elseif ($this->session->userdata('sess_id_lokasi') == '03') {
+            $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt . '_pks', TRUE); //PKS
             $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_pks', TRUE); //PKS
         } else {
+            $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt . '_site', TRUE); //SITE
             $this->mips_gl = $this->load->database('mips_gl_' . $db_pt . '_site', TRUE); //SITE
         }
     }
@@ -37,6 +39,39 @@ class Cetak extends CI_Controller
         $data = $this->cetak_model->get_data_vouch_register($tgl_start, $tgl_end, $chx_periode)->result_array();
         echo json_encode($data);
     }
+    public function sum_saldo_register()
+    {
+
+        $tgl_start      = $this->input->post('tgl_start', TRUE);
+        $tgl_end        = $this->input->post('tgl_end', TRUE);
+        $chx_periode    = $this->input->post('chx_periode', TRUE);
+
+        $data = $this->cetak_model->sum_saldo_register($tgl_start, $tgl_end, $chx_periode);
+        // $data = "by ali dev";
+        echo json_encode($data);
+    }
+    public function sum_saldo_jurnal()
+    {
+
+        $tgl_start      = $this->input->post('tgl_start', TRUE);
+        $tgl_end        = $this->input->post('tgl_end', TRUE);
+        $chx_periode    = $this->input->post('chx_periode', TRUE);
+
+        $data = $this->cetak_model->sum_saldo_jurnal($tgl_start, $tgl_end, $chx_periode);
+        // $data = "by ali dev";
+        echo json_encode($data);
+    }
+    public function sum_saldo_accn()
+    {
+
+        $tgl_start      = $this->input->post('tgl_start', TRUE);
+        $tgl_end        = $this->input->post('tgl_end', TRUE);
+        $accn    = $this->input->post('accn', TRUE);
+
+        $data = $this->cetak_model->sum_saldo_accn($accn, $tgl_start, $tgl_end);
+        // $data = "by ali dev";
+        echo json_encode($data);
+    }
 
     public function cb_laporan_voucher_journal_view()
     {
@@ -47,7 +82,7 @@ class Cetak extends CI_Controller
 
         $res_data       = $this->cetak_model->get_data_vouch_journal($tgl_start, $tgl_end, $chx_periode)->result_array();
         $res_data_head  = $this->cetak_model->get_data_vouch_register_head_2($tgl_start, $tgl_end, $chx_periode)->result_array();
-        $html;
+        $html = 0;
 
         $nos = 0 + 1;
         foreach ($res_data_head as $v) {
@@ -112,6 +147,7 @@ class Cetak extends CI_Controller
         // Tentukan path yang tepat ke mPDF
         $this->load->library('mpdf/mpdf');
         $data['namapt']  = $this->main_model->get_pt()->row_array();
+        $data['jumlah']  = $this->cetak_model->sum_saldo_accn($coa, $tgl_start, $tgl_end);
         //$result['datapiutang'] = $this->piutang_model->data()->result_array();
 
         // Define a Landscape page size/format by name
@@ -428,6 +464,7 @@ class Cetak extends CI_Controller
 
 
         $data['namapt']  = $this->main_model->get_pt()->row_array();
+        $data['jumlah']  = $this->cetak_model->sum_saldo_register($tgl_start, $tgl_end, $cbx_periode);
 
 
         // Tentukan path yang tepat ke mPDF
@@ -461,8 +498,9 @@ class Cetak extends CI_Controller
         // Tentukan path yang tepat ke mPDF
         $this->load->library('mpdf/mpdf');
         $data['namapt']  = $this->main_model->get_pt()->row_array();
+        $data['jumlah']  = $this->cetak_model->sum_saldo_jurnal($tgl_start, $tgl_end, $cbx_periode);
         //$result['datapiutang'] = $this->piutang_model->data()->result_array();
-
+        // var_dump($data['jumlah']) . die();
         // Define a Landscape page size/format by name
         $mpdf = new mPDF('utf-8', 'A4-L');
         //Memulai proses untuk menyimpan variabel php dan html
@@ -651,6 +689,7 @@ class Cetak extends CI_Controller
         //output to json format
         echo json_encode($output);
     }
+
 
     function sum_saldo_akhir()
     {

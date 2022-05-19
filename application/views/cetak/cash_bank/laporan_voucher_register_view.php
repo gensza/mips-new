@@ -144,6 +144,14 @@
     ?>
     <tr>
   </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="5" style="text-align:right">Grand Total:</th>
+      <th>
+        <p><?= $jumlah ?></p>
+      </th>
+    </tr>
+  </tfoot>
 </table>
 
 

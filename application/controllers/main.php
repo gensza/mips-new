@@ -25,6 +25,7 @@ class Main extends CI_Controller
         $data['namalok'] = $this->main_model->get_lokasi()->row_array();
         $data['namamodul'] = $this->main_model->get_modul_app()->row_array();
 
+        // var_dump($data) . die();
 
         if ($res_passtoken == '1') {
             //auth token

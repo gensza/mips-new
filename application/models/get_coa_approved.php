@@ -14,8 +14,6 @@ class get_coa_approved extends CI_Model
     {
         parent::__construct();
         $this->load->database();
-        $db_pt = check_db_pt();
-        $this->mips_gl = $this->load->database('mips_gl_' . $db_pt, TRUE);
         $this->mips_center  = $this->load->database('mips_center', TRUE);
     }
 

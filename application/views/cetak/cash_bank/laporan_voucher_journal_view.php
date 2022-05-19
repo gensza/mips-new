@@ -180,13 +180,18 @@
     <?php
     }
     ?>
-
-
-
-
-
-
   </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="5" style="text-align:right">Grand Total:</th>
+      <th>
+        <p><?= $jumlah['debit'] ?></p>
+      </th>
+      <th>
+        <p><?= $jumlah['credit'] ?></p>
+      </th>
+    </tr>
+  </tfoot>
 </table>
 
 

@@ -1,4 +1,6 @@
 <script type="text/javascript">
+  // console.log("<?= $this->session->userdata('sess_id_lokasi') ?>");
+
   function data_coa(data) {
     $('#coa_approve').DataTable().destroy();
     $('#coa_approve').DataTable({

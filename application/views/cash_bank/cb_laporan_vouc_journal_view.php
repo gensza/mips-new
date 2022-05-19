@@ -135,6 +135,25 @@
                     $("#tabel_lap_vouc_jurnal_list").html("");
                     $("#tabel_lap_vouc_jurnal_list").append(result);
 
+                    $.ajax({
+                        url: base_url + 'cetak/sum_saldo_jurnal',
+                        type: 'POST',
+                        data: {
+                            tgl_start: $("#tgl_start").val(),
+                            tgl_end: $("#tgl_end").val(),
+                            chx_periode: $('#chx_periode').val(),
+                            <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+                        },
+                        dataType: "json",
+                        success: function(result) {
+                            // console.log(result);
+                            // $('#total_reg').html(result);
+                            $('#total_jurnal_d').html(result.debit);
+                            $('#total_jurnal_c').html(result.credit);
+                        },
+
+                    });
+
                 },
                 beforeSend: function() {
                     loadingPannel.show();
@@ -249,6 +268,17 @@
                 </tr>
             </thead>
             <tbody id="tabel_lap_vouc_jurnal_list"></tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5" style="text-align:right">Grand Total:</th>
+                    <th>
+                        <p id="total_jurnal_d"></p>
+                    </th>
+                    <th>
+                        <p id="total_jurnal_c"></p>
+                    </th>
+                </tr>
+            </tfoot>
         </table>
 
     </div>

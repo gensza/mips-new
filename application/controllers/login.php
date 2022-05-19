@@ -119,6 +119,7 @@ class Login extends CI_Controller
             $lok = $this->db->query("SELECT nama as nama_lokasi FROM codegroup WHERE value='$result_data[id_lokasi]' AND group_n='LOKASI_USERS'")->row_array();
             $getpt = $this->mips_center->query("SELECT nama_pt, logo, alias FROM tb_pt WHERE kode_pt='$pt'")->row_array();
             $setup = $this->db->query("SELECT txtperiode FROM tb_setup WHERE id_modul='$result_data[id_module_role]' AND id_pt='$pt' AND lokasi='$result_data[id_lokasi]'")->row_array();
+            // var_dump($setup) . die();
             // var_dump($result_data) . die();
             //ini fungsi cek query, jika ada
             if ($result_data) {
@@ -199,6 +200,7 @@ class Login extends CI_Controller
                         'sess_login'        => "1",
                         'sess_pw_cb'        => "0"
                     );
+                    // var_dump($data_session['sess_id']) . die();
 
                     $this->session->set_userdata($data_session);
                     //?u=aHR0cDovL2RldGlrLmNvbS8

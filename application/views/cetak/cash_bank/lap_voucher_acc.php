@@ -228,6 +228,17 @@
                 }
             } ?>
     </tbody>
+    <tfoot>
+        <tr style="background-color: grey;">
+            <td colspan="4" style="text-align:right;font-weight: bold;">Total Transaksi:</th>
+            <td align="right" width="150px" style="color: black;font-weight: bold">
+                <?= $jumlah['debit'] ?>
+            </td>
+            <td align="right" width="150px" style="color: black;font-weight: bold">
+                <?= $jumlah['credit'] ?>
+            </td>
+        </tr>
+    </tfoot>
 </table>
 
 <table width="100%" border="0" align="center" class="font-styles">
