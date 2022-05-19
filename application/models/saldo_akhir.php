@@ -13,12 +13,6 @@ class saldo_akhir extends CI_Model
 
 
 
-    function __construct()
-    {
-        parent::__construct();
-        $db_pt = check_db_pt();
-        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
-    }
 
     private function _get_datatables_query($thun)
     {

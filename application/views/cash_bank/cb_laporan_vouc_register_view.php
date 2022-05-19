@@ -21,6 +21,25 @@
         return [day, month, year].join('-');
     }
 
+    function sum_saldo() {
+        $.ajax({
+            url: base_url + 'cetak/sum_saldo_register',
+            type: 'POST',
+            data: {
+                <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>',
+                tgl_start: $("#tgl_start").val(),
+                tgl_end: $("#tgl_end").val(),
+                chx_periode: $('#chx_periode').val(),
+            },
+            dataType: "json",
+            success: function(result) {
+                // console.log('totalnya ya', result);
+                $('#total_reg').html(result);
+            },
+
+        });
+    }
+
 
     $(document).ready(function() {
 
@@ -32,7 +51,7 @@
 
         $('#chx_periode').attr('checked', true);
         $('#chx_periode').val('1');
-
+        sum_saldo();
         // $('#tgl_start').val(format_date(firstDateOfYearMonth(thn, bln)));
         // $('#tgl_end').val(format_date(lastDateOfYearMonth(thn, bln)));
 
@@ -179,6 +198,8 @@
                         },
                     });
 
+
+
                 },
                 beforeSend: function() {
                     loadingPannel.show();
@@ -186,14 +207,28 @@
                 complete: function() {
                     loadingPannel.hide();
                     $('#tabel_lap_vouc_register').show();
+
+                    // sum_saldo();
+                    // console.log('totalnya ya');
+                    $.ajax({
+                        url: base_url + 'cetak/sum_saldo_register',
+                        type: 'POST',
+                        data: {
+                            tgl_start: $("#tgl_start").val(),
+                            tgl_end: $("#tgl_end").val(),
+                            chx_periode: $('#chx_periode').val(),
+                            <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+                        },
+                        dataType: "json",
+                        success: function(result) {
+                            // console.log('totalnya ya', result);
+                            $('#total_reg').html(result);
+                        },
+
+                    });
                 }
             });
         });
-
-
-
-
-
 
 
     });
@@ -283,6 +318,15 @@
                     <th style="font-size: 12px; padding:10px">Nilai</th>
                 </tr>
             </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5" style="text-align:right">Grand Total:</th>
+                    <th>
+                        <p id="total_reg"></p>
+                    </th>
+                </tr>
+            </tfoot>
         </table>
 
     </div>

@@ -94,6 +94,25 @@ $db['mips_center']['stricton'] = FALSE;
 /* END DB CENTER */
 
 
+/* START-DB-GL */
+// $db['mips_gl']['hostname'] = '192.168.1.231';
+// $db['mips_gl']['username'] = 'mis';
+// $db['mips_gl']['password'] = 'msaljkt@88';
+// $db['mips_gl']['database'] = 'db_mips_gl_' . $inis_db . '';
+// // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db;
+// // $db['mips_gl']['database'] = 'db_mips_gl_'.$inis_db.'_sblmcoba10digit';
+// $db['mips_gl']['dbdriver'] = 'mysqli';
+// $db['mips_gl']['dbprefix'] = '';
+// $db['mips_gl']['pconnect'] = TRUE;
+// $db['mips_gl']['db_debug'] = TRUE;
+// $db['mips_gl']['cache_on'] = FALSE;
+// $db['mips_gl']['cachedir'] = '';
+// $db['mips_gl']['char_set'] = 'utf8';
+// $db['mips_gl']['dbcollat'] = 'utf8_general_ci';
+// $db['mips_gl']['swap_pre'] = '{PRE}';
+// $db['mips_gl']['autoinit'] = TRUE;
+// $db['mips_gl']['stricton'] = FALSE;
+/* END-DB-GL */
 
 $db['mips_gl_msal'] = array(
 	'dsn'	=> '',
@@ -160,8 +179,7 @@ $db['mips_gl_msal_pks'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
-
-
+/* START-DB-CB */
 
 $db['db_mips_cb_msal'] = array(
 	'dsn'	=> '',
@@ -227,27 +245,51 @@ $db['db_mips_cb_msal_pks'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+$db['db_mips_cb_msal_ro'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.231',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_cb_msal_ro',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+$db['mstcode'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.231',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mmop_ms_code',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
 
 
 
-
-/* START-DB-MASTERCODE */
-$db['mstcode']['hostname'] = '192.168.1.231';
-$db['mstcode']['username'] = 'mis';
-$db['mstcode']['password'] = 'msaljkt@88';
-$db['mstcode']['database'] = 'db_mmop_ms_code';
-$db['mstcode']['dbdriver'] = 'mysqli';
-$db['mstcode']['dbprefix'] = '';
-$db['mstcode']['pconnect'] = TRUE;
-$db['mstcode']['db_debug'] = TRUE;
-$db['mstcode']['cache_on'] = FALSE;
-$db['mstcode']['cachedir'] = '';
-$db['mstcode']['char_set'] = 'utf8';
-$db['mstcode']['dbcollat'] = 'utf8_general_ci';
-$db['mstcode']['swap_pre'] = '{PRE}';
-$db['mstcode']['autoinit'] = TRUE;
-$db['mstcode']['stricton'] = FALSE;
-/* END-DB-MASTERCODE */
 
 $db['mips_logistik_msal'] = array(
 	'dsn'	=> '',
@@ -270,7 +312,6 @@ $db['mips_logistik_msal'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
-
 
 
 $db['db_personalia_msal'] = array(
@@ -297,9 +338,6 @@ $db['db_personalia_msal'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
-
-
-
 
 
 

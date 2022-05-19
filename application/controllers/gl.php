@@ -1982,4 +1982,16 @@ class Gl extends CI_Controller
 
         echo json_encode($result);
     }
+
+    function restore_data()
+    {
+        $tokens = $this->input->post('tokens', TRUE);
+        $result = $this->main_model->check_token($tokens);
+        $data['tokens'] = $tokens;
+        if ($result == '1') {
+            $this->load->view('gl/restore/restore_data_view', $data);
+        } else {
+            echo "<script> window.location = 'main/logout' </script>";
+        }
+    }
 }

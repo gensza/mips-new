@@ -18,7 +18,6 @@ class Cash_bank_model extends CI_Model
         // db center noac
         $this->mips_center  = $this->load->database('mips_center', TRUE);
 
-        $this->mips_caba = $this->load->database('db_mips_cb_' . $db_pt, TRUE);
         $this->mstcode = $this->load->database('mstcode', TRUE);
         $this->mips_logistik = $this->load->database('mips_logistik_' . $db_pt, TRUE);
     }
@@ -106,7 +105,12 @@ class Cash_bank_model extends CI_Model
         /* END */
 
         // ini select dulu ke table tmp , lalu insert ke table voucher dengan fungsi insert batch
-        $sql2 = "SELECT  `TRANS`, `VOUCNO`, `DATE`, `ACCTNO`, `DEBIT`, `CREDIT`, `DESCRIPT`, `JENIS`, `CHEQNO`, `TO`, `FROM`, `PAY`, `AMOUNT`, `BANK`, `POSTED`, `REMARKS`, `LOKASI`, `PROJECT`, `PRINTED`, `TGLTXT`, `KODE_PT`, `txtperiode`, `MODULE`, `user`, `NO_PP`, `NO_PO`, `PDO`, `sumber` FROM `voucher_tmp` WHERE `id_user` = '$id_user' ORDER BY ID ASC";
+        if ($lokasi != 'HO') {
+
+            $sql2 = "SELECT  `TRANS`, `VOUCNO`, `DATE`, `ACCTNO`, `DEBIT`, `CREDIT`, `DESCRIPT`, `JENIS`, `CHEQNO`, `TO`, `FROM`, `PAY`, `AMOUNT`, `BANK`, `POSTED`, `REMARKS`, `LOKASI`, `PROJECT`, `PRINTED`, `TGLTXT`, `KODE_PT`, `txtperiode`, `MODULE`, `user`, `NO_PP`, `NO_PO`, `PDO`, `sumber` FROM `voucher_tmp` WHERE `id_user` = '$id_user' ORDER BY ID ASC";
+        } else {
+            $sql2 = "SELECT  `TRANS`, `VOUCNO`, `DATE`, `ACCTNO`, `DEBIT`, `CREDIT`, `DESCRIPT`, `JENIS`, `CHEQNO`, `TO`, `FROM`, `PAY`, `AMOUNT`, `BANK`, `POSTED`, `REMARKS`, `LOKASI`, `PROJECT`, `PRINTED`, `TGLTXT`, `KODE_PT`, `txtperiode`, `MODULE`, `user`, `NO_PP`, `NO_PO` FROM `voucher_tmp` WHERE `id_user` = '$id_user' ORDER BY ID ASC";
+        }
         // $n = $this->mips_caba->query($sql2)->result_array();
         $n = $this->mips_caba->query($sql2)->result();
 
@@ -138,8 +142,11 @@ class Cash_bank_model extends CI_Model
             $dt_vou['user'] = $ds->user;
             $dt_vou['NO_PP'] = $ds->NO_PP;
             $dt_vou['NO_PO'] = $ds->NO_PO;
-            $dt_vou['PDO'] = $ds->PDO;
-            $dt_vou['sumber'] = $ds->sumber;
+            if ($lokasi != 'HO') {
+
+                $dt_vou['PDO'] = $ds->PDO;
+                $dt_vou['sumber'] = $ds->sumber;
+            }
 
             $this->mips_caba->insert('voucher', $dt_vou);
         }
@@ -5086,8 +5093,11 @@ class Cash_bank_model extends CI_Model
             $dt_vou['user'] = $ds->user;
             $dt_vou['NO_PP'] = $ds->NO_PP;
             $dt_vou['NO_PO'] = $ds->NO_PO;
-            $dt_vou['PDO'] = $ds->PDO;
-            $dt_vou['sumber'] = $ds->sumber;
+            if ($lokasi != 'HO') {
+
+                $dt_vou['PDO'] = $ds->PDO;
+                $dt_vou['sumber'] = $ds->sumber;
+            }
 
             $this->mips_caba->insert('voucher', $dt_vou);
         }
@@ -10105,8 +10115,10 @@ class Cash_bank_model extends CI_Model
         $vou['id_user'] = $id_user;
         $vou['NO_PP'] = $id_user;
         $vou['NO_PO'] = $id_user;
-        $vou['PDO'] = '-';
-        $vou['sumber'] = '-';
+        if ($lokasi != 'HO') {
+            $vou['PDO'] = '-';
+            $vou['sumber'] = '-';
+        }
 
         return $this->mips_caba->insert('voucher_tmp', $vou);
     }
@@ -10162,8 +10174,11 @@ class Cash_bank_model extends CI_Model
                                     id_user,
                                     user,
                                     no_pp,
+                                    if ($lokasi != 'HO') {
+
                                     pdo,
                                     sumber,
+                                    }
                                     tgltxt,
                                     txtperiode,
                                     no_po,
@@ -10189,8 +10204,10 @@ class Cash_bank_model extends CI_Model
                                     '$id_user',
                                     '$nama_user',
                                     '$nopp',
+                                    if ($lokasi != 'HO') {
                                     '-',
                                     '-',
+                                    }
                                     $tgltxt,
                                     $tgltxtperiode,
                                     '$data[ref_po]','0','0')";
@@ -10250,8 +10267,10 @@ class Cash_bank_model extends CI_Model
                                     kode_pt,
                                     user,
                                     no_pp,
+                                    if ($lokasi != 'HO') {
                                     pdo,
                                     sumber,
+                                        }
                                     tgltxt,
                                     txtperiode) 
                             VALUES ('$data[kas_bank]',
@@ -10273,8 +10292,10 @@ class Cash_bank_model extends CI_Model
                                     '$data[divisi_v]',
                                     '$nama_user',
                                     '$nopp',
+                                    if ($lokasi != 'HO') {
                                     '-',
                                     '-',
+                                    }
                                     $tgltxt,
                                     $tgltxtperiode
                                 )";
@@ -10865,8 +10886,10 @@ class Cash_bank_model extends CI_Model
                                     kode_pt,
                                     user,
                                     no_pp,
+                                    if ($lokasi != 'HO') {
                                     pdo,
                                     sumber,
+                                        }
                                     tgltxt,
                                     txtperiode) 
                             VALUES ('$data[kas_bank]',
@@ -10889,8 +10912,10 @@ class Cash_bank_model extends CI_Model
                                     '$data[divisi_v]',
                                     '$nama_user',
                                     '$nopp',
+                                    if ($lokasi != 'HO') {
                                     '-',
                                     '-',
+                                    }
                                     $tgltxt,
                                     $tgltxtperiode
                                 )";
@@ -10906,7 +10931,7 @@ class Cash_bank_model extends CI_Model
     {
 
         $user_id = $this->username();
-
+        $lokasi  = $this->get_nama_lokasi();
         $jumlah_amount    = str_replace(",", "", $data['jumlah']);
 
         $ceknoref = 0;
@@ -10937,8 +10962,10 @@ class Cash_bank_model extends CI_Model
                                             amount   = '$jumlah_amount',
                                             bankcek  = '$data[bank_nama]',
                                             tglcek   = STR_TO_DATE('$data[bank_tanggal]','%d-%m-%Y'),
+                                            if ($lokasi != 'HO') {
                                             pdo      = '$data[sumber_dana]',
                                             sumber   = '$nominalsumber',
+                                                }
                                             nocekbg  = '$data[bank_no]' where id = '$data[id_vouc]' and voucno = '$data[no_vouc]'";
 
             $headrs = $this->mips_caba->query($sql);

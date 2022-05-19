@@ -110,6 +110,25 @@
 
                     $("#tabel_lap_accn").html("");
                     $("#tabel_lap_accn").append(result);
+
+                    $.ajax({
+                        url: base_url + 'cetak/sum_saldo_accn',
+                        type: 'POST',
+                        data: {
+                            tgl_start: tgl_start,
+                            tgl_end: tgl_end,
+                            accn: dt,
+                            <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash(); ?>'
+                        },
+                        dataType: "json",
+                        success: function(result) {
+                            // console.log(result);
+                            // $('#total_reg').html(result);
+                            $('#total_accn_d').html(result.debit);
+                            $('#total_accn_c').html(result.credit);
+                        },
+
+                    });
                 },
                 beforeSend: function() {
                     loadingPannel.show();
@@ -235,6 +254,17 @@
                 </tr>
             </thead>
             <tbody id="tabel_lap_accn"></tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" style="text-align:right">Total Transaksi:</th>
+                    <th>
+                        <p id="total_accn_d"></p>
+                    </th>
+                    <th>
+                        <p id="total_accn_c"></p>
+                    </th>
+                </tr>
+            </tfoot>
         </table>
 
 
