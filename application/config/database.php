@@ -179,6 +179,28 @@ $db['mips_gl_msal_pks'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+$db['mips_gl_msal_ro'] = array(
+	'dsn'	=> '',
+	'hostname' => '192.168.1.231',
+	'username' => 'mis',
+	'password' => 'msaljkt@88',
+	'database' => 'db_mips_gl_msal_ro',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
 /* START-DB-CB */
 
 $db['db_mips_cb_msal'] = array(
