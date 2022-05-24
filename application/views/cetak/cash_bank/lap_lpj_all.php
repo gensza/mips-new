@@ -158,7 +158,11 @@
             <?php
                     $lokasi = $this->session->userdata('sess_nama_lokasi');
 
+<<<<<<< HEAD
                     $sql = $this->mips_caba->query("SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO ='$d->ACCTNO' AND DATE(`DATE`) >= STR_TO_DATE('$tgl1', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl2', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE`,`VOUCNO` ASC")->result_array();
+=======
+                    $sql = $this->mips_caba->query("SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO ='$d->ACCTNO' AND DATE(`DATE`) >= STR_TO_DATE('$tgl1', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl2', '%d-%m-%Y') AND LOKASI = '$lokasi' ORDER BY `DATE` ASC")->result_array();
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
 
                     if (empty($sql)) { ?>
                 <tr>

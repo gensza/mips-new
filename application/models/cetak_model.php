@@ -412,11 +412,19 @@ class cetak_model extends CI_Model
 
         if ($sumber == '0') {
             # code...
+<<<<<<< HEAD
             $sql = "SELECT * FROM `head_voucher` WHERE LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y')  ORDER BY `DATE`,`VOUCNO` ASC";
         } else {
             # code...
 
             $sql = "SELECT * FROM `head_voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y')  ORDER BY `DATE`,`VOUCNO` ASC";
+=======
+            $sql = "SELECT * FROM `head_voucher` WHERE LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y')  ORDER BY `DATE` ASC";
+        } else {
+            # code...
+            // $sql = "SELECT * FROM head_voucher WHERE ACCTNO LIKE '$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND PDO='$sumber' ORDER BY `DATE` ASC";
+            $sql = "SELECT * FROM `head_voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND PDO='$sumber' ORDER BY `DATE` ASC";
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
         }
 
         return $this->mips_caba->query($sql);
@@ -425,7 +433,11 @@ class cetak_model extends CI_Model
     {
         $lokasi   = $this->lokasi();
         // $sql = "SELECT * FROM head_voucher WHERE ACCTNO LIKE '$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND PDO='$sumber' ORDER BY `DATE` ASC";
+<<<<<<< HEAD
         $sql = "SELECT * FROM `voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') ORDER BY `DATE`,`VOUCNO` ASC";
+=======
+        $sql = "SELECT * FROM `voucher` WHERE `ACCTNO` LIKE '$coa' AND LOKASI = '$lokasi' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') ORDER BY `DATE` ASC";
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
         return $this->mips_caba->query($sql);
     }
 
@@ -440,13 +452,21 @@ class cetak_model extends CI_Model
             $grtt = '100101032000000';
             $gaji = '100101030100000';
 
+<<<<<<< HEAD
             $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$remise','$pddo', '$kontanan', '$grtt', '$gaji') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE`,`VOUCNO` ASC";
+=======
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$remise','$pddo', '$kontanan', '$grtt', '$gaji') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC";
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
         } else if ($lokasi == 'PKS') {
             $remise = '100101041000000';
             $pddo = '100101040500000';
             $gaji = '100101040100000';
 
+<<<<<<< HEAD
             $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$remise','$pddo', '$gaji') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE`,`VOUCNO` ASC";
+=======
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$remise','$pddo', '$gaji') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC";
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
             # code...
         } else {
             $remise = '100101031000000';
@@ -455,7 +475,11 @@ class cetak_model extends CI_Model
             $grtt = '100101032000000';
             $gaji = '100101030100000';
 
+<<<<<<< HEAD
             $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$remise','$pddo', '$kontanan', '$grtt', '$gaji') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE`,`VOUCNO` ASC";
+=======
+            $sql = "SELECT *,DATE_FORMAT(`DATE`, '%d-%m-%Y') TGL,CREDIT,DEBIT FROM voucher WHERE ACCTNO IN ('$remise','$pddo', '$kontanan', '$grtt', '$gaji') AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi'  ORDER BY `DATE` ASC";
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
             # code...
         }
 
@@ -547,7 +571,11 @@ class cetak_model extends CI_Model
     function get_data_lpj_vou($sumber, $coa, $tgl_start, $tgl_end)
     {
         $lokasi   = $this->lokasi();
+<<<<<<< HEAD
         $sql = "SELECT * FROM voucher WHERE ACCTNO='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND sumber = '$sumber' ORDER BY `DATE`,`VOUCNO` ASC";
+=======
+        $sql = "SELECT * FROM voucher WHERE ACCTNO='$coa' AND DATE(`DATE`) >= STR_TO_DATE('$tgl_start', '%d-%m-%Y') AND DATE(`DATE`) <= STR_TO_DATE('$tgl_end', '%d-%m-%Y') AND LOKASI = '$lokasi' AND sumber = '$sumber' ORDER BY `DATE` DESC";
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
         return $this->mips_caba->query($sql);
     }
     function get_data_bank_vou($coa, $tgl_start, $tgl_end)
