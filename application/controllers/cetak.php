@@ -186,7 +186,11 @@ class Cetak extends CI_Controller
         // $data['saldo'] = $saldo->saldonya;
         $data['namapt']  = $this->main_model->get_pt()->row_array();
 
+<<<<<<< HEAD
+        // var_dump($data['namapt']) . die();
+=======
         // var_dump($data['saldo']) . die();
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
 
         $this->load->library('mpdf/mpdf');
 
@@ -257,7 +261,11 @@ class Cetak extends CI_Controller
             # code...
         } else if ($sumber == 5) {
             $pdo = "Dana Kontanan";
+<<<<<<< HEAD
+            $coa = '100101031500000';
+=======
             $coa = '100101021500000';
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
 
             # code...
         } else {
@@ -266,12 +274,21 @@ class Cetak extends CI_Controller
             $coa = 0;
         }
 
+<<<<<<< HEAD
+        // var_dump($coa) . die();
+
+=======
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
 
         $nama_dokumen = 'Laporan_pertanggung_jawaban_' . $tgl_start . '_' . $tgl_end . '';
         // var_dump($pdo, $coa, $tgl_start, $tgl_end) . die();
         $head_vou = $this->cetak_model->get_data_lpj($pdo, $coa, $tgl_start, $tgl_end)->row();
         $data['res_data'] = $this->cetak_model->get_lpj($head_vou->ACCTNO, $tgl_start, $tgl_end)->result_array();
+<<<<<<< HEAD
+        // var_dump($head_vou->ACCTNO) . die();
+=======
         // var_dump($data) . die();
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
 
         $saldo = $this->cetak_model->get_list_saldo_akhir_lpj($head_vou->ACCTNO)->row();
         $data['saldo'] = $saldo->saldonya;
@@ -306,13 +323,20 @@ class Cetak extends CI_Controller
     {
         $nama_dokumen = 'Laporan_buku_bank_' . $tgl_start . '_' . $tgl_end . '';
         $data['res_data'] = $this->cetak_model->get_data_bank($bank, $tgl_start, $tgl_end)->result_array();
+<<<<<<< HEAD
+        // var_dump($data['res_data']) . die();
+=======
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
         $data['tgl1'] = $tgl_start;
         $data['tgl2'] = $tgl_end;
         $data['coa'] = $bank;
         // $p = $this->cetak_model->get_data_bank_vou($bank, $tgl_start, $tgl_end)->row();
         // $dt = $p->ACCTNO;
         $data['saldo'] = $this->cetak_model->get_list_bank($bank)->result();
+<<<<<<< HEAD
+=======
         // var_dump($data['coa']) . die();
+>>>>>>> c004719cb0bf198f69ad08e9b02984bb20df2777
         // $data['saldo'] = $saldo->saldonya;
         $data['namapt']  = $this->main_model->get_pt()->row_array();
 
