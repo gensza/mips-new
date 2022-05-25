@@ -123,30 +123,32 @@
       .space_kanan {}
 </style>
 
-<div id="page_posting">
+<?php if ($this->session->userdata('sess_nama_lokasi') != 'HO') { ?>
+      <div id="page_posting">
 
-      <form id="form_input" method=POST enctype='multipart/form-data'>
-            <input type='hidden' class='form-control' name='<?php echo $this->security->get_csrf_token_name(); ?>' value="<?php echo $this->security->get_csrf_hash(); ?>">
+            <form id="form_input" method=POST enctype='multipart/form-data'>
+                  <input type='hidden' class='form-control' name='<?php echo $this->security->get_csrf_token_name(); ?>' value="<?php echo $this->security->get_csrf_hash(); ?>">
 
 
-            <div class="section-wrapper">
-                  <h3 class="heading">Posting / Transfer Transaksi ke HO</h3>
-                  <div class="row-fluid">
-                        <div class="span2" style="margin-right:10px;">
-                              <div class="form-group">
-                                    <label for="demo-vs-definput" class="control-label">Password</label>
-                                    <input type="password" id="password" name="password" class="form-control maskmoney" placeholder="Password">
+                  <div class="section-wrapper">
+                        <h3 class="heading">Posting / Transfer Transaksi ke HO</h3>
+                        <div class="row-fluid">
+                              <div class="span2" style="margin-right:10px;">
+                                    <div class="form-group">
+                                          <label for="demo-vs-definput" class="control-label">Password</label>
+                                          <input type="password" id="password" name="password" class="form-control maskmoney" placeholder="Password">
+                                    </div>
                               </div>
                         </div>
+
+
+
+                        <br>
+                        <button type="button" class="btn btn-danger btn-min-width mr-1 mb-1" id="btn_posting">Transfer Sekarang <i class="splashy-arrow_large_right"></i></button>
+
                   </div>
 
+            </form>
 
-
-                  <br>
-                  <button type="button" class="btn btn-danger btn-min-width mr-1 mb-1" id="btn_posting">Transfer Sekarang <i class="splashy-arrow_large_right"></i></button>
-
-            </div>
-
-      </form>
-
-</div>
+      </div>
+<?php } ?>
